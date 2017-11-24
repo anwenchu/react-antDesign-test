@@ -1,0 +1,17 @@
+bin/
+build/
+.settings/
+.gradle/
+.classpath
+.project
+.git/
+.svn*
+.idea
+.settings/
+catalina*
+logs/
+.DS_Store
+*.iml
+/nobm.iml
+/.idea/
+/.gradle/

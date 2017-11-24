@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+    }
+    ext {
+        springBootVersion = '1.4.5.RELEASE'
+        suixingpayVersion = '2.0-SNAPSHOT'
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'org.springframework.boot'
+
+    version = '0.0.1'
+    group = 'com.anwen'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    bootRepackage {
+        enabled = false
+    }
+
+    repositories {
+        maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+    }
+
+
+
+}
+description = 'antDesigTest'

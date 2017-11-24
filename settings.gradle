@@ -1,0 +1,4 @@
+rootProject.name = 'react-antDesign-test'
+include 'front-service'
+include 'core'
+
