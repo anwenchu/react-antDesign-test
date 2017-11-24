@@ -33,4 +33,4 @@ subprojects {
 
 
 }
-description = 'antDesigTest'
+description = '用例管理'
