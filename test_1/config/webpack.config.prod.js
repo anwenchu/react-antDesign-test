@@ -149,10 +149,37 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
+                plugins: [
+                    ['import', { libraryName: 'antd', style: true }],
+                ],
               compact: true,
             },
           },
+            {
+                test: /\.less$/,
+                use: [
+                    require.resolve('style-loader'),
+                    require.resolve('css-loader'),
+                    {
+                        loader: require.resolve('postcss-loader'),
+                        options: {
+                            ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                            plugins: () => [
+                                autoprefixer({
+                                    browsers: ['last 2 versions', 'Firefox ESR', '> 1%', 'ie >= 8', 'iOS >= 8', 'Android >= 4'],
+                                }),
+                                require('postcss-pxtorem')({ rootValue: 100, propWhiteList: [] })
+                            ],
+                        },
+                    },
+                    {
+                        loader: require.resolve('less-loader'),
+                        options: {
+                            modifyVars: { "@primary-color": "#1DA57A" },
+                        },
+                    },
+                ],
+            },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -222,7 +249,10 @@ module.exports = {
             // it's runtime that would otherwise processed through "file" loader.
             // Also exclude `html` and `json` extensions so they get processed
             // by webpacks internal loaders.
-            exclude: [/\.js$/, /\.html$/, /\.json$/],
+            exclude: [/\.js$/, /\.html$/, /\.json$/,
+                     /\.less$/,   //新增项
+                      /\.svg$/,    //新增项
+                    ],
             options: {
               name: 'static/media/[name].[hash:8].[ext]',
             },
