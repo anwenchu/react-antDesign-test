@@ -1,4 +1,4 @@
-import { Tree } from 'antd';
+import { Tree, Divider,Input } from 'antd';
 const TreeNode = Tree.TreeNode;
 
 const x = 3;
@@ -29,7 +29,7 @@ const generateData = (_level, _preKey, _tns) => {
 };
 generateData(z);
 
-const Directory = () => {
+class Directory extends React.Component {
   state = {
     gData,
     expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
@@ -100,19 +100,32 @@ const Directory = () => {
       return <TreeNode key={item.key} title={item.key} />;
     });
     return (
-      <Tree
-        className="draggable-tree"
-        defaultExpandedKeys={this.state.expandedKeys}
-        draggable
-        onDragEnter={this.onDragEnter}
-        onDrop={this.onDrop}
-      >
-        {loop(this.state.gData)}
-      </Tree>
+      <div>
+        <Divider>用例查找</Divider>
+        <div style={{ padding: " 15px" }}> 用例编号：</div>
+        <div style={{ padding: " 0px 15px 0px 15px" }}> 
+          <Input placeholder="请输入用例编号" />
+        </div>
+        <div style={{ padding: " 15px" }}> 用例标题：</div>
+        <div style={{ padding: " 0px 15px 15px 15px" }}> 
+          <Input placeholder="请输入用例标题" />
+        </div>
+        <Divider>用例管理</Divider>
+        <Tree
+          className="draggable-tree"
+          defaultExpandedKeys={this.state.expandedKeys}
+          draggable
+          onDragEnter={this.onDragEnter}
+          onDrop={this.onDrop}
+        >
+          {loop(this.state.gData)}
+        </Tree>
+      </div>
     );
   }
 }
 
 Directory.propTypes = {
 };
+
 export default Directory;
