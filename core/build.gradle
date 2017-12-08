@@ -1,5 +1,0 @@
-
-dependencies {
-    compile('com.suixingpay.starter:suixingpay-starter-logback:1.0.5')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-}

@@ -3,7 +3,6 @@ bootRepackage {
     enabled = true
 }
 dependencies {
-    compile project(":core")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate4'
     compile 'com.fasterxml.jackson.core:jackson-core'
