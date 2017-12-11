@@ -1,35 +1,43 @@
-import { Table,Divider } from 'antd';
+import { Table,Divider,Input } from 'antd';
+/*
+*新建测试计划页面表单中的用例列表模块
+*/
 
 const columns = [{
   title: '编号',
   dataIndex: 'caseNo',
 }, {
-  title: '计划标题',
+  title: '用例标题',
   dataIndex: 'caseTile',
   render: text => <a href="#">{text}</a>,
 }, {
-  title: '客户端版本',
-  dataIndex: 'caseStatus',
+  title: '执行次数',
+  dataIndex: 'count',
+  render: () => <Input placeholder="1" />
 }, {
   title: '操作',
   dataIndex: 'action',
   render: (text, record) => (
-    <a href="#">删除</a>
+    <span>
+      <a href="#">上移</a>
+      <Divider type="vertical" />
+      <a href="#">下移</a>
+    </span>
   ),
 }];
 const data = [{
   key: '1',
   caseNo: 'John Brown',
   caseTile: 'New York No. 1 Lake Park',
-  caseStatus: '通过',
+  count: '通过',
 }, {
   key: '2',
   caseNo: 'John Brown',
   caseTile: 'New York No. 1 Lake Park',
-  caseStatus: '失败',
+  count: '失败',
 }];
 
-const CaseManageList = () => {
+const TestPlaneCaseList = () => {
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -38,7 +46,7 @@ const CaseManageList = () => {
     getCheckboxProps: record => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
     }),
-  }; 
+  };
 
   return (
     <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
@@ -47,7 +55,7 @@ const CaseManageList = () => {
 
 
 
-CaseManageList.propTypes = {
+TestPlaneCaseList.propTypes = {
 };
 
-export default CaseManageList;
+export default TestPlaneCaseList;

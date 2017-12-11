@@ -1,4 +1,7 @@
 import { Table, Icon, Divider,Menu, Dropdown, Button, message } from 'antd';
+/*
+*各个页面用到的下拉列表
+*/
 
 function handleButtonClick(e) {
   message.info('Click on left button.');

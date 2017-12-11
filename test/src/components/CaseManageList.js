@@ -1,4 +1,8 @@
 import { Table,Divider } from 'antd';
+/*
+*测试用例管理页面的用例列表模块
+*/
+
 
 const columns = [{
   title: '编号',
@@ -42,7 +46,7 @@ const CaseManageList = () => {
     getCheckboxProps: record => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
     }),
-  }; 
+  };
 
   return (
     <Table rowSelection={rowSelection} columns={columns} dataSource={data} />

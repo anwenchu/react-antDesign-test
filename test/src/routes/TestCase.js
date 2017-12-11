@@ -6,6 +6,11 @@ import "antd/dist/antd.css";
 import HeaderMenu from '../components/HeaderMenu';
 import Directory from '../components/Directory';
 import CaseStepList from '../components/CaseStepList';
+/*
+*页面名称：新建、保存用例页面
+* 入口：测试用例管理页面点击新建进入
+*/
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -14,7 +19,7 @@ ReactDOM.render(
     <HeaderMenu />
     <Layout>
       <Sider width={300} style={{ background: "#F0F2F5", padding: " 25px 0px 25px 25px" }}>
-        <div style={{ background: "#fff", padding: 10, minHeight: 960 }}> 
+        <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
           <Directory />
         </div>
       </Sider>

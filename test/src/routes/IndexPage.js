@@ -4,6 +4,10 @@ import moment from "moment";
 import { DatePicker, version, Layout, Menu, Breadcrumb } from "antd";
 import "antd/dist/antd.css";
 import HeaderMenu from '../components/HeaderMenu';
+/*
+*首页
+*/
+
 
 const { Header, Content, Footer } = Layout;
 

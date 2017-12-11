@@ -1,6 +1,6 @@
 import { Tree, Divider,Input } from 'antd';
 /*
-*测试用例管理页面的用例目录
+*元素管理页面的左侧目录
 */
 
 
@@ -34,7 +34,7 @@ const generateData = (_level, _preKey, _tns) => {
 };
 generateData(z);
 
-class Directory extends React.Component {
+class PageDirectory extends React.Component {
   state = {
     gData,
     expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
@@ -106,16 +106,16 @@ class Directory extends React.Component {
     });
     return (
       <div>
-        <Divider>用例查找</Divider>
-        <div style={{ padding: " 15px" }}> 用例编号：</div>
+        <Divider>元素查找</Divider>
+        <div style={{ padding: " 15px" }}> 元素id：</div>
         <div style={{ padding: " 0px 15px 0px 15px" }}>
-          <Input placeholder="请输入用例编号" />
+          <Input placeholder="请输入元素id" />
         </div>
-        <div style={{ padding: " 15px" }}> 用例标题：</div>
+        <div style={{ padding: " 15px" }}> 元素文本：</div>
         <div style={{ padding: " 0px 15px 15px 15px" }}>
-          <Input placeholder="请输入用例标题" />
+          <Input placeholder="请输入元素文本" />
         </div>
-        <Divider>用例管理</Divider>
+        <Divider>元素管理</Divider>
         <Tree
           className="draggable-tree"
           defaultExpandedKeys={this.state.expandedKeys}
@@ -130,7 +130,7 @@ class Directory extends React.Component {
   }
 }
 
-Directory.propTypes = {
+PageDirectory.propTypes = {
 };
 
-export default Directory;
+export default PageDirectory;

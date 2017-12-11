@@ -1,4 +1,11 @@
 import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import TestPlaneCaseList from './TestPlaneCaseList';
+/*
+*新建测试计划页面表单
+*/
+
+
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
@@ -24,7 +31,7 @@ const residences = [{
   }],
 }];
 
-class RegistrationForm extends React.Component {
+class TestPlaneFormInfo extends React.Component {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
@@ -37,25 +44,7 @@ class RegistrationForm extends React.Component {
       }
     });
   }
-  handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  }
-  checkPassword = (rule, value, callback) => {
-    const form = this.props.form;
-    if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter is inconsistent!');
-    } else {
-      callback();
-    }
-  }
-  checkConfirm = (rule, value, callback) => {
-    const form = this.props.form;
-    if (value && this.state.confirmDirty) {
-      form.validateFields(['confirm'], { force: true });
-    }
-    callback();
-  }
+
 
   handleWebsiteChange = (value) => {
     let autoCompleteResult;
@@ -93,14 +82,6 @@ class RegistrationForm extends React.Component {
         },
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
 
     const websiteOptions = autoCompleteResult.map(website => (
       <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
@@ -193,7 +174,7 @@ class RegistrationForm extends React.Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="Habitual Residence"
+          label="选择用例目录"
         >
           {getFieldDecorator('residence', {
             rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
@@ -201,16 +182,19 @@ class RegistrationForm extends React.Component {
             <Cascader placeholder="请选择" options={residences} />
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Habitual Residence"
-        >
-          {getFieldDecorator('residence', {
-            rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
-          })(
-            <Cascader placeholder="请选择" options={residences} />
-          )}
-        </FormItem>        
+        <FormItem>
+          <TestPlaneCaseList />
+        </FormItem>
+        <FormItem>
+          <Row gutter={16} align={"middle"} justify={"center"}>
+            <Col className="gutter-row" span={2}>
+            <Button type="primary">保存</Button>
+            </Col>
+            <Col className="gutter-row" span={4}>
+              <Button >取消</Button>
+            </Col>
+          </Row>
+        </FormItem>
       </Form>
     );
   }
@@ -218,14 +202,14 @@ class RegistrationForm extends React.Component {
 
 
 
-const TestForm = () => {
-  const WrappedRegistrationForm = Form.create()(RegistrationForm);
+const TestPlaneForm = () => {
+  const WrappedTestPlaneForm = Form.create()(TestPlaneFormInfo);
   return (
-    <WrappedRegistrationForm />
+    <WrappedTestPlaneForm />
   );
 };
 
-TestForm.propTypes = {
+TestPlaneForm.propTypes = {
 };
 
-export default TestForm;
+export default TestPlaneForm;
