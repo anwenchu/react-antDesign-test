@@ -1,6 +1,7 @@
 import { Tree, Divider,Input } from 'antd';
 /*
-*测试用例管理页面的用例目录
+*测试用例管理页面（TestCaseManage）的用例目录
+* 数据：来自directory表
 */
 
 

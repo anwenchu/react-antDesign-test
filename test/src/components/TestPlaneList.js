@@ -1,7 +1,8 @@
 import { Table, Icon, Divider } from 'antd';
 
 /*
-*测试计划管理页面的测试计划列表模块
+*测试计划管理页面（TestPlaneManage）的测试计划列表模块
+* 数据：来自testPlane表
 */
 
 const data = [{

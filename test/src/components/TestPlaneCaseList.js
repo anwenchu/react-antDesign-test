@@ -1,6 +1,8 @@
 import { Table,Divider,Input } from 'antd';
 /*
-*新建测试计划页面表单中的用例列表模块
+*新建测试计划页面（TestPlane）表单中的用例列表模块
+* 数据：新建测试计划的时候数据来自testCase表，展示为所选的用例目录的下的用例数据；编辑
+* 测试计划的时候，数据数据来自testPlaneCase表。保存测试计划的时候，会将用例信息存入testPlaneCase表
 */
 
 const columns = [{

@@ -1,7 +1,8 @@
 import { Table, Icon, Divider,Menu, Dropdown, Button, message } from 'antd';
 import DropdownList from './DropdownList';
 /*
-*新建测试用例页面的用例步骤模块
+*新建测试用例页面（TestCase）的用例步骤模块
+* 数据：数据来自testCaseStep表，根据用例id来存储和读取
 */
 
 

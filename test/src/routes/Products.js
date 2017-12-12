@@ -2,6 +2,10 @@ import React from 'react';
 import { connect } from 'dva';
 import ProductList from '../components/ProductList';
 
+/*
+*官方例子，无作用
+*/
+
 const Products = ({ dispatch, products }) => {
   function handleDelete(id) {
     dispatch({

@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Popconfirm, Button } from 'antd';
 
-
+/*
+*官方例子，无作用
+*/
 
 const ProductList = ({ onDelete, products }) => {
   const columns = [{

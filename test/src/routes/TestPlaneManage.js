@@ -7,7 +7,7 @@ import HeaderMenu from '../components/HeaderMenu';
 import TestPlaneList from '../components/TestPlaneList';
 /*
 *页面名称：测试计划管理页面
-* 入口：点击导航中的测试计划进入（ios入口进入数据为ios测试计划，android入口进入数据为android测试计划）
+* 入口：点击导航中的测试计划管理进入（ios入口进入数据为ios测试计划，android入口进入数据为android测试计划）
 */
 
 const { Header, Content, Footer } = Layout;

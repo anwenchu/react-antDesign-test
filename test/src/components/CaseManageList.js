@@ -1,6 +1,7 @@
 import { Table,Divider } from 'antd';
 /*
-*测试用例管理页面的用例列表模块
+*测试用例管理页面（TestCaseManage）的用例列表模块
+* 数据：取at_testCase表里的数据，根据所选用例目录取
 */
 
 

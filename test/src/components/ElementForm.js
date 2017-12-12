@@ -1,6 +1,7 @@
 import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 /*
 *新建元素页面表单
+* 数据：来自element表
 */
 
 

@@ -1,7 +1,8 @@
 import { Table, Icon, Divider } from 'antd';
 
 /*
-*元素列表
+*元素列表管理页（ElementManage）的元素列表模块
+* 数据：来自element表，根据所选页面id不同展示不同的元素
 */
 
 const data = [{

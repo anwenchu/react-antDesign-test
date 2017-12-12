@@ -1,6 +1,7 @@
 import { Tree, Divider,Input } from 'antd';
 /*
-*元素管理页面的左侧目录
+*元素管理页面（ElementManage）的左侧目录
+* 数据：来自page表（这个目录只有一级，展示出来每个页面即可）
 */
 
 

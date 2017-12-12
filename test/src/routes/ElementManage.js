@@ -9,7 +9,7 @@ import DropdownList from '../components/DropdownList';
 import ElementList from '../components/ElementList';
 /*
 *页面名称：页面元素管理
-* 入口：点击顶部导航中的用例管理进入（ios导航点击进入后数据为ios用例数据，android导航点击进入后数据为android用例数据）
+* 入口：点击顶部导航中的元素管理进入（ios元素管理点击进入后数据为ios元素数据，android同理）
 */
 
 const { Header, Content, Footer, Sider } = Layout;

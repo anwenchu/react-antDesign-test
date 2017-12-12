@@ -8,7 +8,7 @@ import PageDirectory from '../components/PageDirectory';
 import ElementForm from '../components/ElementForm';
 /*
 *页面名称：新建编辑元素页面
-* 入口：点击顶部导航中的用例管理进入（ios导航点击进入后数据为ios用例数据，android导航点击进入后数据为android用例数据）
+* 入口：点击元素管理页面的新建按钮进入
 */
 
 const { Header, Content, Footer, Sider } = Layout;

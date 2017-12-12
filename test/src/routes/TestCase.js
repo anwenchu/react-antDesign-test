@@ -8,7 +8,7 @@ import Directory from '../components/Directory';
 import CaseStepList from '../components/CaseStepList';
 /*
 *页面名称：新建、保存用例页面
-* 入口：测试用例管理页面点击新建进入
+* 入口：点击测试管理页面中的新建进入
 */
 
 

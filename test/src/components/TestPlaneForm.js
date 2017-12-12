@@ -10,7 +10,10 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
 const { TextArea } = Input;
-
+/*
+*新建测试计划页面（TestPlane），测试计划表单
+* 数据：来自testPlane表
+*/
 const residences = [{
   value: '冒烟基本功能用例',
   label: '冒烟基本功能用例',
