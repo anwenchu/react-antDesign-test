@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import moment from "moment";
 import { DatePicker, version, Layout, Menu, Breadcrumb } from "antd";
 import "antd/dist/antd.css";
-import HeaderMenu from './HeaderMenu';
+import HeaderMenu from '../common/HeaderMenu';
 
 const { Header, Content, Footer } = Layout;
 
