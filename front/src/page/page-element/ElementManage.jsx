@@ -2,16 +2,17 @@ import React from "react";
 import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import PageDirectory from './PageDirectory';
 import DropdownList from '../common/DropdownList';
-import ElementList from './ElementList';
 import {
     Link
 } from 'react-router-dom'
+import {promiseAjax} from '../common/an';
+
 /*
 *页面名称：页面元素管理
 * 入口：点击顶部导航中的元素管理进入（ios元素管理点击进入后数据为ios元素数据，android同理）
 */
 
-const { Header, Content, Footer, Sider } = Layout;
+const {Content, Sider } = Layout;
 const menu = (
     <Menu onClick={handleMenuClick}>
         <Menu.Item key="1">下拉列表内</Menu.Item>
@@ -28,7 +29,82 @@ function handleMenuClick(e) {
 }
 
 export default class ElementManage extends React.Component{
+    // 一个全局状态 改变后会从新渲染页面
+    state = {
+       elements: []
+    }
 
+    // react 生命周期函数  自己百度
+    componentDidMount() {
+        // 页面渲染完成，进行一次查询
+        //ajax get请求  url 路径
+        promiseAjax.get('/element/list').then(data => {
+            console.log(data);
+            if (data && data.length) {
+                // 将数据存入state  渲染页面
+                this.setState({
+                    elements: data,
+                });
+            }
+        });
+    }
+
+    columns = [{
+        title: '编号',
+        dataIndex: 'elementNo',
+    }, {
+        title: '元素名称',
+        dataIndex: 'elementName',
+    }, {
+        title: '元素类型',
+        dataIndex: 'elementCategory',
+    }, {
+        title: '元素id',
+        dataIndex: 'elementId',
+    }, {
+        title: '元素文本',
+        dataIndex: 'elementText',
+    }, {
+        title: '元素坐标',
+        dataIndex: 'elementXY',
+    }, {
+        title: '元素xpath',
+        dataIndex: 'elementXpath',
+    }, {
+        title: '元素描述',
+        dataIndex: 'elementDes',
+    }, {
+        title: '操作',
+        dataIndex: 'action',
+        render: (text, record) => (
+            <span>
+                        <a href="#">编辑</a>
+                        <Divider type="vertical"/>
+                        <a href="#">删除</a>
+                      </span>
+        ),
+    }];
+    data = [{
+        key: '1',
+        elementNo: '1',
+        elementName: 'New York No. 1 Lake Park',
+        elementCategory: '1',
+        elementId: 'New York No. 1 Lake Park',
+        elementText: 'android851',
+        elementXY: '1',
+        elementXpath: 'New York No. 1 Lake Park',
+        elementDes: 'android851',
+    }, {
+        key: '2',
+        elementNo: '1',
+        elementName: 'New York No. 1 Lake Park',
+        elementCategory: '1',
+        elementId: 'New York No. 1 Lake Park',
+        elementText: 'android851',
+        elementXY: '1',
+        elementXpath: 'New York No. 1 Lake Park',
+        elementDes: 'android851',
+    }];
     render() {
         return (
             <Layout>
@@ -67,7 +143,7 @@ export default class ElementManage extends React.Component{
                                 </Row>
                             </div>
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
-                                <ElementList />
+                                <Table columns={this.columns} dataSource={this.state.elements}/>
                             </div>
                         </div>
                     </div>
