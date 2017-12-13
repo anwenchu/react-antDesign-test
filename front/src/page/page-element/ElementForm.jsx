@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import {withRouter} from 'react-router-dom'
 /*
 *新建元素页面表单
 * 数据：来自element表
@@ -13,7 +14,7 @@ const AutoCompleteOption = AutoComplete.Option;
 const { TextArea } = Input;
 
 
-export default class ElementForm extends React.Component {
+class ElementForm extends React.Component {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
@@ -27,6 +28,10 @@ export default class ElementForm extends React.Component {
     });
   }
 
+  check = () => {
+      debugger
+     this.props.history.goBack()
+  }
 
   handleWebsiteChange = (value) => {
     let autoCompleteResult;
@@ -103,7 +108,7 @@ export default class ElementForm extends React.Component {
               <Button type="primary">保存</Button>
             </Col>
             <Col className="gutter-row" span={4}>
-              <Button >取消</Button>
+              <Button onClick={()=>{this.check()}}>取消</Button>
             </Col>
           </Row>
         </FormItem>
@@ -111,6 +116,8 @@ export default class ElementForm extends React.Component {
     )
   }
 }
+
+export default ElementForm = withRouter(ElementForm)
 
 
 
