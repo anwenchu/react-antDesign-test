@@ -81,12 +81,13 @@ export default class TestA extends React.Component {
     }
 
     onAdd(key, e) {
+        console.log('onAdd', key);
         const data = [...this.state.data];
         var key_i = parseInt(key)
         var stepNo = key_i + 1
         var el = {
             stepNo: stepNo.toString(),
-            key: stepNo.toString(),
+            key: new Date().getTime(),
         }
         data.splice(key_i, 0, el);
         for (var i=0;i<data.length;i++)
@@ -95,9 +96,9 @@ export default class TestA extends React.Component {
             {
                 data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
                 data[i].Key = (parseInt(data[i].Key) + 1).toString();
+
             }
         }
-
         this.setState({ data });
     }
 

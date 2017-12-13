@@ -58,9 +58,6 @@ const TestCase = ({ dispatch, CaseStep }) => {
                 <div className="caseStepList">
                   <CaseStepListB />
                 </div>
-                  <div className="caseStepList">
-                      <CaseStepListA />
-                  </div>
                 <div className="gutter-example">
                   <div>
                     <Row gutter={16} align="middle">
