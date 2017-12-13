@@ -87,14 +87,11 @@ class Directory extends React.Component {
           </Tree>
         <div>
             <Row gutter={16} align="middle" >
-                <Col className="gutter-row" span={2}>
-                    <Button  shape="circle" icon="edit" size={"small"} />
+                <Col className="gutter-row" offset={6} span={2}>
+                    <Button  size={"small"} >新建</Button>
                 </Col>
-                <Col className="gutter-row" span={2}>
-                    <Button  shape="circle" icon="plus-circle-o" size={"small"} />
-                </Col>
-                <Col className="gutter-row" span={2}>
-                    <Button  shape="circle" icon="minus-circle-o" size={"small"} />
+                <Col className="gutter-row" offset={6} span={2}>
+                    <Button  size={"small"} >删除</Button>
                 </Col>
             </Row>
         </div>
