@@ -23,8 +23,8 @@ const statusMenu = (
 
 const DropdownList = ({ onDelete, products }) => {
   return (
-    <Dropdown overlay={statusMenu}>
-      <Button style={{ marginLeft: 8 }}>
+    <Dropdown  overlay={statusMenu}>
+      <Button size={"small"} style={{ marginLeft: 8 }}>
         请选择 <Icon type="down" />
       </Button>
     </Dropdown>

@@ -1,5 +1,5 @@
 import React from "react";
-
+import "antd/dist/antd.css";
 import { Table,Divider } from 'antd';
 /*
 *测试用例管理页面（TestCaseManage）的用例列表模块

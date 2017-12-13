@@ -4,6 +4,9 @@ import "antd/dist/antd.css";
 import Directory from './Directory';
 import DropdownList from '../common/DropdownList';
 import CaseManageList from './CaseManageList';
+import {
+    Link
+} from 'react-router-dom'
 /*
 *页面名称：测试用例管理页面
 * 入口：点击顶部导航中的用例管理进入（ios导航点击进入后数据为ios用例数据，android导航点击进入后数据为android用例数据）
@@ -53,7 +56,7 @@ export default class TestCaseManage extends React.Component{
                 <div style={{ padding: " 0px 0px 15px 0px" }}>
                   <Row gutter={16} align="middle" >
                     <Col className="gutter-row" span={3}>
-                      <Button type="primary">+ 新建</Button>
+                      <Button type="primary"><Link to={"addtestcase"}>+ 新建</Link></Button>
                     </Col>
                     <Col className="gutter-row" span={3}>
                       <Button >批量操作</Button>

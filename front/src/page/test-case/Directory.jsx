@@ -1,4 +1,5 @@
 import React from 'react'
+import "antd/dist/antd.css";
 import { Tree, Divider,Input,Row,Col,Button,Icon } from 'antd';
 import NewDirModal from '../common/NewDirModal';
 import DelDirModal from '../common/DelDirModal';

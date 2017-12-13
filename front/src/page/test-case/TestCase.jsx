@@ -3,6 +3,8 @@ import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,
 import "antd/dist/antd.css";
 import Directory from './Directory';
 import CaseStepList from './CaseStepList';
+import TestA from './TestA';
+
 /*
 *页面名称：新建、保存用例页面
 * 入口：点击测试管理页面中的新建进入
@@ -11,8 +13,13 @@ import CaseStepList from './CaseStepList';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-export default class TestCase extends React.Component {
-    render() {
+const TestCase = ({ dispatch, CaseStep }) => {
+    function handleDelete(id) {
+        dispatch({
+            type: 'products/delete',
+            payload: id,
+        });
+    }
       return(
           <Layout>
             <Sider width={300} style={{ background: "#F0F2F5", padding: " 25px 0px 25px 25px" }}>
@@ -49,8 +56,11 @@ export default class TestCase extends React.Component {
                   </div>
                 </div>
                 <div className="caseStepList">
-                  <CaseStepList />
+                  <TestA />
                 </div>
+                  <div className="caseStepList">
+                      <CaseStepList />
+                  </div>
                 <div className="gutter-example">
                   <div>
                     <Row gutter={16} align="middle">
@@ -65,14 +75,18 @@ export default class TestCase extends React.Component {
                     </Row>
                   </div>
                   <div style={{ padding: " 30px 0px 0px 0px" }}>
-                    <Button type="primary">保存</Button>
+                      <Row gutter={16} align="middle" >
+                          <Col className="gutter-row" offset={20} span={2}>
+                              <Button type="primary">保存</Button>
+                          </Col>
+                      </Row>
                   </div>
                 </div>
               </div>
             </Content>
           </Layout>
-      )
-    }
+      );
 }
 
+export default TestCase;
 
