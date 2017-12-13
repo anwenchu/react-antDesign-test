@@ -1,10 +1,10 @@
 buildscript {
     repositories {
-        maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+//         maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+         maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
     }
     ext {
-        springBootVersion = '1.4.5.RELEASE'
-        suixingpayVersion = '2.0-SNAPSHOT'
+        springBootVersion = '1.5.4.RELEASE'
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
@@ -22,12 +22,10 @@ subprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    bootRepackage {
-        enabled = false
-    }
 
     repositories {
-        maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+//        maven { url "http://172.16.60.188:8081/nexus/content/groups/public" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
     }
 
 
