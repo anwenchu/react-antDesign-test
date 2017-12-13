@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tree, Divider,Input } from 'antd';
+import { Tree, Divider,Input,Row,Col,Button,Icon } from 'antd';
 /*
 *测试用例管理页面（TestCaseManage）的用例目录
 * 数据：来自directory表
@@ -41,64 +41,11 @@ class Directory extends React.Component {
     gData,
     expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
   }
-  onDragEnter = (info) => {
-    console.log(info);
-    // expandedKeys 需要受控时设置
-    // this.setState({
-    //   expandedKeys: info.expandedKeys,
-    // });
+
+  onSelect = (selectedKeys, info) => {
+    console.log('selected', selectedKeys, info);
   }
-  onDrop = (info) => {
-    console.log(info);
-    const dropKey = info.node.props.eventKey;
-    const dragKey = info.dragNode.props.eventKey;
-    const dropPos = info.node.props.pos.split('-');
-    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    // const dragNodesKeys = info.dragNodesKeys;
-    const loop = (data, key, callback) => {
-      data.forEach((item, index, arr) => {
-        if (item.key === key) {
-          return callback(item, index, arr);
-        }
-        if (item.children) {
-          return loop(item.children, key, callback);
-        }
-      });
-    };
-    const data = [...this.state.gData];
-    let dragObj;
-    loop(data, dragKey, (item, index, arr) => {
-      arr.splice(index, 1);
-      dragObj = item;
-    });
-    if (info.dropToGap) {
-      let ar;
-      let i;
-      loop(data, dropKey, (item, index, arr) => {
-        ar = arr;
-        i = index;
-      });
-      if (dropPosition === -1) {
-        ar.splice(i, 0, dragObj);
-      } else {
-        // drag node and drop node in the same level
-        // and drop to the last node
-        if (dragKey.length === dropKey.length && ar.length - 1 === i) {
-          i += 2;
-        }
-        ar.splice(i - 1, 0, dragObj);
-      }
-    } else {
-      loop(data, dropKey, (item) => {
-        item.children = item.children || [];
-        // where to insert 示例添加到尾部，可以是随意位置
-        item.children.push(dragObj);
-      });
-    }
-    this.setState({
-      gData: data,
-    });
-  }
+
   render() {
     const loop = data => data.map((item) => {
       if (item.children && item.children.length) {
@@ -118,15 +65,39 @@ class Directory extends React.Component {
           <Input placeholder="请输入用例标题" />
         </div>
         <Divider>用例管理</Divider>
-        <Tree
-          className="draggable-tree"
-          defaultExpandedKeys={this.state.expandedKeys}
-          draggable
-          onDragEnter={this.onDragEnter}
-          onDrop={this.onDrop}
-        >
-          {loop(this.state.gData)}
-        </Tree>
+          <Tree
+              showLine
+              defaultExpandedKeys={['0-0-0']}
+              onSelect={this.onSelect}
+          >
+              <TreeNode title="parent 1" key="0-0">
+                  <TreeNode title="parent 1-0" key="0-0-0">
+                      <TreeNode title="leaf" key="0-0-0-0" />
+                      <TreeNode title="leaf" key="0-0-0-1" />
+                      <TreeNode title="leaf" key="0-0-0-2" />
+                  </TreeNode>
+                  <TreeNode title="parent 1-1" key="0-0-1">
+                      <TreeNode title="leaf" key="0-0-1-0" />
+                  </TreeNode>
+                  <TreeNode title="parent 1-2" key="0-0-2">
+                      <TreeNode title="leaf" key="0-0-2-0" />
+                      <TreeNode title="leaf" key="0-0-2-1" />
+                  </TreeNode>
+              </TreeNode>
+          </Tree>
+        <div>
+            <Row gutter={16} align="middle" >
+                <Col className="gutter-row" span={2}>
+                    <Button  shape="circle" icon="edit" size={"small"} />
+                </Col>
+                <Col className="gutter-row" span={2}>
+                    <Button  shape="circle" icon="plus-circle-o" size={"small"} />
+                </Col>
+                <Col className="gutter-row" span={2}>
+                    <Button  shape="circle" icon="minus-circle-o" size={"small"} />
+                </Col>
+            </Row>
+        </div>
       </div>
     );
   }

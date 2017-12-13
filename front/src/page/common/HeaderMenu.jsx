@@ -17,13 +17,13 @@ const HeaderMenu = () => {
 
                         <Menu.SubMenu key="1" title="测试计划">
                             <Menu.Item key="1.1">
-                                <Link to={"testplanemanage"}>android自动化测试计划</Link>
+                                <Link to={"/testplanemanage"}>android自动化测试计划</Link>
                             </Menu.Item>
                             <Menu.Item>
-                                <Link to={"testplanemanage"}>ios自动化测试计划</Link>
+                                <Link to={"/testplanemanage"}>ios自动化测试计划</Link>
                             </Menu.Item>
                             <Menu.Item>
-                                <Link to={"testplanemanage"}>性能基准测试计划</Link>
+                                <Link to={"/testplanemanage"}>性能基准测试计划</Link>
                             </Menu.Item>
                         </Menu.SubMenu>
                     <Col span={1}>
