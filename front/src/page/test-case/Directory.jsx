@@ -1,5 +1,7 @@
 import React from 'react'
 import { Tree, Divider,Input,Row,Col,Button,Icon } from 'antd';
+import NewDirModal from '../common/NewDirModal';
+import DelDirModal from '../common/DelDirModal';
 /*
 *测试用例管理页面（TestCaseManage）的用例目录
 * 数据：来自directory表
@@ -88,10 +90,10 @@ class Directory extends React.Component {
         <div>
             <Row gutter={16} align="middle" >
                 <Col className="gutter-row" offset={6} span={2}>
-                    <Button  size={"small"} >新建</Button>
+                    <NewDirModal />
                 </Col>
                 <Col className="gutter-row" offset={6} span={2}>
-                    <Button  size={"small"} >删除</Button>
+                    <DelDirModal />
                 </Col>
             </Row>
         </div>
