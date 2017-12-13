@@ -3,8 +3,10 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
 //    compile 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate4'
     // jpa
-    compile 'org.springframework.data:spring-data-jpa'
-    compile 'org.springframework.data:spring-data-releasetrain:1.4.6.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // mysql
+    compile 'mysql:mysql-connector-java'
 
 //    compile 'com.fasterxml.jackson.core:jackson-core'
     compile('io.springfox:springfox-swagger2:2.6.1')
@@ -12,6 +14,7 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     // lombok
     compileOnly('org.projectlombok:lombok')
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.38'
 
     compile("commons-httpclient:commons-httpclient:3.1")
 

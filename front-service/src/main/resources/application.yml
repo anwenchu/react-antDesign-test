@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/auto?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: root
+
+
+
+server:
+  port: 8080
+
+
+management:
+  security:
+    enabled: false
+  context-path: /management
+
+
+#swagger默认参数
+swagger2:
+  basePackage: com.anwen.autotest.controller
+  title:  自动化测试 平台RESTF-API列表
+  contact-name: anwenX
+  contact-url: https://www.anwenchu.space
+  version: 1.0

@@ -1,4 +1,4 @@
-package com.anwen.autotest.swagger;
+package com.anwen.autotest.swaager;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,14 +14,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * EnableSwagger2配置
- *
- * @author: anwen
+ * Created by an_wch on 2017/12/13.
  */
 @Configuration
 @EnableSwagger2
 @ConfigurationProperties(prefix = SwaggerConfiguration.PREFIX)
 public class SwaggerConfiguration {
-
     /**
      *
      */
@@ -54,7 +52,7 @@ public class SwaggerConfiguration {
 
     /**
      * api
-     * 
+     *
      * @return
      */
     @Bean
@@ -67,7 +65,7 @@ public class SwaggerConfiguration {
 
     /**
      * info
-     * 
+     *
      * @return
      */
     private ApiInfo info() {
