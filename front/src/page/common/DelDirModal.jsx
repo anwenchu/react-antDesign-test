@@ -2,6 +2,7 @@ import React from "react";
 import "antd/dist/antd.css";
 import { Modal, Button } from 'antd';
 
+
 const confirm = Modal.confirm;
 
 export default class DelDirModal extends React.Component {

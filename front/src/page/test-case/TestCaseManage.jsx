@@ -37,18 +37,7 @@ export default class TestCaseManage extends React.Component{
           <Content style={{ padding: " 25px" }}>
             <div style={{ background: "#fff", padding: 50, minHeight: 960 }}>
               <div className="gutter-example" style={{ padding: " 0px 0px 30px 0px" }}>
-                <div style={{ padding: " 0px 0px 25px 0px" }}>
-                    <Row gutter={16} align="middle" >
-                        <Col className="gutter-row" span={4}>
-                            <div className="gutter-box" >目录名称：</div>
-                        </Col>
-                        <Col className="gutter-row" span={6}>
-                            <Input />
-                        </Col>
-                    </Row>
-                </div>
                 <div style={{ padding: " 0px 0px 45px 0px" }}>
-
                   <Row gutter={16} align="middle" >
                     <Col className="gutter-row" span={2}>
                       <div className="gutter-box" >状态：</div>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Tree, Divider,Input,Row,Col,Button,Icon } from 'antd';
 import NewDirModal from '../common/NewDirModal';
 import DelDirModal from '../common/DelDirModal';
+import EditDirModal from '../common/EditDirModal';
 /*
 *测试用例管理页面（TestCaseManage）的用例目录
 * 数据：来自directory表
@@ -87,12 +88,15 @@ class Directory extends React.Component {
                   </TreeNode>
               </TreeNode>
           </Tree>
-        <div>
+        <div style={{ padding: " 15px" }}>
             <Row gutter={16} align="middle" >
-                <Col className="gutter-row" offset={6} span={2}>
+                <Col className="gutter-row" offset={4} span={2}>
                     <NewDirModal />
                 </Col>
-                <Col className="gutter-row" offset={6} span={2}>
+                <Col className="gutter-row" offset={4} span={2}>
+                    <EditDirModal />
+                </Col>
+                <Col className="gutter-row" offset={4} span={2}>
                     <DelDirModal />
                 </Col>
             </Row>
