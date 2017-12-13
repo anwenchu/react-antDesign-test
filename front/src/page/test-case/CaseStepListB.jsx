@@ -54,7 +54,7 @@ export default class TestA extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <a onClick={e => this.onAdd(e)}>添加</a>
+                <a onClick={e => this.onAdd(record.key,e)} href="#">添加</a>
                 <Divider type="vertical" />
                 <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
             </span>
@@ -80,25 +80,27 @@ export default class TestA extends React.Component {
         this.setState({ data });
     }
 
-    onAdd( e) {
-        debugger;
+    onAdd(key, e) {
+
         const data = [...this.state.data];
-        var key_i = parseInt(data.length)
+        var key_i = parseInt(key)
         var stepNo = key_i + 1
         var el = {
             stepNo: stepNo.toString(),
-            key: new Date().getTime(),
+            key: stepNo.toString(),
         }
+
         data.splice(key_i, 0, el);
         for (var i=0;i<data.length;i++)
         {
             if (i>key_i)
             {
                 data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
-                data[i].Key = (parseInt(data[i].Key) + 1).toString();
+                data[i].key = data[i].stepNo;
 
             }
         }
+
         this.setState({ data });
     }
 

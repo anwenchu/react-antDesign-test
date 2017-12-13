@@ -45,7 +45,7 @@ export default class CaseStepListB extends React.Component {
             if (i>key_i)
             {
                 data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
-                data[i].Key = (parseInt(data[i].Key) + 1).toString();
+                data[i].key = data[i].stepNo;
             }
         }
 
@@ -95,7 +95,7 @@ export default class CaseStepListB extends React.Component {
 
     render() {
         return (
-            <div style={{ margin: 20 }}>
+            <div style={{ margin: 5 }}>
                 <Table
                     dataSource={this.state.data}
                     columns={this.columns}

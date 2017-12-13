@@ -1,64 +1,70 @@
 import React from "react";
 import "antd/dist/antd.css";
-import { Table,Divider } from 'antd';
+import { Table,Divider,Popconfirm } from 'antd';
 /*
 *测试用例管理页面（TestCaseManage）的用例列表模块
 * 数据：取at_testCase表里的数据，根据所选用例目录取
 */
 
 
-const columns = [{
-  title: '编号',
-  dataIndex: 'caseNo',
-}, {
-  title: '用例标题',
-  dataIndex: 'caseTile',
-  render: text => <a href="#">{text}</a>,
-}, {
-  title: '状态',
-  dataIndex: 'caseStatus',
-}, {
-  title: '操作',
-  dataIndex: 'action',
-  render: (text, record) => (
-    <span>
-      <a href="#">删除</a>
-      <Divider type="vertical" />
-      <a href="#">订阅警报</a>
-    </span>
-  ),
-}];
-const data = [{
-  key: '1',
-  caseNo: 'John Brown',
-  caseTile: 'New York No. 1 Lake Park',
-  caseStatus: '通过',
-}, {
-  key: '2',
-  caseNo: 'John Brown',
-  caseTile: 'New York No. 1 Lake Park',
-  caseStatus: '失败',
-}];
 
-const CaseManageList = () => {
-  // rowSelection object indicates the need for row selection
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    }),
-  };
 
-  return (
-    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-  );
+export default class CaseManageList extends React.Component {
+
+    state = {
+        data : [{
+            key: '1',
+            caseNo: 'John Brown',
+            caseTile: 'New York No. 1 Lake Park',
+            caseStatus: '通过',
+        }, {
+            key: '2',
+            caseNo: 'John Brown',
+            caseTile: 'New York No. 1 Lake Park',
+            caseStatus: '失败',
+        }],
+    };
+    columns = [{
+        title: '编号',
+        dataIndex: 'caseNo',
+    }, {
+        title: '用例标题',
+        dataIndex: 'caseTile',
+        render: text => <a href="#">{text}</a>,
+    }, {
+        title: '状态',
+        dataIndex: 'caseStatus',
+    }, {
+        title: '操作',
+        dataIndex: 'action',
+        render: (text, record) => (
+            <span>
+                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.key, e)}>
+                    <a href="#">删除</a>
+                </Popconfirm>
+                <Divider type="vertical" />
+                <a href="#">订阅警报</a>
+            </span>
+        ),
+    }];
+
+    onDelete(key, e) {
+        console.log('Delete', key);
+        e.preventDefault();
+        const data = this.state.data.filter(item => item.key !== key);
+        console.log('Delete', data);
+        this.setState({ data });
+    }
+    render() {
+        return (
+            <div style={{ margin: 5 }}>
+                <Table
+                    dataSource={this.state.data}
+                    columns={this.columns}
+                />
+            </div>
+        );
+    }
 };
 
 
-
-CaseManageList.propTypes = {
-};
-
-export default CaseManageList;
