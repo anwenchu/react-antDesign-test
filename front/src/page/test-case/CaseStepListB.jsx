@@ -19,6 +19,7 @@ export default class TestA extends React.Component {
             title: '编号',
             dataIndex: 'stepNo',
             key: 'stepNo',
+            width: 50
         }, {
             title: '页面',
             dataIndex: 'page',
@@ -26,6 +27,7 @@ export default class TestA extends React.Component {
             render: (text, record) => (
                 <DropdownList />
             ),
+            width: 120
         }, {
             title: '操作对象',
             dataIndex: 'element',
@@ -33,6 +35,7 @@ export default class TestA extends React.Component {
             render: (text, record) => (
                 <DropdownList />
             ),
+            width: 120
         }, {
             title: '步骤描述',
             dataIndex: 'step',
@@ -40,16 +43,18 @@ export default class TestA extends React.Component {
             render: (text, record) => (
                 <DropdownList />
             ),
+            width: 250
         }, {
             title: '状态',
             dataIndex: 'status',
             key: 'status',
+            width: 50
         }, {
             title: '操作',
             key: 'action',
             render: (text, record) => (
                 <span>
-                <a onClick={e => this.onAdd(record.key, e)} href="#">添加</a>
+                <a onClick={e => this.onAdd(record.key, e)}>添加</a>
                 <Divider type="vertical" />
                 <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
             </span>
@@ -75,22 +80,30 @@ export default class TestA extends React.Component {
         this.setState({ data });
     }
 
-    onAdd() {
+    onAdd(key, e) {
         const data = [...this.state.data];
-        data.push({
-            a: 'new data',
-            b: 'new data',
-            c: 'new data',
-            key: Date.now(),
-        });
+        var key_i = parseInt(key)
+        var stepNo = key_i + 1
+        var el = {
+            stepNo: stepNo.toString(),
+            key: stepNo.toString(),
+        }
+        data.splice(key_i, 0, el);
+        for (var i=0;i<data.length;i++)
+        {
+            if (i>key_i)
+            {
+                data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
+                data[i].Key = (parseInt(data[i].Key) + 1).toString();
+            }
+        }
+
         this.setState({ data });
     }
 
     render() {
         return (
-            <div style={{ margin: 20 }}>
-                <h2>Table row with animation</h2>
-                <button onClick={() => this.onAdd()}>添加</button>
+            <div style={{ margin: 5 }}>
                 <Table
                     columns={this.columns}
                     data={this.state.data}

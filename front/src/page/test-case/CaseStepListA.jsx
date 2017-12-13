@@ -10,7 +10,7 @@ import DropdownList from '../common/DropdownList';
 
 
 
-export default class TestA extends React.Component {
+export default class CaseStepListB extends React.Component {
 
     state = {
         data:[{
@@ -31,13 +31,24 @@ export default class TestA extends React.Component {
         this.setState({ data });
     }
 
-    onAdd() {
+    onAdd(key, e) {
         const data = [...this.state.data];
-        data.push({
-            key: Date.now(),
-            stepNo: 'new data',
+        var key_i = parseInt(key)
+        var stepNo = key_i + 1
+        var el = {
+            stepNo: stepNo.toString(),
+            key: stepNo.toString(),
+        }
+        data.splice(key_i, 0, el);
+        for (var i=0;i<data.length;i++)
+        {
+            if (i>key_i)
+            {
+                data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
+                data[i].Key = (parseInt(data[i].Key) + 1).toString();
+            }
+        }
 
-        });
         this.setState({ data });
     }
 
@@ -75,7 +86,7 @@ export default class TestA extends React.Component {
         key: 'action',
         render: (text, record) => (
             <span>
-                <a onClick={e => this.onAdd(record.key, e)} href="#">添加</a>
+                <a onClick={e => this.onAdd(record.key, e)}>添加</a>
                 <Divider type="vertical" />
                 <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
             </span>

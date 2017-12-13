@@ -2,8 +2,8 @@ import React from "react";
 import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import "antd/dist/antd.css";
 import Directory from './Directory';
-import CaseStepList from './CaseStepList';
-import TestA from './TestA';
+import CaseStepListB from './CaseStepListB';
+import CaseStepListA from './CaseStepListA';
 
 /*
 *页面名称：新建、保存用例页面
@@ -56,10 +56,10 @@ const TestCase = ({ dispatch, CaseStep }) => {
                   </div>
                 </div>
                 <div className="caseStepList">
-                  <TestA />
+                  <CaseStepListB />
                 </div>
                   <div className="caseStepList">
-                      <CaseStepList />
+                      <CaseStepListA />
                   </div>
                 <div className="gutter-example">
                   <div>
