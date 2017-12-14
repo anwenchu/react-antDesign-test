@@ -143,7 +143,7 @@ export default class ElementManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary"><Link to={"addelement"}> + 新建</Link></Button>
+                                        <Button type="primary"><Link to={"/addelement"}> + 新建</Link></Button>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>

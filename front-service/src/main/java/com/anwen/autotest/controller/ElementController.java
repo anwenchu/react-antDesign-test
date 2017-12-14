@@ -71,4 +71,16 @@ public class ElementController extends AbstractController{
     public ResponseEntity list() {
         return wrapperSupplier(() -> elementRepository.findAll(), false);
     }
+
+    /**
+     * 查询元素
+     * @return
+     */
+    @ApiOperation(value = "查询元素", notes = "查询元素")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity detail(@PathVariable(name = "id") Long id) {
+        return wrapperSupplier(() -> elementRepository.findOne(id), false);
+    }
+
+
 }
