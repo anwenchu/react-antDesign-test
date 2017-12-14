@@ -67,30 +67,7 @@ export default class DirTree extends React.Component {
         this.DeltraverseTree(this.state.data)
     }
 
-    onDelete() {
-        console.log('Delete', this.state.selectedKeys);
-        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
-        console.log('Delete', data);
-        this.setState({ data });
 
-    }
-
-    DeltraverseTree(node){
-        if (!node) {
-            return;
-        }
-        console.log('Delete', node.key);
-        if(node.key == this.state.selectedKeys[0]）{
-
-        }
-        else {
-            if (node.children && node.children.length > 0) {
-                for (var i = 0; i < data.children.length; i++) {
-                    this.traverseTree(data.children[i]);
-                }
-            }
-        }
-    }
 
     renderTreeNodes = (data) => {
         return data.map((item) => {
@@ -127,8 +104,7 @@ export default class DirTree extends React.Component {
                             <EditDirModal />
                         </Col>
                         <Col span={2} offset={4}>
-                            <Button size={"small"} onClick={() => this.handleDelete(record.id)}>删除</Button>
-                            <Button size={"small"} onClick={this.onDelete.bind(this)}>删除2</Button>
+                            <Button size={"small"} onClick={() => this.handleDelete(this.state.selectedKeys)}>删除</Button>
                         </Col>
                     </Row>
                 </div>

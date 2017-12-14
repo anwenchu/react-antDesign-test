@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(description = "目录管理相关接口")
 @RestController
 @RequestMapping("/dir")
-public class DirController extends AbstractController{
+public class TestCaseController extends AbstractController{
 
     @Autowired
     private DirRepository dirRepository;

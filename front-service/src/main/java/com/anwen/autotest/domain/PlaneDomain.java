@@ -24,37 +24,40 @@ public class PlaneDomain {
     @GeneratedValue
     private Long id;
     //目录id
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "directory_Id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private Long directoryId;
     //循环次数
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
-    private Long cycleCount;
+    @Column(name = "testplane_count", columnDefinition = "int(x) COMMENT 'xx'")
+    private Long testPlaneCount;
     //执行时间
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
-    private Long time;
+    @Column(name = "testplane_runtime", columnDefinition = "int(x) COMMENT 'xx'")
+    private Long testPlaneRuntime;
     //平台客户端类型
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;
     //客户端版本号
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String version;
+    @Column(name = "app_version", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String appVersion;
     //测试appuirl
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "app_url", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String appUrl;
     //测试计划描述
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "testplane_des", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String testPlaneDes;
     //测试计划名称
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "testplane_name", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String testPlaneName;
     //系统版本
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "sys_version", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String sysVersion;
     //设备名称
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
+    @Column(name = "device_name", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String deviceName;
     //（ios）设备uuid
-    @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String uuid;
+    @Column(name = "device_uuid", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String deviceUUID;
+    //测试计划类型
+    @Column(name = "testplane_category", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String testPlaneCategory;
 
 }

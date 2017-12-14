@@ -18,10 +18,7 @@ const menu = (
         <Menu.Item key="1">下拉列表内</Menu.Item>
     </Menu>
 );
-function handleButtonClick(e) {
-    message.info('Click on left button.');
-    console.log('click left button', e);
-}
+
 
 function handleMenuClick(e) {
     message.info('Click on menu item.');
@@ -31,7 +28,8 @@ function handleMenuClick(e) {
 export default class ElementManage extends React.Component{
     // 一个全局状态 改变后会从新渲染页面
     state = {
-       elements: []
+        elements: [],
+        id: '',
     }
 
     // react 生命周期函数  自己百度
@@ -70,7 +68,7 @@ export default class ElementManage extends React.Component{
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                        <a href="#">编辑</a>
+                        <a href="#" onClick={() => this.handleEdit(record.id)}>编辑</a>
                         <Divider type="vertical"/>
                         <a href="#" onClick={() => this.handleDelete(record.id)}>删除</a>
                       </span>
@@ -88,10 +86,12 @@ export default class ElementManage extends React.Component{
         elementDes: 'android851',
     }];
 
+    /**
+     * 查询
+     */
     search = () => {
         //ajax get请求  url 路径
         promiseAjax.get('/element/list').then(data => {
-            console.log(data);
             if (data && data.length) {
                 // 将数据存入state  渲染页面
                 this.setState({
@@ -100,15 +100,38 @@ export default class ElementManage extends React.Component{
             }
         });
     }
+<<<<<<< HEAD
 
+=======
+    /**
+     * 删除
+     * @param id
+     */
+>>>>>>> 754d87261e5ac4066325d1ee597fdb333f94975b
     handleDelete = (id) => {
         promiseAjax.del(`/element/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
     }
+<<<<<<< HEAD
 
+=======
+    /**
+     *
+     * @param id
+     */
+    handleEdit = (id) => {
+        const editPath = {
+            pathname: '/addelement',
+            query: 'edit',
+            id,
+        }
+        this.props.history.push(editPath);
+    }
+>>>>>>> 754d87261e5ac4066325d1ee597fdb333f94975b
     render() {
+
         return (
             <Layout>
                 <Sider width={300} style={{ background: "#F0F2F5", padding: " 25px 0px 25px 25px" }}>
@@ -135,7 +158,7 @@ export default class ElementManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary"><Link to={"/addelement"}> + 新建</Link></Button>
+                                        <Button type="primary"><Link to={'/addelement'}> + 新建</Link></Button>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>

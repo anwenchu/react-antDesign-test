@@ -54,5 +54,8 @@ public class ElementDomain {
     //元素所属平台：android、ios
     @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;
+    //删除状态
+    @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
+    private Long isDelete;
 
 }

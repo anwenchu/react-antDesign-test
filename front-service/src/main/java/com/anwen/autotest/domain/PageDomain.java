@@ -11,21 +11,24 @@ import javax.persistence.*;
  * Created by an_wch on 2017/12/13.
  */
 @Entity
-@Table(name = "at_directory")
+@Table(name = "at_page")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-public class DirDomain {
+public class PageDomain {
 
     @Id
     @GeneratedValue
     private Long id;
-    //目录名称
-    @Column(name = "directory_name", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String directoryName;
+    //页面名称
+    @Column(name = "page_name", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String pageName;
     //父节点
-    @Column(name = "parent_id", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String parentId;
+    @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String platform;
+    //页面是否可用，0不可用，1可用
+    @Column(name = "available", columnDefinition = "int(x) COMMENT 'xx'")
+    private Long available;
     //删除状态
     @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
     private Long isDelete;
