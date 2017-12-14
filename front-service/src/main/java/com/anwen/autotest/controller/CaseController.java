@@ -1,7 +1,7 @@
 package com.anwen.autotest.controller;
 
-import com.anwen.autotest.domain.DirDomain;
-import com.anwen.autotest.repository.DirRepository;
+import com.anwen.autotest.domain.CaseDomain;
+import com.anwen.autotest.repository.CaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Created by an_wch on 2017/12/13.
  */
-@Api(description = "目录管理相关接口")
+@Api(description = "用例相关接口")
 @RestController
-@RequestMapping("/dir")
-public class TestCaseController extends AbstractController{
+@RequestMapping("/testcase")
+public class CaseController extends AbstractController{
 
     @Autowired
-    private DirRepository dirRepository;
+    private CaseRepository caseRepository;
 
     /**
      * 新增目录
@@ -28,8 +28,8 @@ public class TestCaseController extends AbstractController{
      */
     @ApiOperation(value = "新增目录", notes = "新增目录")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody DirDomain dir) {
-        return wrapperConsumer((p) -> dirRepository.save(p), dir);
+    public ResponseEntity save(@RequestBody CaseDomain dir) {
+        return wrapperConsumer((p) -> caseRepository.save(p), dir);
     }
 
     /**
@@ -40,7 +40,7 @@ public class TestCaseController extends AbstractController{
     @ApiOperation(value = "删除目录", notes = "删除目录")
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
-        return wrapperConsumer((p) -> dirRepository.delete(p), id);
+        return wrapperConsumer((p) -> caseRepository.delete(p), id);
     }
 
     /**
@@ -51,8 +51,8 @@ public class TestCaseController extends AbstractController{
      */
     @ApiOperation(value = "修改目录", notes = "修改目录")
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody DirDomain dir) {
-        return wrapperConsumer((p) -> dirRepository.save(p), dir);
+    public ResponseEntity update(@RequestBody CaseDomain dir) {
+        return wrapperConsumer((p) -> caseRepository.save(p), dir);
     }
 
     /**
@@ -62,7 +62,7 @@ public class TestCaseController extends AbstractController{
     @ApiOperation(value = "查询所有目录", notes = "查询所有目录")
     @GetMapping(value = "/list")
     public ResponseEntity list() {
-        return wrapperSupplier(() -> dirRepository.findAll(), false);
+        return wrapperSupplier(() -> caseRepository.findAll(), false);
 
     }
 
@@ -73,7 +73,7 @@ public class TestCaseController extends AbstractController{
     @ApiOperation(value = "查询目录", notes = "查询目录")
     @GetMapping(value = "/{id}")
     public ResponseEntity detail(@PathVariable(name = "id") Long id) {
-        return wrapperSupplier(() -> dirRepository.findOne(id), false);
+        return wrapperSupplier(() -> caseRepository.findOne(id), false);
     }
 
 
