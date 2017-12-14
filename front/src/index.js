@@ -15,19 +15,19 @@ promiseAjax.init({
     setOptions: (instance) => {
         instance.defaults.baseURL = 'http://localhost:8080/';
     },
-    onShowErrorTip: (err, errorTip) => {
-        if (err.response && err.response.status === 401) {
-            // return toLogin();
-        }
-        if (errorTip !== false) {
-            handleErrorMessage(err);
-        }
-    },
-    onShowSuccessTip: (response, successTip) => {
-        if (successTip !== false) {
-            message.success(successTip, 3);
-        }
-    },
+    // onShowErrorTip: (err, errorTip) => {
+    //     if (err.response && err.response.status === 401) {
+    //         // return toLogin();
+    //     }
+    //     if (errorTip !== false) {
+    //         handleErrorMessage(err);
+    //     }
+    // },
+    // onShowSuccessTip: (response, successTip) => {
+    //     if (successTip !== false) {
+    //         message.success(successTip, 3);
+    //     }
+    // },
 });
 
 ReactDOM.render(<Router history={history}/>, document.getElementById('root'));
