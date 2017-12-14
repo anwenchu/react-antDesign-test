@@ -17,29 +17,36 @@ const {Content, Sider} = Layout;
 export default class ElementNew extends React.Component {
 
     state = {
-        confirmDirty: false,
-        autoCompleteResult: [],
+        isEdit: false,
+        element: [],
     };
     handleSubmit = (e) => {
         e.preventDefault();
+
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                if (this.state.isEdit) {
+                    values.id = this.state.element.id;
+                }
                 promiseAjax.post('/element/add', values).then(() => {
-                    this.props.history.goBack()
+                    this.props.history.goBack();
                 });
             }
         });
     }
 
-
-    handleWebsiteChange = (value) => {
-        let autoCompleteResult;
-        if (!value) {
-            autoCompleteResult = [];
-        } else {
-            autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
+    // react 生命周期函数
+    componentDidMount() {
+        // 如果是修改 回显数据
+        const id = this.props.location.id;
+        if (this.props.location.query === 'edit') {
+            promiseAjax.get(`/element/${id}`).then((data) => {
+                this.setState({
+                    element: data,
+                    isEdit: true,
+                })
+            });
         }
-        this.setState({autoCompleteResult});
     }
 
     render() {
@@ -54,7 +61,7 @@ export default class ElementNew extends React.Component {
                 sm: { span: 16 },
             },
         };
-
+        const element = this.state.element;
         return (
             <Layout>
                 <Sider width={300} style={{background: "#F0F2F5", padding: " 25px 0px 25px 25px"}}>
@@ -74,7 +81,7 @@ export default class ElementNew extends React.Component {
                                         {...formItemLayout}
                                         label="元素名称">
                                         {getFieldDecorator('elementName', {
-                                            // initialValue: element.elementName,
+                                            initialValue: element == null ? '' : element.elementName,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素名称!',
@@ -90,7 +97,7 @@ export default class ElementNew extends React.Component {
                                         label="元素类型"
                                     >
                                         {getFieldDecorator('elementCategory', {
-                                            // initialValue: element.elementCategory,
+                                            initialValue: element == null ? '' : element.elementCategory,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素类型!',
@@ -105,7 +112,7 @@ export default class ElementNew extends React.Component {
                                         label="元素id"
                                     >
                                         {getFieldDecorator('elementId', {
-                                            // initialValue: element.elementId,
+                                            initialValue: element == null ? '' : element.elementId,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素id!',
@@ -120,7 +127,7 @@ export default class ElementNew extends React.Component {
                                         label="元素文本"
                                     >
                                         {getFieldDecorator('elementText', {
-                                            // initialValue: element.elementText,
+                                            initialValue: element == null ? '' : element.elementText,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素文本!',
@@ -135,7 +142,7 @@ export default class ElementNew extends React.Component {
                                         label="元素坐标"
                                     >
                                         {getFieldDecorator('elementBounds', {
-                                            // initialValue: element.elementText,
+                                            initialValue: element == null ? '' : element.elementBounds,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素坐标!',
@@ -150,7 +157,7 @@ export default class ElementNew extends React.Component {
                                         label="元素xpath"
                                     >
                                         {getFieldDecorator('elementXpath', {
-                                            // initialValue: element.elementXpath,
+                                            initialValue: element == null ? '' : element.elementXpath,
                                             rules: [
                                                 {
                                                     required: true, message: '请输入元素xpath!',
@@ -165,7 +172,7 @@ export default class ElementNew extends React.Component {
                                         label="描述"
                                     >
                                         {getFieldDecorator('elementDesc', {
-                                            // initialValue: element.elementXpath,
+                                            initialValue: element == null ? '' : element.elementDesc,
                                             rules: [
                                                 {
                                                     required: false, message: '请输入元素描述!',
