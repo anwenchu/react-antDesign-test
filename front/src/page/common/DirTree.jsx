@@ -1,41 +1,49 @@
-import React from "react";
-import "antd/dist/antd.css";
-import { Tree, Divider,Input,Row,Col,Button,Icon ,From} from 'antd';
-import EditDirModal from './EditDirModal'
-import DelDirModal from './DelDirModal'
-import NewDirModal from './NewDirModal'
-
+import React from 'react';
+import { Tree,Button,Row, Col  } from 'antd';
+import NewDirModal from './NewDirModal';
+import EditDirModal from './EditDirModal';
+import DelDirModal from './DelDirModal';
+import {promiseAjax} from "./an";
 const TreeNode = Tree.TreeNode;
 
+
 export default class DirTree extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            treeData: [
-                { title: 'Expand to load', key: '0' },
-                { title: 'Expand to load', key: '1' },
-                { title: 'Tree Node', key: '2', isLeaf: true },
-            ],
-            rightClickNodeTreeItem: {},
+    state = {
+        expandedKeys: ['0-0-0', '0-0-1'],
+        autoExpandParent: true,
+        checkedKeys: ['0-0-0'],
+        selectedKeys: [],
+        data : [{
+            title: 'android自动化用例',
+            key: '0-0',
+        }],
+    }
+
+    traverseTree(node){
+        if (!node) {
+            return;
+        }
+
+        traverseNode(node);
+        if (node.children && node.children.length > 0) {
+            var i = 0;
+            for (i = 0; i < node.children.length; i++) {
+                this.traverseTree(node.children[i]);
+            }
         }
     }
-    onLoadData = (treeNode) => {
-        return new Promise((resolve) => {
-            if (treeNode.props.children) {
-                resolve();
-                return;
-            }
-            setTimeout(() => {
-                treeNode.props.dataRef.children = [
-                    { title: 'Child Node', key: `${treeNode.props.eventKey}-0` },
-                    { title: 'Child Node', key: `${treeNode.props.eventKey}-1` },
-                ];
-                this.setState({
-                    treeData: [...this.state.treeData],
-                });
-                resolve();
-            }, 1000);
-        });
+
+    onDelete() {
+        console.log('Delete', this.state.selectedKeys);
+        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys);
+        console.log('Delete', data);
+        this.setState({ data });
+    }
+    onSelect = (selectedKeys) => {
+        console.log('onSelect', selectedKeys);
+        this.state.selectedKeys = selectedKeys
+        this.setState({ selectedKeys });
+        console.log('onSelect', this.state.selectedKeys);
     }
     renderTreeNodes = (data) => {
         return data.map((item) => {
@@ -46,69 +54,49 @@ export default class DirTree extends React.Component {
                     </TreeNode>
                 );
             }
-            return <TreeNode {...item} dataRef={item} />;
+            return <TreeNode {...item} />;
         });
     }
-    onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
-    }
-    treeNodeonRightClick(e) {
-        this.setState({
-            rightClickNodeTreeItem: {
-                pageX: e.event.pageX,
-                pageY: e.event.pageY,
-                id: e.node.props['data-key'],
-                categoryName: e.node.props['data-title']
+    search = () => {
+        //ajax get请求  url 路径
+        promiseAjax.get('/dir/list').then(data => {
+            console.log(data);
+            if (data && data.length) {
+                // 将数据存入state  渲染页面
+                this.setState({
+                    elements: data,
+                });
             }
         });
     }
-    getNodeTreeRightClickMenu() {
-        const {pageX, pageY} = {...this.state.rightClickNodeTreeItem};
-        const tmpStyle = {
-            position: 'absolute',
-            left: `${pageX - 220}px`,
-            top: `${pageY - 70}px`
-        };
-        const menu = (
-            <Menu
-                onClick={this.handleMenuClick}
-                style={tmpStyle}
 
-            >
-                <Menu.Item key='2'><Icon type='plus-circle-o'/>{'加下级'}</Menu.Item>
-                <Menu.Item key='4'><Icon type='edit'/>{'修改'}</Menu.Item>
-                <Menu.Item key='3'><Icon type='minus-circle-o'/>{'删除目录'}</Menu.Item>
-            </Menu>
-        );
-        return (this.state.rightClickNodeTreeItem == null) ? '' : menu;
-    }
 
     render() {
-
         return (
             <div>
                 <Tree
-                    showLine
-                    defaultExpandedKeys={['0-0-0']}
+                    onExpand={this.onExpand}
+                    expandedKeys={this.state.expandedKeys}
+                    autoExpandParent={this.state.autoExpandParent}
                     onSelect={this.onSelect}
-
-                    loadData={this.onLoadData}
+                    selectedKeys={this.state.selectedKeys}
                 >
-                    {this.renderTreeNodes(this.state.treeData)}
+                    {this.renderTreeNodes(this.state.data)}
                 </Tree>
-                <div style={{ padding: " 15px" }}>
-                    <Row gutter={16} align="middle" >
-                        <Col className="gutter-row" offset={4} span={2}>
+                <div style={{ padding: " 5px" }}>
+                    <Row>
+                        <Col span={2} offset={4}>
                             <NewDirModal />
                         </Col>
-                        <Col className="gutter-row" offset={4} span={2}>
+                        <Col span={2} offset={4}>
                             <EditDirModal />
                         </Col>
-                        <Col className="gutter-row" offset={4} span={2}>
+                        <Col span={2} offset={4}>
                             <DelDirModal />
                         </Col>
                     </Row>
                 </div>
+
             </div>
         );
     }

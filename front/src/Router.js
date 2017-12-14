@@ -24,7 +24,7 @@ export default class Router extends React.Component {
                 <BrowserRouter>
                     <Layout className="layout">
                         <HeaderMenu />
-                        <Content style={{padding: " 50px"}}>
+                        <Content style={{padding: " 50px 50px 25px 50px" }}>
                             <div>
                                 <Route exact path="/TestPlane" component={TestPlane}/>
                                 <Route path="/IndexPage" component={IndexPage}/>
@@ -35,9 +35,10 @@ export default class Router extends React.Component {
                                 <Route path="/testplanemanage" component={TestPlaneManage}/>
                                 <Route path="/addplane" component={TestPlaneForm}/>
                             </div>
+                            <IndexPage/>
                         </Content>
                         <Footer style={{textAlign: "center"}}>
-                            Ant Design ©2017 Created by Ant UED
+                            Ant Design ©2017 Created by QA
                         </Footer>
                     </Layout>
 

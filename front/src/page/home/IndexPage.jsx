@@ -10,11 +10,9 @@ const { Header, Content, Footer } = Layout;
 export default class IndexPage extends React.Component {
     render() {
         return (
-
-                <div style={{background: "#fff", padding: 24, minHeight: 280}}>
-                  使用说明
-                </div>
+            <div style={{background: "#fff", padding: 24, minHeight: 430}}>
+                这里是使用说明
+            </div>
         )
-
     }
 }

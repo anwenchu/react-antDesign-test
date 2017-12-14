@@ -79,22 +79,12 @@ export default class ElementManage extends React.Component{
     data = [{
         key: '1',
         elementNo: '1',
-        elementName: 'New York No. 1 Lake Park',
+        elementName: '元素1',
         elementCategory: '1',
-        elementId: 'New York No. 1 Lake Park',
+        elementId: 'id',
         elementText: 'android851',
         elementXY: '1',
-        elementXpath: 'New York No. 1 Lake Park',
-        elementDes: 'android851',
-    }, {
-        key: '2',
-        elementNo: '1',
-        elementName: 'New York No. 1 Lake Park',
-        elementCategory: '1',
-        elementId: 'New York No. 1 Lake Park',
-        elementText: 'android851',
-        elementXY: '1',
-        elementXpath: 'New York No. 1 Lake Park',
+        elementXpath: 'xxxx',
         elementDes: 'android851',
     }];
 
