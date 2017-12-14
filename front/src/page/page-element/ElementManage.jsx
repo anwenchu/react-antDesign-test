@@ -100,12 +100,14 @@ export default class ElementManage extends React.Component{
             }
         });
     }
+
     handleDelete = (id) => {
         promiseAjax.del(`/element/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
     }
+
     render() {
         return (
             <Layout>

@@ -20,12 +20,9 @@ public class DirDomain {
     @Id
     @GeneratedValue
     private Long id;
-    //目录id
-    @Column(name = "dir_id", columnDefinition = "int(x) COMMENT 'xx'")
-    private Long dirId;
     //目录名称
     @Column(name = "directory_name", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private Long directoryName;
+    private String directoryName;
     //父节点
     @Column(name = "parent", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String parent;

@@ -1,50 +1,97 @@
 import React from 'react';
-import { Tree,Button,Row, Col  } from 'antd';
+import { Tree,Button,Row, Col ,Modal } from 'antd';
 import NewDirModal from './NewDirModal';
 import EditDirModal from './EditDirModal';
-import DelDirModal from './DelDirModal';
 import {promiseAjax} from "./an";
+
+
+
 const TreeNode = Tree.TreeNode;
+const confirm = Modal.confirm;
 
 
 export default class DirTree extends React.Component {
     state = {
-        expandedKeys: ['0-0-0', '0-0-1'],
-        autoExpandParent: true,
-        checkedKeys: ['0-0-0'],
         selectedKeys: [],
         data : [{
-            title: 'android自动化用例',
-            key: '0-0',
+            title: '1',
+            key: '1',
+            children: [
+                { title: '4', key: '4' },
+                { title: '5', key: '5' },
+                { title: '6', key: '6' },
+            ],
+        }, {
+            title: '2',
+            key: '2',
+        }, {
+            title: '30',
+            key: '30',
         }],
     }
 
-    traverseTree(node){
-        if (!node) {
-            return;
-        }
-
-        traverseNode(node);
-        if (node.children && node.children.length > 0) {
-            var i = 0;
-            for (i = 0; i < node.children.length; i++) {
-                this.traverseTree(node.children[i]);
+    // 查询目录数据
+    search = () => {
+        //ajax get请求  url 路径
+        promiseAjax.get('/dir/list').then(data => {
+            console.log(data);
+            if (data && data.length) {
+                // 将数据存入state  渲染页面
+                this.setState({
+                    data: data,
+                });
             }
-        }
+        });
+    }
+    // 确认删除
+    showConfirmDel = (id) => {
+        confirm({
+            title: '是否要删除所选目录?',
+            content: '点击确定按钮，删除所选目录。',
+            onOk() {
+                promiseAjax.del(`/dir/${id}`).then(() => {
+                    // todo: low一点 重新查询 可以优化
+                    this.search();
+                });
+                return new Promise((resolve, reject) => {
+                    setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+                }).catch(() => console.log('Oops errors!'));
+            },
+            onCancel() {},
+        });
+    }
+
+    onSelect = (selectedKeys) => {
+        this.state.selectedKeys = selectedKeys;
+        this.setState({ selectedKeys });
+        this.DeltraverseTree(this.state.data)
     }
 
     onDelete() {
         console.log('Delete', this.state.selectedKeys);
-        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys);
+        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
         console.log('Delete', data);
         this.setState({ data });
+
     }
-    onSelect = (selectedKeys) => {
-        console.log('onSelect', selectedKeys);
-        this.state.selectedKeys = selectedKeys
-        this.setState({ selectedKeys });
-        console.log('onSelect', this.state.selectedKeys);
+
+    DeltraverseTree(node){
+        if (!node) {
+            return;
+        }
+        console.log('Delete', node.key);
+        if(node.key == this.state.selectedKeys[0]）{
+
+        }
+        else {
+            if (node.children && node.children.length > 0) {
+                for (var i = 0; i < data.children.length; i++) {
+                    this.traverseTree(data.children[i]);
+                }
+            }
+        }
     }
+
     renderTreeNodes = (data) => {
         return data.map((item) => {
             if (item.children) {
@@ -57,27 +104,15 @@ export default class DirTree extends React.Component {
             return <TreeNode {...item} />;
         });
     }
-    search = () => {
-        //ajax get请求  url 路径
-        promiseAjax.get('/dir/list').then(data => {
-            console.log(data);
-            if (data && data.length) {
-                // 将数据存入state  渲染页面
-                this.setState({
-                    elements: data,
-                });
-            }
-        });
-    }
+
 
 
     render() {
         return (
             <div>
                 <Tree
-                    onExpand={this.onExpand}
-                    expandedKeys={this.state.expandedKeys}
-                    autoExpandParent={this.state.autoExpandParent}
+                    showLine
+                    defaultExpandedKeys={['0-0-0']}
                     onSelect={this.onSelect}
                     selectedKeys={this.state.selectedKeys}
                 >
@@ -92,7 +127,8 @@ export default class DirTree extends React.Component {
                             <EditDirModal />
                         </Col>
                         <Col span={2} offset={4}>
-                            <DelDirModal />
+                            <Button size={"small"} onClick={() => this.handleDelete(record.id)}>删除</Button>
+                            <Button size={"small"} onClick={this.onDelete.bind(this)}>删除2</Button>
                         </Col>
                     </Row>
                 </div>
