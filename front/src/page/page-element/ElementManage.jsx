@@ -37,17 +37,9 @@ export default class ElementManage extends React.Component{
     // react 生命周期函数  自己百度
     componentDidMount() {
         // 页面渲染完成，进行一次查询
-        //ajax get请求  url 路径
-        promiseAjax.get('/element/list').then(data => {
-            console.log(data);
-            if (data && data.length) {
-                // 将数据存入state  渲染页面
-                this.setState({
-                    elements: data,
-                });
-            }
-        });
+       this.search()
     }
+
 
     columns = [{
         title: '编号',
@@ -80,7 +72,7 @@ export default class ElementManage extends React.Component{
             <span>
                         <a href="#">编辑</a>
                         <Divider type="vertical"/>
-                        <a href="#">删除</a>
+                        <a href="#" onClick={() => this.handleDelete(record.id)}>删除</a>
                       </span>
         ),
     }];
@@ -105,6 +97,25 @@ export default class ElementManage extends React.Component{
         elementXpath: 'New York No. 1 Lake Park',
         elementDes: 'android851',
     }];
+
+    search = () => {
+        //ajax get请求  url 路径
+        promiseAjax.get('/element/list').then(data => {
+            console.log(data);
+            if (data && data.length) {
+                // 将数据存入state  渲染页面
+                this.setState({
+                    elements: data,
+                });
+            }
+        });
+    }
+    handleDelete = (id) => {
+        promiseAjax.del(`/element/${id}`).then(() => {
+            // todo: low一点 重新查询 可以优化
+            this.search();
+        });
+    }
     render() {
         return (
             <Layout>
@@ -143,7 +154,10 @@ export default class ElementManage extends React.Component{
                                 </Row>
                             </div>
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
-                                <Table columns={this.columns} dataSource={this.state.elements}/>
+                                <Table
+                                    columns={this.columns}
+                                    rowKey={(record) => record.id}
+                                    dataSource={this.state.elements}/>
                             </div>
                         </div>
                     </div>
