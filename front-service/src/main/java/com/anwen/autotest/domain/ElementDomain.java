@@ -24,34 +24,34 @@ public class ElementDomain {
     @Id
     @GeneratedValue
     private Long id;
-
+    //页面id
     @Column(name = "page_id", columnDefinition = "int(x) COMMENT 'xx'")
     private Long pageId;
-
+    //页面是否可用，0不可用，1可用
     @Column(name = "available", columnDefinition = "int(x) COMMENT 'xx'")
     private Long available;
-
+    //元素名称
     @Column(name = "element_name", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementName;
-
+    //元素分类
     @Column(name = "element_category", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementCategory;
-
+    //元素文本
     @Column(name = "element_text", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementText;
-
+    //元素描述
     @Column(name = "element_desc", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementDesc;
-
+    //元素xpath
     @Column(name = "element_xpath", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementXpath;
-
+    //元素id
     @Column(name = "element_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementId;
-
+    //元素坐标
     @Column(name = "element_bounds", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementBounds;
-
+    //元素所属平台：android、ios
     @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;
 

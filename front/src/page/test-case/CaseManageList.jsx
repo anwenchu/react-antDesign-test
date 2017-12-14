@@ -14,13 +14,13 @@ export default class CaseManageList extends React.Component {
     state = {
         data : [{
             key: '1',
-            caseNo: 'John Brown',
-            caseTile: 'New York No. 1 Lake Park',
+            caseNo: '1',
+            caseTile: '测试用例标题1',
             caseStatus: '通过',
         }, {
             key: '2',
-            caseNo: 'John Brown',
-            caseTile: 'New York No. 1 Lake Park',
+            caseNo: '2',
+            caseTile: '测试用例标题2，测试用例标题2',
             caseStatus: '失败',
         }],
     };

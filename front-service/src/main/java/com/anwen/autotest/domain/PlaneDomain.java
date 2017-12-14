@@ -23,37 +23,37 @@ public class PlaneDomain {
     @Id
     @GeneratedValue
     private Long id;
-
+    //目录id
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private Long directoryId;
-
+    //循环次数
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private Long cycleCount;
-
+    //执行时间
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private Long time;
-
+    //平台客户端类型
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;
-
+    //客户端版本号
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String version;
-
+    //测试appuirl
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String appUrl;
-
+    //测试计划描述
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String testPlaneDes;
-
+    //测试计划名称
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String testPlaneName;
-
+    //系统版本
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String sysVersion;
-
+    //设备名称
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String deviceName;
-
+    //（ios）设备uuid
     @Column(columnDefinition = "varchar(x) COMMENT 'xx'")
     private String uuid;
 
