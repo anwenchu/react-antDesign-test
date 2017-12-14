@@ -2,33 +2,33 @@ import React from 'react';
 import { Tree,Button,Row, Col ,Modal,Input } from 'antd';
 import {promiseAjax} from "./an";
 
-
+/*
+* 元素管理页面的tree组件，跟用例管理页面目录不同，这个添加目录关系只有一级，添加目录为一级目录
+* 数据：来自page表（这个目录只有一级，展示出来每个页面即可）
+*/
 
 const TreeNode = Tree.TreeNode;
-const confirm = Modal.confirm;
 
 
-export default class DirTree extends React.Component {
-    state = {
-        visible1: false,
-        visible2: false,
-        visible3: false,
-        selectedKeys: [],
-        data : [{
-            title: '1',
-            key: '1',
-            children: [
-                { title: '4', key: '4' },
-                { title: '5', key: '5' },
-                { title: '6', key: '6' },
-            ],
-        }, {
-            title: '2',
-            key: '2',
-        }, {
-            title: '30',
-            key: '30',
-        }],
+export default class PageTree extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            visible1: false,
+            visible2: false,
+            visible3: false,
+            selectedKeys: [],
+            data : [{
+                title: '1',
+                key: '1',
+            }, {
+                title: '2',
+                key: '2',
+            }, {
+                title: '30',
+                key: '30',
+            }],
+        }
     }
 
     showModalNew = () => {
@@ -71,7 +71,7 @@ export default class DirTree extends React.Component {
     }
 
     handleOkDel = (e) => {
-        //promiseAjax.del(`/dir/${id}`).then(() => {
+        //promiseAjax.del(`/page/${id}`).then(() => {
         //    // todo: low一点 重新查询 可以优化
         //    this.search();
         //});
@@ -90,7 +90,7 @@ export default class DirTree extends React.Component {
     // 查询目录数据
     search = () => {
         //ajax get请求  url 路径
-        promiseAjax.get('/dir/list').then(data => {
+        promiseAjax.get('/page/list').then(data => {
             console.log(data);
             if (data && data.length) {
                 // 将数据存入state  渲染页面
@@ -107,6 +107,7 @@ export default class DirTree extends React.Component {
         this.state.selectedKeys = selectedKeys;
         this.setState({ selectedKeys });
     }
+
 
 
 

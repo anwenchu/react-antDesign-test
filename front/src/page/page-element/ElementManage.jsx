@@ -55,15 +55,6 @@ export default class ElementManage extends React.Component{
         title: '元素文本',
         dataIndex: 'elementText',
     }, {
-        title: '元素坐标',
-        dataIndex: 'elementXY',
-    }, {
-        title: '元素xpath',
-        dataIndex: 'elementXpath',
-    }, {
-        title: '元素描述',
-        dataIndex: 'elementDes',
-    }, {
         title: '操作',
         dataIndex: 'action',
         render: (text, record) => (
@@ -100,23 +91,23 @@ export default class ElementManage extends React.Component{
             }
         });
     }
-<<<<<<< HEAD
 
-=======
+
+
     /**
      * 删除
      * @param id
      */
->>>>>>> 754d87261e5ac4066325d1ee597fdb333f94975b
+
     handleDelete = (id) => {
         promiseAjax.del(`/element/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
     }
-<<<<<<< HEAD
 
-=======
+
+
     /**
      *
      * @param id
@@ -129,7 +120,7 @@ export default class ElementManage extends React.Component{
         }
         this.props.history.push(editPath);
     }
->>>>>>> 754d87261e5ac4066325d1ee597fdb333f94975b
+
     render() {
 
         return (

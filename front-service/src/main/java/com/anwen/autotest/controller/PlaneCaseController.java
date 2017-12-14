@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(description = "元素管理相关接口")
 @RestController
-@RequestMapping("/element")
+@RequestMapping("/planecase")
 public class PlaneCaseController extends AbstractController{
 
     @Autowired
