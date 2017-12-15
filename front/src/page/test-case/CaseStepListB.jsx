@@ -54,10 +54,10 @@ export default class TestA extends React.Component {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <a onClick={e => this.onAdd(record.key,e)} href="#">添加</a>
-                <Divider type="vertical" />
-                <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
-            </span>
+                    <a onClick={e => this.onAdd(record.key,e)} href="#">添加</a>
+                    <Divider type="vertical" />
+                    <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
+                </span>
             ),
         }];
         this.state = {

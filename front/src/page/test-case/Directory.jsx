@@ -16,37 +16,37 @@ const z = 1;
 const gData = [];
 
 const generateData = (_level, _preKey, _tns) => {
-  const preKey = _preKey || '0';
-  const tns = _tns || gData;
+    const preKey = _preKey || '0';
+    const tns = _tns || gData;
 
-  const children = [];
-  for (let i = 0; i < x; i++) {
-    const key = `${preKey}-${i}`;
-    tns.push({ title: key, key });
-    if (i < y) {
-      children.push(key);
+    const children = [];
+    for (let i = 0; i < x; i++) {
+        const key = `${preKey}-${i}`;
+        tns.push({ title: key, key });
+        if (i < y) {
+            children.push(key);
+        }
     }
-  }
-  if (_level < 0) {
-    return tns;
-  }
-  const level = _level - 1;
-  children.forEach((key, index) => {
-    tns[index].children = [];
-    return generateData(level, key, tns[index].children);
-  });
+    if (_level < 0) {
+        return tns;
+    }
+    const level = _level - 1;
+    children.forEach((key, index) => {
+        tns[index].children = [];
+        return generateData(level, key, tns[index].children);
+    });
 };
 generateData(z);
 
 class Directory extends React.Component {
-  state = {
-    gData,
-    expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
-  }
+    state = {
+        gData,
+        expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
+    }
 
-  onSelect = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
-  }
+    onSelect = (selectedKeys, info) => {
+        console.log('selected', selectedKeys, info);
+    }
 
     render() {
         const loop = data => data.map((item) => {
@@ -69,8 +69,8 @@ class Directory extends React.Component {
                 <Divider>用例管理</Divider>
                 <DirTree />
             </div>
-    );
-  }
+        );
+    }
 }
 
 Directory.propTypes = {

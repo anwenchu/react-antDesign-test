@@ -59,10 +59,10 @@ export default class ElementManage extends React.Component{
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                        <a href="#" onClick={() => this.handleEdit(record.id)}>编辑</a>
-                        <Divider type="vertical"/>
-                        <a href="#" onClick={() => this.handleDelete(record.id)}>删除</a>
-                      </span>
+                <a href="#" onClick={() => this.handleEdit(record.id)}>编辑</a>
+                <Divider type="vertical"/>
+                <a href="#" onClick={() => this.handleDelete(record.id)}>删除</a>
+            </span>
         ),
     }];
     data = [{

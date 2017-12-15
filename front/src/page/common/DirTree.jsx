@@ -171,7 +171,6 @@ export default class DirTree extends React.Component {
                         </Col>
                     </Row>
                 </div>
-
             </div>
         );
     }

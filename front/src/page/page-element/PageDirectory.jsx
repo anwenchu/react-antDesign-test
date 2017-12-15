@@ -8,30 +8,29 @@ import PageTree from '../common/PageTree';
 
 export default class PageDirectory extends React.Component {
 
-  render() {
-    const loop = data => data.map((item) => {
-      if (item.children && item.children.length) {
-        return <TreeNode key={item.key} title={item.key}>{loop(item.children)}</TreeNode>;
-      }
-      return <TreeNode key={item.key} title={item.key} />;
-    });
-    return (
-      <div>
-        <Divider>元素查找</Divider>
-        <div style={{ padding: " 15px" }}> 元素id：</div>
-        <div style={{ padding: " 0px 15px 0px 15px" }}>
-          <Input placeholder="请输入元素id" />
-        </div>
-        <div style={{ padding: " 15px" }}> 元素文本：</div>
-        <div style={{ padding: " 0px 15px 15px 15px" }}>
-          <Input placeholder="请输入元素文本" />
-        </div>
-        <Divider>元素管理</Divider>
-        <PageTree />
-
-      </div>
-    );
-  }
+    render() {
+        const loop = data => data.map((item) => {
+            if (item.children && item.children.length) {
+                return <TreeNode key={item.key} title={item.key}>{loop(item.children)}</TreeNode>;
+            }
+            return <TreeNode key={item.key} title={item.key} />;
+        });
+        return (
+            <div>
+                <Divider>元素查找</Divider>
+                <div style={{ padding: " 15px" }}> 元素id：</div>
+                <div style={{ padding: " 0px 15px 0px 15px" }}>
+                    <Input placeholder="请输入元素id" />
+                </div>
+                <div style={{ padding: " 15px" }}> 元素文本：</div>
+                <div style={{ padding: " 0px 15px 15px 15px" }}>
+                    <Input placeholder="请输入元素文本" />
+                </div>
+                <Divider>元素管理</Divider>
+                <PageTree />
+            </div>
+        );
+    }
 }
 
 
