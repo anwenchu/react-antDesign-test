@@ -4,7 +4,7 @@ import {
     Route,
     Link
 } from 'react-router-dom'
-import TestPlane from './page/common/TestPlane';
+import TestPlane from './page/test-plane/TestPlane';
 import IndexPage from './page/home/IndexPage';
 import ElementManage from './page/page-element/ElementManage';
 import ElementNew from './page/page-element/ElementNew';
@@ -24,9 +24,9 @@ export default class Router extends React.Component {
                 <BrowserRouter>
                     <Layout className="layout">
                         <HeaderMenu />
-                        <Content style={{padding: " 50px 50px 25px 50px" }}>
+                        <Content style={{padding: 30 }}>
                             <div>
-                                <Route exact path="/TestPlane" component={TestPlane}/>
+                                <Route exact path="/testplane" component={TestPlane}/>
                                 <Route path="/index" component={IndexPage}/>
                                 <Route path="/elementlist" component={ElementManage}/>
                                 <Route path="/addelement" component={ElementNew}/>

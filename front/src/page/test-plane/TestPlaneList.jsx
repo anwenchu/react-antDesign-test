@@ -1,6 +1,9 @@
 import React from "react";
-
+import "antd/dist/antd.css";
 import { Table, Icon, Divider,Popconfirm } from 'antd';
+import {
+    Link
+} from 'react-router-dom'
 
 /*
 *测试计划管理页面（TestPlaneManage）的测试计划列表模块
@@ -31,7 +34,7 @@ export default class TestPlaneList extends React.Component {
     }, {
         title: '计划标题',
         dataIndex: 'caseTile',
-        render: text => <a href="#">{text}</a>,
+        render: text => <a href="#"><Link to={"/addplane"}>{text}</Link></a> ,
     }, {
         title: '客户端版本',
         dataIndex: 'caseStatus',

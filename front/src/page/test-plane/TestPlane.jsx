@@ -12,8 +12,8 @@ const {Header, Content, Footer} = Layout;
 export default class TestPlane extends React.Component {
     render() {
         return (
-            <Content style={{padding: " 50px"}}>
-                <div style={{background: "#fff", padding: 24, minHeight: 280}}>
+            <Content >
+                <div style={{background: "#fff", padding: 24, minHeight: 430}}>
                     <div style={{padding: "40px"}}>
                         <TestPlaneForm />
                     </div>
