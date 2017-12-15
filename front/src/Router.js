@@ -27,7 +27,7 @@ export default class Router extends React.Component {
                         <Content style={{padding: " 50px 50px 25px 50px" }}>
                             <div>
                                 <Route exact path="/TestPlane" component={TestPlane}/>
-                                <Route path="/IndexPage" component={IndexPage}/>
+                                <Route path="/index" component={IndexPage}/>
                                 <Route path="/elementlist" component={ElementManage}/>
                                 <Route path="/addelement" component={ElementNew}/>
                                 <Route path="/testcasemanage" component={TestCaseManage}/>
@@ -35,7 +35,6 @@ export default class Router extends React.Component {
                                 <Route path="/testplanemanage" component={TestPlaneManage}/>
                                 <Route path="/addplane" component={TestPlaneForm}/>
                             </div>
-                            <IndexPage/>
                         </Content>
                         <Footer style={{textAlign: "center"}}>
                             Ant Design ©2017 Created by QA
