@@ -42,22 +42,11 @@ class TestPlaneFormInfo extends React.Component {
     };
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
+        this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
             }
         });
-    }
-
-
-    handleWebsiteChange = (value) => {
-        let autoCompleteResult;
-        if (!value) {
-            autoCompleteResult = [];
-        } else {
-            autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-        }
-        this.setState({ autoCompleteResult });
     }
 
     render() {
@@ -66,12 +55,10 @@ class TestPlaneFormInfo extends React.Component {
 
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 8 },
+                span: 6 ,
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 16 },
+                span: 12 ,
             },
         };
 
@@ -90,11 +77,7 @@ class TestPlaneFormInfo extends React.Component {
                             label="标题"
                         >
                             {getFieldDecorator('title', {
-                                rules: [{
-                                    type: 'title', message: '输入的标题不合法!',
-                                }, {
-                                    required: true, message: '请输入标题!',
-                                }],
+                                rules: [{required: true, message: '请输入标题!'}],
                             })(
                                 <Input placeholder="请输入标题"/>
                             )}
@@ -115,12 +98,8 @@ class TestPlaneFormInfo extends React.Component {
                             {...formItemLayout}
                             label="app地址"
                         >
-                            {getFieldDecorator('title', {
-                                rules: [{
-                                    type: 'title', message: '输入的app地址不合法!',
-                                }, {
-                                    required: true, message: '请输入app地址!',
-                                }],
+                            {getFieldDecorator('appurl', {
+                                rules: [{ required: true, message: '请输入app地址!' }],
                             })(
                                 <Input placeholder="请输入app地址"/>
                             )}
@@ -129,8 +108,8 @@ class TestPlaneFormInfo extends React.Component {
                             {...formItemLayout}
                             label="客户端版本号"
                         >
-                            {getFieldDecorator('title', {
-                                rules: [{required: true, message: '请输入客户端版本号!',}],
+                            {getFieldDecorator('appversion', {
+                                rules: [{required: true, message: '请输入客户端版本号!'}],
                             })(
                                 <Input placeholder="请输入app地址"/>
                             )}
@@ -139,7 +118,7 @@ class TestPlaneFormInfo extends React.Component {
                             {...formItemLayout}
                             label="系统版本"
                         >
-                            {getFieldDecorator('title', {
+                            {getFieldDecorator('sysversion', {
                                 rules: [{required: true, message: '请输入系统版本!',}],
                             })(
                                 <Input placeholder="请输入系统版本"/>
@@ -149,7 +128,7 @@ class TestPlaneFormInfo extends React.Component {
                             {...formItemLayout}
                             label="设备名称"
                         >
-                            {getFieldDecorator('title', {
+                            {getFieldDecorator('devicename', {
                                 rules: [{required: true, message: '请输入设备名称!',}],
                             })(
                                 <Input placeholder="请输入设备名称"/>
@@ -176,10 +155,10 @@ class TestPlaneFormInfo extends React.Component {
                         </FormItem>
                         <FormItem>
                             <Row gutter={16} align={"middle"} justify={"center"}>
-                                <Col className="gutter-row" span={2}>
-                                    <Button type="primary">保存</Button>
+                                <Col className="gutter-row" span={2} offset={6}>
+                                    <Button type="primary" htmlType="submit">保存</Button>
                                 </Col>
-                                <Col className="gutter-row" span={4}>
+                                <Col className="gutter-row" span={2} offset={6}>
                                     <Button >取消</Button>
                                 </Col>
                             </Row>
