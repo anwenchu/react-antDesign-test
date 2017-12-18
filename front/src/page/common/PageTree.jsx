@@ -19,13 +19,13 @@ export default class PageTree extends React.Component {
             visible3: false,
             selectedKeys: [],
             data : [{
-                title: '1',
+                title: '1-aaa',
                 key: '1',
             }, {
-                title: '2',
+                title: '2-aaaa',
                 key: '2',
             }, {
-                title: '30',
+                title: '30-aaa',
                 key: '30',
             }],
         }
@@ -36,11 +36,30 @@ export default class PageTree extends React.Component {
             visible1: true,
         });
     }
+
     showModalEdit = () => {
         this.setState({
             visible2: true,
         });
+        if (this.state.selectedKeys.length != 0)
+        {
+            const data = [...this.state.data];
+            // 根据key获取目录名称
+            var i = 0;
+            while (i<data.length) {
+
+                if (data[i].key === this.state.selectedKeys[0])
+                    break;
+                i++;
+
+            }
+            var value = document.getElementById("dirName1");
+            console.log(' showModalEdit:',value);
+            //value.value = data[i].title;
+        }
+
     }
+
     showModalDel = () => {
         this.setState({
             visible3: true,
@@ -48,8 +67,22 @@ export default class PageTree extends React.Component {
     }
 
     handleOkNew = (e) => {
-
+        //promiseAjax.del(`/page/${id}`).then(() => {
+        //    // todo: low一点 重新查询 可以优化
+        //    this.search();
+        //});
+        const data = [...this.state.data];
+        var nameText = document.getElementById('dirName').value;
+        if (nameText !== '')
+            //输入目录名称后插入数据
+            data.push(
+                {
+                    title : nameText,
+                    key : (data.length + 1).toString()
+                }
+            );
         this.setState({
+            data: data,
             visible1: false,
         });
     }
@@ -60,7 +93,11 @@ export default class PageTree extends React.Component {
     }
     handleOkEdit = (e) => {
 
+
+
+
         this.setState({
+            data: data,
             visible2: false,
         });
     }
@@ -125,6 +162,16 @@ export default class PageTree extends React.Component {
     }
 
 
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+            }
+        });
+    }
+
+
 
     render() {
         return (
@@ -146,7 +193,7 @@ export default class PageTree extends React.Component {
                                    onOk={this.handleOkNew}
                                    onCancel={this.handleCancelNew}
                             >
-                                <Input />
+                                <Input id="dirName" placeholder="请输入目录名称"/>
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>
@@ -156,7 +203,7 @@ export default class PageTree extends React.Component {
                                    onOk={this.handleOkEdit}
                                    onCancel={this.handleCancelEdit}
                             >
-                                <Input />
+                                <Input id="dirName1" />
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>

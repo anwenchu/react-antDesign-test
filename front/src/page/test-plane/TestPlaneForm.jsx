@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
 import TestPlaneCaseList from './TestPlaneCaseList';
+import {promiseAjax} from '../common/an';
 /*
 *新建测试计划页面表单
 */
@@ -156,7 +157,7 @@ class TestPlaneFormInfo extends React.Component {
                         <FormItem>
                             <Row gutter={16} align={"middle"} justify={"center"}>
                                 <Col className="gutter-row" span={2} offset={8}>
-                                    <Button >取消</Button>
+                                    <Button onClick={()=>{this.props.history.goBack()}}>取消</Button>
                                 </Col>
                                 <Col className="gutter-row" span={2} offset={4}>
                                     <Button type="primary" htmlType="submit">保存</Button>
