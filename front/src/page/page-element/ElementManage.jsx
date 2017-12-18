@@ -30,6 +30,7 @@ export default class ElementManage extends React.Component{
     state = {
         elements: [],
         id: '',
+        status: '',
     }
 
     // react 生命周期函数  自己百度
@@ -77,21 +78,22 @@ export default class ElementManage extends React.Component{
         elementDes: 'android851',
     }];
 
-    /**
-     * 查询
-     */
+
+
     search = () => {
         //ajax get请求  url 路径
-        promiseAjax.get('/element/list').then(data => {
+        const status = this.state.status;
+        promiseAjax.get(`/element/search?status=${status}`).then(data => {
+            console.log('data: ', data);
             if (data && data.length) {
                 // 将数据存入state  渲染页面
                 this.setState({
                     elements: data,
+                    status: '',
                 });
             }
         });
     }
-
 
 
     /**
@@ -121,6 +123,12 @@ export default class ElementManage extends React.Component{
         this.props.history.push(editPath);
     }
 
+    selectStatus = (status) => {
+        this.setState({
+            status
+        })
+    }
+
     render() {
 
         return (
@@ -138,11 +146,11 @@ export default class ElementManage extends React.Component{
                                     <Col className="gutter-row" span={2}>
                                         <div className="gutter-box" >状态：</div>
                                     </Col>
-                                    <Col className="gutter-row" span={4}>
-                                        <DropdownList />
+                                    <Col className="gutter-row" span={6}>
+                                        <DropdownList selectStatus={this.selectStatus} />
                                     </Col>
                                     <Col className="gutter-row" span={4}>
-                                        <Button type="primary">查找</Button>
+                                        <Button type="primary" onClick={this.search}>查找</Button>
                                     </Col>
                                 </Row>
                             </div>

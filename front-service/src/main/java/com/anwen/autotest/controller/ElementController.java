@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -62,15 +63,16 @@ public class ElementController extends AbstractController{
         return wrapperConsumer((p) -> elementRepository.save(p), element);
     }
 
-    /**
-     * 查询所有元素
-     * @return
-     */
-    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
-    @GetMapping(value = "/list")
-    public ResponseEntity list() {
-        return wrapperSupplier(() -> elementRepository.findAll(), false);
-    }
+//    /**
+//     * 查询所有元素
+//     * @return
+//     */
+//    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
+//    @GetMapping(value = "/list")
+//    public ResponseEntity list() {
+//        return wrapperSupplier(() -> elementRepository.findAll(), false);
+//    }
+
 
     /**
      * 查询元素
@@ -82,5 +84,18 @@ public class ElementController extends AbstractController{
         return wrapperSupplier(() -> elementRepository.findOne(id), false);
     }
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "条件查询", notes = "条件查询")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "status") Long isDelete) {
+        if (null == isDelete) {
+            return wrapperSupplier(() -> elementRepository.findAll(), false);
+        } else {
+            return wrapperSupplier(() -> elementRepository.findElementDomainByIsDelete(isDelete), false);
+        }
+    }
 
 }
