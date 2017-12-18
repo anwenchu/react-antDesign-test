@@ -43,7 +43,7 @@ export default class TestA extends React.Component {
             render: (text, record) => (
                 <DropdownList />
             ),
-            width: 250
+            width: 400
         }, {
             title: '状态',
             dataIndex: 'status',

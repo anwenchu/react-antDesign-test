@@ -53,23 +53,21 @@ export default class ElementNew extends React.Component {
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 8 },
+                span: 6 ,
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 16 },
+                span: 12 ,
             },
         };
         const element = this.state.element;
         return (
             <Layout>
-                <Sider width={300} style={{background: "#F0F2F5", padding: " 25px 0px 25px 25px"}}>
+                <Sider width={260} style={{background: "#F0F2F5"}}>
                     <div style={{background: "#fff", padding: 10, minHeight: 960}}>
                         <PageDirectory />
                     </div>
                 </Sider>
-                <Content style={{padding: " 25px"}}>
+                <Content style={{padding: "0px 0px 0px 20px"}}>
                     <div style={{background: "#fff", padding: 50, minHeight: 960}}>
                         <div className="gutter-example" style={{padding: " 0px 0px 30px 0px"}}>
                             <div style={{padding: " 0px 0px 15px 0px"}}>
@@ -82,11 +80,7 @@ export default class ElementNew extends React.Component {
                                         label="元素名称">
                                         {getFieldDecorator('elementName', {
                                             initialValue: element == null ? '' : element.elementName,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素名称!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素名称!'}],
                                         })(
                                             <Input placeholder="请输入元素名称"/>
                                         )}
@@ -98,11 +92,7 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementCategory', {
                                             initialValue: element == null ? '' : element.elementCategory,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素类型!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素类型!'}],
                                         })(
                                             <Input placeholder="请输入元素类型"/>
                                         )}
@@ -113,11 +103,7 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementId', {
                                             initialValue: element == null ? '' : element.elementId,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素id!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素id!'}],
                                         })(
                                             <Input placeholder="请输入元素id"/>
                                         )}
@@ -128,11 +114,7 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementText', {
                                             initialValue: element == null ? '' : element.elementText,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素文本!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素文本!'}],
                                         })(
                                             <Input placeholder="请输入元素文本"/>
                                         )}
@@ -143,11 +125,7 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementBounds', {
                                             initialValue: element == null ? '' : element.elementBounds,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素坐标!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素坐标!'}],
                                         })(
                                             <Input placeholder="请输入元素坐标"/>
                                         )}
@@ -158,11 +136,7 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementXpath', {
                                             initialValue: element == null ? '' : element.elementXpath,
-                                            rules: [
-                                                {
-                                                    required: true, message: '请输入元素xpath!',
-                                                },
-                                            ],
+                                            rules: [{required: true, message: '请输入元素xpath!'}],
                                         })(
                                             <Input placeholder="请输入元素xpath"/>
                                         )}
@@ -173,22 +147,18 @@ export default class ElementNew extends React.Component {
                                     >
                                         {getFieldDecorator('elementDesc', {
                                             initialValue: element == null ? '' : element.elementDesc,
-                                            rules: [
-                                                {
-                                                    required: false, message: '请输入元素描述!',
-                                                },
-                                            ],
+                                            rules: [{required: false, message: '请输入元素描述!'}],
                                         })(
                                             <TextArea placeholder="请输入元素描述" autosize={{ minRows: 2, maxRows: 6 }} />
                                         )}
                                     </FormItem>
                                     <FormItem>
                                         <Row gutter={16} align={"middle"} justify={"center"}>
-                                            <Col className="gutter-row" span={2}>
-                                                <Button type="primary" htmlType="submit" >保存</Button>
-                                            </Col>
-                                            <Col className="gutter-row" span={4}>
+                                            <Col className="gutter-row" span={2} offset={8}>
                                                 <Button onClick={()=>{this.props.history.goBack()}}>取消</Button>
+                                            </Col>
+                                            <Col className="gutter-row" span={2} offset={2}>
+                                                <Button type="primary" htmlType="submit" >保存</Button>
                                             </Col>
                                         </Row>
                                     </FormItem>

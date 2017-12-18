@@ -1,5 +1,8 @@
 import React from "react";
 import { Table,Divider,Input } from 'antd';
+import {
+    Link
+} from 'react-router-dom'
 /*
 *新建测试计划页面（TestPlane）表单中的用例列表模块
 * 数据：新建测试计划的时候数据来自testCase表，展示为所选的用例目录的下的用例数据；编辑
@@ -18,7 +21,7 @@ export default class TestPlaneCaseList extends React.Component {
         }, {
             title: '用例标题',
             dataIndex: 'caseTile',
-            render: text => <a href="#">{text}</a>,
+            render: text => <a href="#"><Link to={"addtestcase"}>{text}</Link></a>,
         }, {
             title: '执行次数',
             dataIndex: 'count',

@@ -155,11 +155,11 @@ class TestPlaneFormInfo extends React.Component {
                         </FormItem>
                         <FormItem>
                             <Row gutter={16} align={"middle"} justify={"center"}>
-                                <Col className="gutter-row" span={2} offset={6}>
-                                    <Button type="primary" htmlType="submit">保存</Button>
-                                </Col>
-                                <Col className="gutter-row" span={2} offset={6}>
+                                <Col className="gutter-row" span={2} offset={8}>
                                     <Button >取消</Button>
+                                </Col>
+                                <Col className="gutter-row" span={2} offset={4}>
+                                    <Button type="primary" htmlType="submit">保存</Button>
                                 </Col>
                             </Row>
                         </FormItem>

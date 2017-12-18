@@ -22,12 +22,12 @@ const TestCase = ({ dispatch, CaseStep }) => {
     }
     return(
         <Layout>
-            <Sider width={300} style={{ background: "#F0F2F5", padding: " 25px 0px 25px 25px" }}>
+            <Sider width={260} style={{ background: "#F0F2F5" }}>
                 <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
                     <Directory />
                 </div>
             </Sider>
-            <Content style={{ padding: " 25px" }}>
+            <Content style={{ padding: "0px 0px 0px 20px" }}>
                 <div style={{ background: "#fff", padding: 50, minHeight: 960 }}>
                     <div className="gutter-example" style={{ padding: " 0px 0px 30px 0px" }}>
                         <div style={{ padding: " 0px 0px 15px 0px" }}>
