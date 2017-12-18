@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tree,Button,Row, Col ,Modal,Input } from 'antd';
+import { Tree,Button,Row, Col ,Modal,Input,Form } from 'antd';
 import {promiseAjax} from "./an";
 
 /*
@@ -8,8 +8,9 @@ import {promiseAjax} from "./an";
 */
 
 const TreeNode = Tree.TreeNode;
+const FormItem = Form.Item;
 
-
+@Form.create()
 export default class PageTree extends React.Component {
     constructor(props) {
         super(props)
@@ -18,105 +19,132 @@ export default class PageTree extends React.Component {
             visible2: false,
             visible3: false,
             selectedKeys: [],
-            data : [{
-                title: '1-aaa',
-                key: '1',
-            }, {
-                title: '2-aaaa',
-                key: '2',
-            }, {
-                title: '30-aaa',
-                key: '30',
-            }],
+            data : [],
+            pageName : "",
         }
     }
 
+
+    // react 生命周期函数
+    componentDidMount() {
+        //初始化数据
+        this.search()
+    }
+
+    // 显示新建对话框
     showModalNew = () => {
         this.setState({
             visible1: true,
         });
     }
 
+    // 显示编辑对话框
     showModalEdit = () => {
+        const data = [...this.state.data];
+        var i = 0;
+        while (i<data.length){
+            if (data[i].key === this.state.selectedKeys[0].toString())
+                break;
+            i++
+        }
         this.setState({
+            pageName : data[i].title,
             visible2: true,
         });
-        if (this.state.selectedKeys.length != 0)
-        {
-            const data = [...this.state.data];
-            // 根据key获取目录名称
-            var i = 0;
-            while (i<data.length) {
-
-                if (data[i].key === this.state.selectedKeys[0])
-                    break;
-                i++;
-
-            }
-            var value = document.getElementById("dirName1");
-            console.log(' showModalEdit:',value);
-            //value.value = data[i].title;
-        }
-
     }
 
+    // 显示删除对话框
     showModalDel = () => {
         this.setState({
             visible3: true,
         });
     }
 
+    /**
+     * 新建
+     * @param
+     */
     handleOkNew = (e) => {
-        //promiseAjax.del(`/page/${id}`).then(() => {
-        //    // todo: low一点 重新查询 可以优化
-        //    this.search();
-        //});
-        const data = [...this.state.data];
-        var nameText = document.getElementById('dirName').value;
-        if (nameText !== '')
-            //输入目录名称后插入数据
-            data.push(
-                {
-                    title : nameText,
-                    key : (data.length + 1).toString()
-                }
-            );
-        this.setState({
-            data: data,
-            visible1: false,
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                promiseAjax.post('/page/add', values).then(() => {
+                    this.search();
+                    this.setState({
+                        visible1: false,
+                    });
+                });
+            }
         });
+
+        //const data = [...this.state.data];
+        //var nameText = document.getElementById('dirName').value;
+        //if (nameText !== '')
+        //    //输入目录名称后插入数据
+        //    data.push(
+        //        {
+        //            title : nameText,
+        //            key : (data.length + 1).toString()
+        //        }
+        //    );
+        //this.setState({
+        //    data: data,
+        //    visible1: false,
+        //});
     }
+    // 取消新建
     handleCancelNew = (e) => {
         this.setState({
             visible1: false,
         });
     }
+
+    /**
+     * 编辑
+     * @param
+     */
     handleOkEdit = (e) => {
-
-
-
-
-        this.setState({
-            data: data,
-            visible2: false,
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                values.id = this.state.selectedKeys[0];
+                promiseAjax.post('/page/add', values).then(() => {
+                    console.log('handleOkEdit-values : ', values);
+                    this.search();
+                    this.setState({
+                        visible2: false,
+                    });
+                });
+            }
         });
     }
+
+    // 取消编辑
     handleCancelEdit = (e) => {
         this.setState({
             visible2: false,
         });
     }
 
+
+    /**
+     * 删除
+     * @param id
+     */
     handleOkDel = (e) => {
-        //promiseAjax.del(`/page/${id}`).then(() => {
-        //    // todo: low一点 重新查询 可以优化
-        //    this.search();
-        //});
-        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
+        var id = this.state.selectedKeys[0]
+        promiseAjax.del(`/page/${id}`).then(() => {
+            // todo: low一点 重新查询 可以优化
+            this.search();
+        });
         this.setState({
-            data: data,
             visible3: false,
         });
+        //const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
+        //this.setState({
+        //    data: data,
+        //    visible3: false,
+        //});
     }
 
     handleCancelDel = (e) => {
@@ -124,15 +152,28 @@ export default class PageTree extends React.Component {
             visible3: false,
         });
     }
-    // 查询目录数据
+
+
+    /**
+     * 查询
+     * @param all
+     */
     search = () => {
         //ajax get请求  url 路径
         promiseAjax.get('/page/list').then(data => {
-            console.log(data);
             if (data && data.length) {
+                var datalist = [];
+                for (var i = 0;i<data.length;i++) {
+                    datalist.push(
+                        {
+                            key : data[i].id.toString(),
+                            title : data[i].pageName,
+                        }
+                    )
+                }
                 // 将数据存入state  渲染页面
                 this.setState({
-                    data: data,
+                    data: datalist,
                 });
             }
         });
@@ -162,18 +203,20 @@ export default class PageTree extends React.Component {
     }
 
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-            }
-        });
-    }
-
 
 
     render() {
+        const { getFieldDecorator } = this.props.form;
+
+        const formItemLayout = {
+            labelCol: {
+                span: 6 ,
+            },
+            wrapperCol: {
+                span: 12 ,
+            },
+        };
+
         return (
             <div>
                 <Tree
@@ -188,22 +231,45 @@ export default class PageTree extends React.Component {
                     <Row>
                         <Col span={2} offset={4}>
                             <Button onClick={this.showModalNew} size={"small"}>新建</Button>
-                            <Modal title="新建目录"
+                            <Modal title="新建页面"
                                    visible={this.state.visible1}
                                    onOk={this.handleOkNew}
                                    onCancel={this.handleCancelNew}
                             >
-                                <Input id="dirName" placeholder="请输入目录名称"/>
+                                <Form onSubmit={this.handleSubmit}>
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="页面名称："
+                                    >
+                                        {getFieldDecorator('pageName', {
+                                            rules: [{ required: true, message: '请输入页面名称!' }],
+                                        })(
+                                            <Input id="dirName" placeholder="请输入页面名称"/>
+                                        )}
+                                    </FormItem>
+                                </Form>
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>
                             <Button onClick={this.showModalEdit} size={"small"}>编辑</Button>
-                            <Modal title="重命名目录"
+                            <Modal title="重命名页面"
                                    visible={this.state.visible2}
                                    onOk={this.handleOkEdit}
                                    onCancel={this.handleCancelEdit}
                             >
-                                <Input id="dirName1" />
+                                <Form >
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="页面名称："
+                                    >
+                                        {getFieldDecorator('pageName', {
+                                            initialValue: this.state.pageName,
+                                            rules: [{required: true, message: '请输入页面名称!' }],
+                                        })(
+                                            <Input id="dirName" />
+                                        )}
+                                    </FormItem>
+                                </Form>
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>

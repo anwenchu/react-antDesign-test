@@ -24,6 +24,7 @@ export default class ElementNew extends React.Component {
         e.preventDefault();
 
         this.props.form.validateFieldsAndScroll((err, values) => {
+            console.log('-----handleSubmit: ', values);
             if (!err) {
                 if (this.state.isEdit) {
                     values.id = this.state.element.id;
