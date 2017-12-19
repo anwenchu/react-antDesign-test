@@ -35,10 +35,10 @@ export default class ElementManage extends React.Component{
 
     // react 生命周期函数  自己百度
     componentDidMount() {
-        var query = this.props.location;
-        console.log("path.query:",query.search);
+        var query = this.props.location.query;
+        console.log("path.query:",query);
         // 页面渲染完成，进行一次查询
-       this.search()
+        this.search()
     }
 
 
@@ -62,9 +62,9 @@ export default class ElementManage extends React.Component{
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                <a href="#" onClick={() => this.handleEdit(record.id)}>编辑</a>
+                <Link to="#" onClick={() => this.handleEdit(record.id)}>编辑</Link>
                 <Divider type="vertical"/>
-                <a href="#" onClick={() => this.handleDelete(record.id)}>删除</a>
+                <Link to="#" onClick={() => this.handleDelete(record.id)}>删除</Link>
             </span>
         ),
     }];
