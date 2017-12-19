@@ -35,8 +35,8 @@ export default class ElementManage extends React.Component{
 
     // react 生命周期函数  自己百度
     componentDidMount() {
-        var query = this.props.location.query;
-        console.log("path.query:",query);
+        var query = this.props.location;
+        console.log("path.query:",query.search);
         // 页面渲染完成，进行一次查询
        this.search()
     }

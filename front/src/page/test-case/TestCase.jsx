@@ -99,8 +99,6 @@ export default class TestCase extends React.Component {
     }
 
     onProvinceChange(key,value){
-        console.log('onProvinceChange-value:', value);
-        console.log('onProvinceChange-key:', key);
         var key_i =  parseInt(key);
         var citiesList = [...this.state.citiesList];
         var secondCityList = [...this.state.secondCityList];
