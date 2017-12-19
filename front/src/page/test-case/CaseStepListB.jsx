@@ -32,7 +32,7 @@ export default class CaseStepListB extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select defaultValue={provinceData[0]} style={{ width: 90 }} onChange={this.handleProvinceChange}>
+                <Select defaultValue={provinceData[0]} style={{ width: 90 }} onChange={e => this.onProvinceChange(record.key,e)}>
                     {this.state.provinceOptions}
                 </Select>
             ),
@@ -42,7 +42,7 @@ export default class CaseStepListB extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select value={this.state.secondCity} style={{ width: 90 }} onChange={this.onSecondCityChange}>
+                <Select value={this.state.secondCityList[parseInt(record.key)-1]} style={{ width: 90 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
                     {this.state.cityOptions}
                 </Select>
             ),
@@ -76,45 +76,58 @@ export default class CaseStepListB extends React.Component {
                 key: '1',
                 stepNo: '1',
                 status: '通过',
-            }, {
-                key: '2',
-                stepNo: '2',
-                status: '失败',
             }],
-            cities: cityData[provinceData[0]],
             secondCity: cityData[provinceData[0]][0],
             provinceOptions: [],
             cityOptions: [],
+            citiesList:[cityData[provinceData[0]]],
+            secondCityList:[cityData[provinceData[0]][0]],
 
         };
  //   }
 
     componentDidMount() {
         // 页面渲染完成，进行一次查询
+
+        this.provinceOptions()
         this.cityOptions();
-        this.provinceOptions();
     }
 
-    handleProvinceChange = (value) => {
+    onProvinceChange(key,value){
+        console.log('onProvinceChange-value:', value);
+        console.log('onProvinceChange-key:', key);
+        var key_i =  parseInt(key);
+        var citiesList = [...this.state.citiesList];
+        var secondCityList = [...this.state.secondCityList];
+        citiesList[key_i-1] = cityData[value];
+        secondCityList[key_i-1] = cityData[value][0]
         this.setState({
             cities: cityData[value],
             secondCity: cityData[value][0],
+            citiesList : citiesList,
+            secondCityList : secondCityList,
+
         });
     }
 
-    onSecondCityChange = (value) => {
+    onSecondCityChange (key,value) {
+        var key_i =  parseInt(key);
+        var secondCityList = [...this.state.secondCityList];
+        secondCityList[key_i-1] = value;
         this.setState({
             secondCity: value,
+            secondCityList : secondCityList,
         });
     }
     cityOptions () {
-        const data = this.state.cities.map(city => <Option key={city}>{city}</Option>);
+        const cityOptions = cityData[provinceData[0]].map(city => <Option key={city}>{city}</Option>);
         this.setState({
-            cityOptions: data
+            cityOptions : cityOptions,
         });
     }
-    provinceOptions(){
-        const data = this.state.provinceOptions = provinceData.map(province => <Option key={province}>{province}</Option>);
+    provinceOptions(key){
+        console.log('provinceOptions-key:', key);
+        const data = provinceData.map(province => <Option key={province}>{province}</Option>);
         this.setState({
             provinceOptions: data
         });
@@ -130,6 +143,10 @@ export default class CaseStepListB extends React.Component {
     onAdd(key, e) {
 
         const data = [...this.state.data];
+        const citiesList = [...this.state.data];
+        const secondCityList = [...this.state.data];
+        citiesList.push(cityData[provinceData[0]]);
+        secondCityList.push(cityData[provinceData[0]][0]);
         var key_i = parseInt(key)
         var stepNo = key_i + 1
         var el = {
