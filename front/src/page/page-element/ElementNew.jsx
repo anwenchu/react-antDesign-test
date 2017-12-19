@@ -50,6 +50,8 @@ export default class ElementNew extends React.Component {
     }
 
     render() {
+        const platfrominfo = this.props.location.platform;
+        console.log("path.query222222:",this.props.location.platform);
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -64,7 +66,7 @@ export default class ElementNew extends React.Component {
             <Layout>
                 <Sider width={260} style={{background: "#F0F2F5"}}>
                     <div style={{background: "#fff", padding: 10, minHeight: 960}}>
-                        <PageDirectory />
+                        <PageDirectory platform={platfrominfo}/>
                     </div>
                 </Sider>
                 <Content style={{padding: "0px 0px 0px 20px"}}>

@@ -31,6 +31,7 @@ export default class ElementManage extends React.Component{
         elements: [],
         id: '',
         status: '',
+        platform : '', //平台信息，前一个页面传值过来
     }
 
     // react 生命周期函数  自己百度
@@ -81,11 +82,11 @@ export default class ElementManage extends React.Component{
 
 
     search = () => {
-        const query = this.props.location.query;
-        console.log("path.query:",query.platform);
+        const platform = this.props.location.query.platform;
+        this.setState({ platform: platform });
         //ajax get请求  url 路径
         const status = this.state.status;
-        promiseAjax.get(`/element/search?status=${status}&platform=${query.platform}`).then(data => {
+        promiseAjax.get(`/element/search?status=${status}&platform=${platform}`).then(data => {
             console.log('data: ', data);
             if (data && data.length) {
                 // 将数据存入state  渲染页面
@@ -117,10 +118,31 @@ export default class ElementManage extends React.Component{
      * @param id
      */
     handleEdit = (key) => {
+        const platfrominfo = this.props.location.query.platform;
         const editPath = {
             pathname: '/addelement',
             query: 'edit',
             key,
+            platform:platfrominfo,
+        }
+        this.props.history.push(editPath);
+    }
+
+    selectStatus = (status) => {
+        this.setState({
+            status
+        })
+    }
+
+    /**
+     *
+     * @param id
+     */
+    handleClick = (key) => {
+        const platfrominfo = this.props.location.query.platform;
+        const editPath = {
+            pathname: '/addelement',
+            platform:platfrominfo,
         }
         this.props.history.push(editPath);
     }
@@ -132,12 +154,14 @@ export default class ElementManage extends React.Component{
     }
 
     render() {
+        const platfrominfo = this.props.location.query.platform;
+        console.log("path.query1111:",platfrominfo);
 
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <PageDirectory />
+                        <PageDirectory platform={platfrominfo}/>
                     </div>
                 </Sider>
                 <Content style={{ padding: "0px 0px 0px 20px" }}>
@@ -159,7 +183,7 @@ export default class ElementManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary"><Link to={'/addelement'}> + 新建</Link></Button>
+                                        <Button type="primary" onClick={this.handleClick}><Link to={'/addelement'}> + 新建</Link></Button>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>
