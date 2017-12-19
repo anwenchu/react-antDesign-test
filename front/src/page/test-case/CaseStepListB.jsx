@@ -12,17 +12,17 @@ import DropdownList from '../common/DropdownList';
 const AnimateBody = (props) =>
     <Animate transitionName="move" component="tbody" {...props} />;
 const Option = Select.Option;
-const provinceData = ['Zhejiang', 'Jiangsu'];
+const provinceData = ['访客页', '登录页'];
 const cityData ={
-    Zhejiang: ['Hangzhou', 'Ningbo', 'Wenzhou'],
-    Jiangsu: ['Nanjing', 'Suzhou', 'Zhenjiang'],
+    访客页: ['登录按钮', '注册按钮', 'qq登录入口'],
+    登录页: ['账号文本框', '密码文本框', '登录按钮'],
 };
 
 export default class CaseStepListB extends React.Component {
 
-//    constructor(props) {
-//        super(props);
-        columns = [{
+    constructor(props) {
+        super(props);
+        this.columns = [{
             title: '编号',
             dataIndex: 'stepNo',
             key: 'stepNo',
@@ -32,7 +32,7 @@ export default class CaseStepListB extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select defaultValue={provinceData[0]} style={{ width: 90 }} onChange={e => this.onProvinceChange(record.key,e)}>
+                <Select size={"small"} defaultValue={provinceData[0]} style={{ width: 110 }} onChange={e => this.onProvinceChange(record.key,e)}>
                     {this.state.provinceOptions}
                 </Select>
             ),
@@ -42,7 +42,7 @@ export default class CaseStepListB extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select value={this.state.secondCityList[parseInt(record.key)-1]} style={{ width: 90 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
+                <Select size={"small"} value={this.state.secondCityList[parseInt(record.key)-1]} style={{ width: 110 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
                     {this.state.cityOptions}
                 </Select>
             ),
@@ -71,7 +71,7 @@ export default class CaseStepListB extends React.Component {
                 </span>
             ),
         }];
-        state = {
+        this.state = {
             data: [{
                 key: '1',
                 stepNo: '1',
@@ -84,7 +84,7 @@ export default class CaseStepListB extends React.Component {
             secondCityList:[cityData[provinceData[0]][0]],
 
         };
- //   }
+    }
 
     componentDidMount() {
         // 页面渲染完成，进行一次查询

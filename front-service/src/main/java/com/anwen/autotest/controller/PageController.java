@@ -62,6 +62,7 @@ public class PageController extends AbstractController{
     @ApiOperation(value = "查询所有页面", notes = "查询所有页面")
     @GetMapping(value = "/list")
     public ResponseEntity list() {
+        System.out.print("1111111");
         return wrapperSupplier(() -> pageRepository.findAll(), false);
     }
 
