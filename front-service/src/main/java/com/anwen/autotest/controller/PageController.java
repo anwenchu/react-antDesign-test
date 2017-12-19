@@ -76,5 +76,20 @@ public class PageController extends AbstractController{
         return wrapperSupplier(() -> pageRepository.findOne(id), false);
     }
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "条件查询", notes = "条件查询")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "status") Long isDelete,String platform) {
+
+        if (null == isDelete || null == platform) {
+            return wrapperSupplier(() -> pageRepository.findAll(), false);
+        } else {
+            return wrapperSupplier(() -> pageRepository.findElementDomainByIsDeleteAndPlatform(isDelete,platform), false);
+        }
+    }
+
 
 }

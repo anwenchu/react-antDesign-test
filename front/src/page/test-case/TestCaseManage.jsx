@@ -1,9 +1,8 @@
 import React from "react";
-import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
+import { Popconfirm, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import "antd/dist/antd.css";
 import Directory from './Directory';
 import DropdownList from '../common/DropdownList';
-import CaseManageList from './CaseManageList';
 import {
     Link
 } from 'react-router-dom'
@@ -29,6 +28,67 @@ function handleMenuClick(e) {
 }
 
 export default class TestCaseManage extends React.Component{
+    state = {
+        data : [{
+            key: '1',
+            caseNo: '1',
+            caseTile: '测试用例标题1',
+            caseStatus: '通过',
+        }, {
+            key: '2',
+            caseNo: '2',
+            caseTile: '测试用例标题2，测试用例标题2',
+            caseStatus: '失败',
+        }],
+    };
+    columns = [{
+        title: '编号',
+        dataIndex: 'caseNo',
+    }, {
+        title: '用例标题',
+        dataIndex: 'caseTile',
+        render: (text, record) => (
+            <a href="#" onClick={() => this.handleEdit(record.key)}><Link to={"addtestcase"}>{text}</Link></a>
+        )
+    }, {
+        title: '状态',
+        dataIndex: 'caseStatus',
+    }, {
+        title: '操作',
+        dataIndex: 'action',
+        render: (text, record) => (
+            <span>
+                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.key, e)}>
+                    <a href="#">删除</a>
+                </Popconfirm>
+                <Divider type="vertical" />
+                <a href="#">订阅警报</a>
+            </span>
+        ),
+    }];
+
+
+    /**
+     *
+     * @param id
+     */
+    handleEdit = (id) => {
+        const editPath = {
+            pathname: '/addtestcase',
+            query: 'edit',
+            id,
+        }
+        this.props.history.push(editPath);
+    }
+
+    onDelete(key, e) {
+        console.log('Delete', key);
+        e.preventDefault();
+        const data = this.state.data.filter(item => item.key !== key);
+        console.log('Delete', data);
+        this.setState({ data });
+    }
+
     render() {
         return(
             <Layout>
@@ -67,7 +127,10 @@ export default class TestCaseManage extends React.Component{
                                 </Row>
                             </div>
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
-                                <CaseManageList />
+                                    <Table
+                                        dataSource={this.state.data}
+                                        columns={this.columns}
+                                    />
                             </div>
                         </div>
                     </div>
