@@ -242,6 +242,7 @@ export default class PageTree extends React.Component {
                                         label="页面名称："
                                     >
                                         {getFieldDecorator('pageName', {
+                                            initialValue: "",
                                             rules: [{ required: true, message: '请输入页面名称!' }],
                                         })(
                                             <Input id="dirName" placeholder="请输入页面名称"/>

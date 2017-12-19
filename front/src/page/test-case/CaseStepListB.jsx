@@ -6,16 +6,23 @@ import 'rc-table/assets/index.css';
 import 'rc-table/assets/animation.css';
 import PropTypes from 'prop-types';
 import "antd/dist/antd.css";
-import { Icon, Divider,Menu, Dropdown, Button, Popconfirm } from 'antd';
+import { Icon, Divider,Menu, Dropdown, Button, Select } from 'antd';
 import DropdownList from '../common/DropdownList';
 
 const AnimateBody = (props) =>
     <Animate transitionName="move" component="tbody" {...props} />;
+const Option = Select.Option;
+const provinceData = ['Zhejiang', 'Jiangsu'];
+const cityData ={
+    Zhejiang: ['Hangzhou', 'Ningbo', 'Wenzhou'],
+    Jiangsu: ['Nanjing', 'Suzhou', 'Zhenjiang'],
+};
 
-export default class TestA extends React.Component {
-    constructor(props) {
-        super(props);
-        this.columns = [{
+export default class CaseStepListB extends React.Component {
+
+//    constructor(props) {
+//        super(props);
+        columns = [{
             title: '编号',
             dataIndex: 'stepNo',
             key: 'stepNo',
@@ -25,7 +32,9 @@ export default class TestA extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <DropdownList />
+                <Select defaultValue={provinceData[0]} style={{ width: 90 }} onChange={this.handleProvinceChange}>
+                    {this.state.provinceOptions}
+                </Select>
             ),
             width: 120
         }, {
@@ -33,7 +42,9 @@ export default class TestA extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <DropdownList />
+                <Select value={this.state.secondCity} style={{ width: 90 }} onChange={this.onSecondCityChange}>
+                    {this.state.cityOptions}
+                </Select>
             ),
             width: 120
         }, {
@@ -60,7 +71,7 @@ export default class TestA extends React.Component {
                 </span>
             ),
         }];
-        this.state = {
+        state = {
             data: [{
                 key: '1',
                 stepNo: '1',
@@ -70,7 +81,43 @@ export default class TestA extends React.Component {
                 stepNo: '2',
                 status: '失败',
             }],
+            cities: cityData[provinceData[0]],
+            secondCity: cityData[provinceData[0]][0],
+            provinceOptions: [],
+            cityOptions: [],
+
         };
+ //   }
+
+    componentDidMount() {
+        // 页面渲染完成，进行一次查询
+        this.cityOptions();
+        this.provinceOptions();
+    }
+
+    handleProvinceChange = (value) => {
+        this.setState({
+            cities: cityData[value],
+            secondCity: cityData[value][0],
+        });
+    }
+
+    onSecondCityChange = (value) => {
+        this.setState({
+            secondCity: value,
+        });
+    }
+    cityOptions () {
+        const data = this.state.cities.map(city => <Option key={city}>{city}</Option>);
+        this.setState({
+            cityOptions: data
+        });
+    }
+    provinceOptions(){
+        const data = this.state.provinceOptions = provinceData.map(province => <Option key={province}>{province}</Option>);
+        this.setState({
+            provinceOptions: data
+        });
     }
 
     onDelete(key, e) {
@@ -104,7 +151,12 @@ export default class TestA extends React.Component {
         this.setState({ data });
     }
 
+
+
+
     render() {
+
+
         return (
             <div style={{ margin: 5 }}>
                 <Table

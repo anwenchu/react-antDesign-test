@@ -10,7 +10,7 @@ import DropdownList from '../common/DropdownList';
 
 
 
-export default class CaseStepListB extends React.Component {
+export default class CaseStepListA extends React.Component {
 
     state = {
         data:[{

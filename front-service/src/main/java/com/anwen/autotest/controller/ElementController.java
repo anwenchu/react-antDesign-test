@@ -91,6 +91,7 @@ public class ElementController extends AbstractController{
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
     public ResponseEntity search(@RequestParam(value = "status") Long isDelete) {
+
         if (null == isDelete) {
             return wrapperSupplier(() -> elementRepository.findAll(), false);
         } else {
