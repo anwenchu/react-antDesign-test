@@ -35,8 +35,6 @@ export default class ElementManage extends React.Component{
 
     // react 生命周期函数  自己百度
     componentDidMount() {
-        var query = this.props.location.query;
-        console.log("path.query:",query);
         // 页面渲染完成，进行一次查询
         this.search()
     }
@@ -83,9 +81,11 @@ export default class ElementManage extends React.Component{
 
 
     search = () => {
+        const query = this.props.location.query;
+        console.log("path.query:",query.platform);
         //ajax get请求  url 路径
         const status = this.state.status;
-        promiseAjax.get(`/element/search?status=${status}`).then(data => {
+        promiseAjax.get(`/element/search?status=${status}&platform=${query.platform}`).then(data => {
             console.log('data: ', data);
             if (data && data.length) {
                 // 将数据存入state  渲染页面
