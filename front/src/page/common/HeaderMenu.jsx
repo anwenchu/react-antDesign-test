@@ -1,13 +1,13 @@
 import React from "react";
 import "antd/dist/antd.css";
-import {Link} from "react-router-dom";
+import {Link,withRouter} from "react-router-dom";
 import { version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import {promiseAjax} from '../common/an';
 
 const {Header} = Layout;
 
 
-export default class HeaderMenu extends React.Component {
+ class HeaderMenu extends React.Component {
 
     constructor(props) {
         super(props);
@@ -50,9 +50,9 @@ export default class HeaderMenu extends React.Component {
         this.setState({
             path : path,
         })
-        //console.log("path:",path);
-        //console.log("history:",this.props.history);
-        //this.props.history.push(path);
+        console.log("path:",path);
+        console.log("history:",this.props.history);
+        this.props.history.push(path);
 
     }
 
@@ -99,4 +99,4 @@ export default class HeaderMenu extends React.Component {
         );
     }
 };
-
+export default HeaderMenu = withRouter(HeaderMenu)
