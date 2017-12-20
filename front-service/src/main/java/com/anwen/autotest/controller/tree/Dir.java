@@ -6,7 +6,6 @@ public class Dir implements ITreeNode {
     private String uuid; //目录id
     private String parentId;  //目录父节点
     private String name;   //目录名称
-
     public Dir(){
 
     }
@@ -14,6 +13,7 @@ public class Dir implements ITreeNode {
         this.uuid = uuid;
         this.parentId = parentId;
         this.name = name;
+
     }
     @Override
     public String getNodeId() {

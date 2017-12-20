@@ -1,5 +1,11 @@
 package com.anwen.autotest.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.anwen.autotest.controller.tree.Dir;
+import com.anwen.autotest.controller.tree.ITreeNode;
+import com.anwen.autotest.controller.tree.Tree;
+import com.anwen.autotest.controller.tree.TreeNode;
 import com.anwen.autotest.domain.DirDomain;
 import com.anwen.autotest.repository.DirRepository;
 import io.swagger.annotations.Api;
@@ -8,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by an_wch on 2017/12/13.
@@ -84,8 +92,33 @@ public class DirController extends AbstractController{
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
     public ResponseEntity search(@RequestParam(value = "platform") String platform) {
+
         Long isDelete = 0L; // 0代表未删除，1代表删除
-        return wrapperSupplier(() -> dirRepository.findDirDomainByIsDeleteAndPlatform(isDelete,platform), false);
+        List<DirDomain> resultList = dirRepository.findDirDomainByIsDeleteAndPlatform(isDelete,platform);
+
+        //将DirDomain转为Dir对象
+        List<ITreeNode> list = new ArrayList<ITreeNode>();
+        for(int i=0; i<resultList.size();i++){
+            //System.out.println(resultList.get(i));
+            Dir org = new Dir(String .valueOf(resultList.get(i).getId()), resultList.get(i).getParentId(), resultList.get(i).getDirectoryName());
+            list.add(org);
+        }
+        Tree tree = new Tree(list);
+
+        //如果是android平台，从根结点1开始描述树，如果是ios平台，从根结点11开始描述
+        TreeNode treeNode;
+        if (platform.equals("android"))
+            treeNode = tree.getTreeNode("1");
+        else
+            treeNode = tree.getTreeNode("11");
+
+        // 序列化
+        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(); // 构造方法里，也可以直接传需要序列化的属性名字
+        filter.getExcludes().add("parent");
+        filter.getExcludes().add("allChildren");
+        String data = JSONObject.toJSONString(treeNode, filter);
+
+        return wrapperSupplier(() -> data, false);
     }
 
 
