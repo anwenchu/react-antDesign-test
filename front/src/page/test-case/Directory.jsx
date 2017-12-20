@@ -18,73 +18,129 @@ class Directory extends React.Component {
         visible2: false,
         visible3: false,
         selectedKeys: [],
-        data : [{
-            title: '1',
-            key: '1',
-            children: [
-                { title: '4', key: '4' },
-                { title: '5', key: '5' },
-                { title: '6', key: '6' },
-            ],
-        }, {
-            title: '2',
-            key: '2',
-        }, {
-            title: '30',
-            key: '30',
-        }],
+        data : [],
+        platform : "",
+        pageName : "",
     }
 
 
+    // 显示新建对话框
     showModalNew = () => {
         this.setState({
             visible1: true,
         });
     }
+
+    // 显示编辑对话框
     showModalEdit = () => {
+        const data = [...this.state.data];
+        var i = 0;
+        while (i<data.length){
+            if (data[i].key === this.state.selectedKeys[0].toString())
+                break;
+            i++
+        }
         this.setState({
+            pageName : data[i].title,
             visible2: true,
         });
     }
+
+    // 显示删除对话框
     showModalDel = () => {
         this.setState({
             visible3: true,
         });
     }
 
+    /**
+     * 新建
+     * @param
+     */
     handleOkNew = (e) => {
-
-        this.setState({
-            visible1: false,
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            values["platform"] = this.state.platform;
+            values["isDelete"] = 1;
+            if (!err) {
+                promiseAjax.post('/dir/add', values).then(() => {
+                    this.search();
+                    this.setState({
+                        visible1: false,
+                    });
+                });
+            }
         });
+
+        //const data = [...this.state.data];
+        //var nameText = document.getElementById('dirName').value;
+        //if (nameText !== '')
+        //    //输入目录名称后插入数据
+        //    data.push(
+        //        {
+        //            title : nameText,
+        //            key : (data.length + 1).toString()
+        //        }
+        //    );
+        //this.setState({
+        //    data: data,
+        //    visible1: false,
+        //});
     }
+    // 取消新建
     handleCancelNew = (e) => {
         this.setState({
             visible1: false,
         });
     }
-    handleOkEdit = (e) => {
 
-        this.setState({
-            visible2: false,
+    /**
+     * 编辑
+     * @param
+     */
+    handleOkEdit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            values["platform"] = this.state.platform;
+            values["isDelete"] = 1;
+            if (!err) {
+                values.id = this.state.selectedKeys[0];
+                promiseAjax.post('/dir/add', values).then(() => {
+                    this.search();
+                    this.setState({
+                        visible2: false,
+                    });
+                });
+            }
         });
     }
+
+    // 取消编辑
     handleCancelEdit = (e) => {
         this.setState({
             visible2: false,
         });
     }
 
+
+    /**
+     * 删除
+     * @param id
+     */
     handleOkDel = (e) => {
-        //promiseAjax.del(`/dir/${id}`).then(() => {
-        //    // todo: low一点 重新查询 可以优化
-        //    this.search();
-        //});
-        const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
+        var id = this.state.selectedKeys[0]
+        promiseAjax.del(`/dir/${id}`).then(() => {
+            // todo: low一点 重新查询 可以优化
+            this.search();
+        });
         this.setState({
-            data: data,
             visible3: false,
         });
+        //const data = this.state.data.filter(item => item.key !== this.state.selectedKeys[0]);
+        //this.setState({
+        //    data: data,
+        //    visible3: false,
+        //});
     }
 
     handleCancelDel = (e) => {
@@ -92,12 +148,28 @@ class Directory extends React.Component {
             visible3: false,
         });
     }
-    // 查询目录数据
+
+
+    // react 生命周期函数
+    componentDidMount() {
+        //初始化数据
+        this.search()
+    }
+
+    /**
+     * 查询
+     * @param all
+     */
     search = () => {
+        const platform = "android";//this.props.platform;
+        console.log("path.tree:",platform);
+        this.setState({
+            platform: platform,
+        });
         //ajax get请求  url 路径
-        promiseAjax.get('/dir/list').then(data => {
-            console.log(data);
-            if (data && data.length) {
+        promiseAjax.get(`/dir/search?platform=${platform}`).then(data => {
+            if (null != data) {
+                var data = data.children;
                 // 将数据存入state  渲染页面
                 this.setState({
                     data: data,
@@ -115,11 +187,12 @@ class Directory extends React.Component {
 
 
 
+
     renderTreeNodes = (data) => {
         return data.map((item) => {
             if (item.children) {
                 return (
-                    <TreeNode title={item.title} key={item.key} dataRef={item}>
+                    <TreeNode title={item.nodeName} key={item.nodeId} dataRef={item}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
                 );
@@ -132,9 +205,9 @@ class Directory extends React.Component {
     render() {
         const loop = data => data.map((item) => {
             if (item.children && item.children.length) {
-                return <TreeNode key={item.key} title={item.key}>{loop(item.children)}</TreeNode>;
+                return <TreeNode key={item.nodeId} title={item.nodeId}>{loop(item.children)}</TreeNode>;
             }
-            return <TreeNode key={item.key} title={item.key} />;
+            return <TreeNode key={item.nodeId} title={item.nodeId} />;
         });
         return (
             <div>
