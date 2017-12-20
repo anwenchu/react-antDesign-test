@@ -77,4 +77,16 @@ public class DirController extends AbstractController{
     }
 
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "条件查询", notes = "条件查询")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L; // 0代表未删除，1代表删除
+        return wrapperSupplier(() -> dirRepository.findDirDomainByIsDeleteAndPlatform(isDelete,platform), false);
+    }
+
+
 }
