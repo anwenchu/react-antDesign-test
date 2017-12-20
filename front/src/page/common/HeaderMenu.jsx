@@ -38,10 +38,13 @@ const {Header} = Layout;
         else if(data[0] === "4")
             path.pathname = "/elementlist";
 
-        if(data[1] === "1")
-            path.query.platform = "android";
+        if(data[1] === "1"){
+            path.pathname = `${path.pathname}/android`;
+            // path.query.platform = "android";
+        }
         else if(data[1] === "2")
-            path.query.platform = "ios";
+            path.pathname = `${path.pathname}/ios`;
+        // path.query.platform = "ios";
 
         if(data[2] === "1")
             path.query.category = "android";
