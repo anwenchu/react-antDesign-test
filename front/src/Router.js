@@ -28,7 +28,8 @@ export default class Router extends React.Component {
                             <div>
                                 <Route exact path="/testplane" component={TestPlane}/>
                                 <Route path="/index" component={IndexPage}/>
-                                <Route path="/elementlist" component={ElementManage}/>
+                                <Route path="/elementlist/android"  component={ElementManage}/>
+                                <Route path="/elementlist/ios" component={ElementManage}/>
                                 <Route path="/addelement" component={ElementNew}/>
                                 <Route path="/testcasemanage" component={TestCaseManage}/>
                                 <Route path="/addtestcase" component={TestCase}/>

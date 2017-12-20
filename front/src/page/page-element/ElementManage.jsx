@@ -60,10 +60,11 @@ export default class ElementManage extends React.Component{
         title: '操作',
         dataIndex: 'action',
         render: (text, record) => (
+
             <span>
-                <Link to="#" onClick={() => this.handleEdit(record.id)}>编辑</Link>
+                <a onClick={() => this.handleEdit(record.id)}>编辑</a>
                 <Divider type="vertical"/>
-                <Link to="#" onClick={() => this.handleDelete(record.id)}>删除</Link>
+                <a  onClick={() => this.handleDelete(record.id)}>删除</a>
             </span>
         ),
     }];
@@ -82,15 +83,21 @@ export default class ElementManage extends React.Component{
 
 
     search = () => {
-        const query = this.props.location.query;
-        if ((null != query)&&(null != query.platform)) {
-            this.setState({ platform: query.platform });
-            console.log("elemanage-search-query:",query.platform );
-            console.log("elemanage-search-state:",this.state.platform);
-        }
         //ajax get请求  url 路径
         const status = this.state.status;
-        const platform = this.state.status;
+        var platform;
+        if (this.props.location.pathname.indexOf('ios') > 0) {
+            this.setState({
+                platform: 'ios'
+            })
+            platform = 'ios'
+        } else {
+            this.setState({
+                platform: 'android'
+            })
+            platform = 'android'
+
+        }
         promiseAjax.get(`/element/search?status=${status}&platform=${platform}`).then(data => {
             console.log('data: ', data);
             if (data && data.length) {
@@ -122,13 +129,13 @@ export default class ElementManage extends React.Component{
      *
      * @param id
      */
-    handleEdit = (key) => {
+    handleEdit = (id) => {
 
         const platfrominfo = this.state.platform;
         const editPath = {
-            pathname: '/addelement111',
+            pathname: '/addelement',
             query: 'edit',
-            key,
+            id,
             platform:platfrominfo,
         }
         console.log("elemanage-handleEdit-editPath:",editPath);
@@ -168,8 +175,7 @@ export default class ElementManage extends React.Component{
 
     render() {
 
-        const platforminfo = this.props.location.query.platform;
-
+        const platforminfo = this.state.platform;
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
