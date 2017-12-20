@@ -37,6 +37,7 @@ public class DirController extends AbstractController{
     @ApiOperation(value = "新增目录", notes = "新增目录")
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody DirDomain dir) {
+        System.out.print(dir);
         return wrapperConsumer((p) -> dirRepository.save(p), dir);
     }
 
@@ -60,6 +61,7 @@ public class DirController extends AbstractController{
     @ApiOperation(value = "修改目录", notes = "修改目录")
     @PutMapping(value = "/update")
     public ResponseEntity update(@RequestBody DirDomain dir) {
+
         return wrapperConsumer((p) -> dirRepository.save(p), dir);
     }
 
@@ -100,7 +102,7 @@ public class DirController extends AbstractController{
         List<ITreeNode> list = new ArrayList<ITreeNode>();
         for(int i=0; i<resultList.size();i++){
             //System.out.println(resultList.get(i));
-            Dir org = new Dir(String .valueOf(resultList.get(i).getId()), resultList.get(i).getParentId(), resultList.get(i).getDirectoryName());
+            Dir org = new Dir(String .valueOf(resultList.get(i).getId()), resultList.get(i).getParentId(), resultList.get(i).getDirName());
             list.add(org);
         }
         Tree tree = new Tree(list);

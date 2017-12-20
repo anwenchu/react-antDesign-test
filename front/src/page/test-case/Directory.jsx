@@ -1,6 +1,6 @@
 import React from 'react'
 import "antd/dist/antd.css";
-import { Tree, Divider,Input,Row,Col,Button,Icon,Modal,Form } from 'antd';
+import { Tree,Button,Row, Col ,Modal,Input,Form,Divider } from 'antd';
 import {promiseAjax} from "../common/an";
 /*
 *测试用例管理页面（TestCaseManage）的用例目录
@@ -8,6 +8,7 @@ import {promiseAjax} from "../common/an";
 */
 
 const TreeNode = Tree.TreeNode;
+const FormItem = Form.Item;
 
 @Form.create()
 class Directory extends React.Component {
@@ -20,7 +21,7 @@ class Directory extends React.Component {
         selectedKeys: [],
         data : [],
         platform : "",
-        pageName : "",
+        dirName : "",
     }
 
 
@@ -34,14 +35,9 @@ class Directory extends React.Component {
     // 显示编辑对话框
     showModalEdit = () => {
         const data = [...this.state.data];
-        var i = 0;
-        while (i<data.length){
-            if (data[i].key === this.state.selectedKeys[0].toString())
-                break;
-            i++
-        }
+        const dirName = this.getNodeName(data);
         this.setState({
-            pageName : data[i].title,
+            dirName : dirName,
             visible2: true,
         });
     }
@@ -61,7 +57,7 @@ class Directory extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             values["platform"] = this.state.platform;
-            values["isDelete"] = 1;
+            console.log("values:",values);
             if (!err) {
                 promiseAjax.post('/dir/add', values).then(() => {
                     this.search();
@@ -156,13 +152,26 @@ class Directory extends React.Component {
         this.search()
     }
 
+
+    getNodeName(data) {
+        var nodeName = '';
+        data.map((item) => {
+            if (item.nodeId === this.state.selectedKeys[0]) {
+                nodeName = item.nodeName;
+            } else {
+                if (item.children.length !== 0)
+                    this.getNodeName(item.children);
+            }
+        });
+        return nodeName;
+    }
+
     /**
      * 查询
      * @param all
      */
     search = () => {
         const platform = "android";//this.props.platform;
-        console.log("path.tree:",platform);
         this.setState({
             platform: platform,
         });
@@ -190,11 +199,15 @@ class Directory extends React.Component {
 
     renderTreeNodes = (data) => {
         return data.map((item) => {
-            if (item.children) {
+            if (item.children.length !== 0) {
                 return (
                     <TreeNode title={item.nodeName} key={item.nodeId} dataRef={item}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
+                );
+            }else {
+                return (
+                    <TreeNode title={item.nodeName} key={item.nodeId} dataRef={item}/>
                 );
             }
             return <TreeNode {...item} />;
@@ -202,13 +215,24 @@ class Directory extends React.Component {
     }
 
 
+
     render() {
-        const loop = data => data.map((item) => {
-            if (item.children && item.children.length) {
-                return <TreeNode key={item.nodeId} title={item.nodeId}>{loop(item.children)}</TreeNode>;
-            }
-            return <TreeNode key={item.nodeId} title={item.nodeId} />;
-        });
+//        const loop = data => data.map((item) => {
+//            if (item.children && item.children.length) {
+//                return <TreeNode key={item.nodeId} title={item.nodeId}>{loop(item.children)}</TreeNode>;
+//            }
+//            return <TreeNode key={item.nodeId} title={item.nodeId} />;
+//        });
+        const { getFieldDecorator } = this.props.form;
+        const formItemLayout = {
+            labelCol: {
+                span: 6 ,
+            },
+            wrapperCol: {
+                span: 12 ,
+            },
+        };
+
         return (
             <div>
                 <Divider>用例查找</Divider>
@@ -233,22 +257,46 @@ class Directory extends React.Component {
                     <Row>
                         <Col span={2} offset={4}>
                             <Button onClick={this.showModalNew} size={"small"}>新建</Button>
-                            <Modal title="新建目录"
+                            <Modal title="新建页面"
                                    visible={this.state.visible1}
                                    onOk={this.handleOkNew}
                                    onCancel={this.handleCancelNew}
                             >
-                                <Input />
+                                <Form >
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="页面名称："
+                                    >
+                                        {getFieldDecorator('dirName', {
+                                            initialValue: "",
+                                            rules: [{ required: true, message: '请输入页面名称!' }],
+                                        })(
+                                            <Input id="dirName" placeholder="请输入页面名称"/>
+                                        )}
+                                    </FormItem>
+                                </Form>
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>
                             <Button onClick={this.showModalEdit} size={"small"}>编辑</Button>
-                            <Modal title="重命名目录"
+                            <Modal title="重命名页面"
                                    visible={this.state.visible2}
                                    onOk={this.handleOkEdit}
                                    onCancel={this.handleCancelEdit}
                             >
-                                <Input />
+                                <Form >
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="页面名称："
+                                    >
+                                        {getFieldDecorator('dirName', {
+                                            initialValue: this.state.dirName,
+                                            rules: [{required: true, message: '请输入页面名称!' }],
+                                        })(
+                                            <Input id="dirName" />
+                                        )}
+                                    </FormItem>
+                                </Form>
                             </Modal>
                         </Col>
                         <Col span={2} offset={4}>
@@ -264,6 +312,7 @@ class Directory extends React.Component {
                         </Col>
                     </Row>
                 </div>
+
             </div>
         );
     }

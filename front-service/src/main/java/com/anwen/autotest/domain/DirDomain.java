@@ -22,7 +22,7 @@ public class DirDomain {
     private Long id;
     //目录名称
     @Column(name = "directory_name", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String directoryName;
+    private String dirName;
     //父节点
     @Column(name = "parent_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String parentId;
