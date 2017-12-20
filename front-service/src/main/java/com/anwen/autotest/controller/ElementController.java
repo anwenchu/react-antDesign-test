@@ -46,7 +46,7 @@ public class ElementController extends AbstractController{
      * @return
      */
     @ApiOperation(value = "删除元素", notes = "删除元素")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
         return wrapperConsumer((p) -> elementRepository.delete(p), id);
     }
@@ -63,15 +63,19 @@ public class ElementController extends AbstractController{
         return wrapperConsumer((p) -> elementRepository.save(p), element);
     }
 
-//    /**
-//     * 查询所有元素
-//     * @return
-//     */
-//    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
-//    @GetMapping(value = "/list")
-//    public ResponseEntity list() {
-//        return wrapperSupplier(() -> elementRepository.findAll(), false);
-//    }
+    /**
+     * 获取元素列表
+     * 功能：根据平台信息，默认查询未删除的所有元素
+     * @param platform 元素所属平台
+     * @return
+     */
+    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
+    @GetMapping(value = "/list")
+    public ResponseEntity list(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L;
+        return wrapperSupplier(() -> elementRepository.findAll(), false);
+
+    }
 
 
     /**
@@ -86,17 +90,36 @@ public class ElementController extends AbstractController{
 
     /**
      * 条件查询
+     * 功能：默认查询未删除的所有元素
+     * @param platform 元素所属平台
      * @return
      */
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
-    public ResponseEntity search(@RequestParam(value = "status") Long isDelete) {
+    public ResponseEntity search(@RequestParam(value = "platform") String platform,String elementText,String elementId,Long available) {
+        Long isDelete = 0L;
+        // available为0时查找所有
+        if (available==0) {
+            if ((null == elementText )&&(null == elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatform(isDelete, platform), false);
+            else if ((null != elementText )&&(null == elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementId(isDelete, platform, elementId), false);
+            else if ((null == elementText )&&(null != elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementText(isDelete, platform, elementText), false);
+            else
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementTextAndElementId(isDelete, platform,elementText, elementId), false);
 
-        if (null == isDelete) {
-            return wrapperSupplier(() -> elementRepository.findAll(), false);
-        } else {
-            return wrapperSupplier(() -> elementRepository.findElementDomainByIsDelete(isDelete), false);
+        }else {
+            if ((null == elementText )&&(null == elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailable(isDelete, platform, available), false);
+            else if ((null != elementText )&&(null == elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementId(isDelete, platform, available, elementId), false);
+            else if ((null == elementText )&&(null != elementId))
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementText(isDelete, platform, available, elementText), false);
+            else
+                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementTextAndElementId(isDelete, platform, available, elementText, elementId), false);
         }
+
     }
 
 }

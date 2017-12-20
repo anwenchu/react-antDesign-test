@@ -31,9 +31,13 @@ export default class Router extends React.Component {
                                 <Route path="/elementlist/android"  component={ElementManage}/>
                                 <Route path="/elementlist/ios" component={ElementManage}/>
                                 <Route path="/addelement" component={ElementNew}/>
-                                <Route path="/testcasemanage" component={TestCaseManage}/>
+                                <Route path="/testcasemanage/android" component={TestCaseManage}/>
+                                <Route path="/testcasemanage/ios" component={TestCaseManage}/>
+                                <Route path="/testcasemanage/performance" component={TestCaseManage}/>
                                 <Route path="/addtestcase" component={TestCase}/>
-                                <Route path="/testplanemanage" component={TestPlaneManage}/>
+                                <Route path="/testplanemanage/android" component={TestPlaneManage}/>
+                                <Route path="/testplanemanage/ios" component={TestPlaneManage}/>
+                                <Route path="/testplanemanage/performance" component={TestPlaneManage}/>
                                 <Route path="/addplane" component={TestPlaneForm}/>
                             </div>
                         </Content>

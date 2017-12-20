@@ -23,7 +23,7 @@ const {Header} = Layout;
         }
     }
 
-
+    /**
     clickItem (menu){
 
         //key的命名规则按照：页面-客户端平台-类型的规则
@@ -61,6 +61,7 @@ const {Header} = Layout;
         console.log("menu-clickItem-history2:",this.props.history);
 
     }
+    **/
 
     render(){
         return (
@@ -76,17 +77,17 @@ const {Header} = Layout;
                             theme="dark"
                             mode="horizontal"
                             defaultSelectedKeys={["0"]}
-                            onClick={this.clickItem.bind(this)}
+
                         >
                             <Menu.SubMenu key="1" title="测试计划">
-                                <Menu.Item key="1.1" ><Link to={"/testplanemanage"}>android自动化测试计划</Link></Menu.Item>
-                                <Menu.Item key="1.2"><Link to={"/testplanemanage"}>ios自动化测试计划</Link></Menu.Item>
-                                <Menu.Item key="1.3"><Link to={"/testplanemanage"}>性能基准测试计划</Link></Menu.Item>
+                                <Menu.Item key="1.1" ><Link to={"/testplanemanage/android"}>android自动化测试计划</Link></Menu.Item>
+                                <Menu.Item key="1.2"><Link to={"/testplanemanage/ios"}>ios自动化测试计划</Link></Menu.Item>
+                                <Menu.Item key="1.3"><Link to={"/testplanemanage/performance"}>性能基准测试计划</Link></Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu key="2" title="用例管理">
-                                <Menu.Item key="2.1"><Link to={"/testcasemanage"}>android自动化用例管理</Link></Menu.Item>
-                                <Menu.Item key="2.2"><Link to={"/testcasemanage"}>ios自动化用例管理</Link></Menu.Item>
-                                <Menu.Item key="2.3"><Link to={"/testcasemanage"}>性能基准测试用例管理</Link></Menu.Item>
+                                <Menu.Item key="2.1"><Link to={"/testcasemanage/android"}>android自动化用例管理</Link></Menu.Item>
+                                <Menu.Item key="2.2"><Link to={"/testcasemanage/ios"}>ios自动化用例管理</Link></Menu.Item>
+                                <Menu.Item key="2.3"><Link to={"/testcasemanage/performance"}>性能基准测试用例管理</Link></Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu key="3" title="测试报告">
                                 <Menu.Item key="3.1">android自动化测试报告</Menu.Item>
@@ -94,8 +95,8 @@ const {Header} = Layout;
                                 <Menu.Item key="3.3">性能基准测试结果报告</Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu key="4" title="页面元素管理">
-                                <Menu.Item key="4.1"><Link to={"/elementlist"}>android页面元素管理</Link></Menu.Item>
-                                <Menu.Item key="4.2"><Link to={"/elementlist"}>ios页面元素管理</Link></Menu.Item>
+                                <Menu.Item key="4.1"><Link to={"/elementlist/android"}>android页面元素管理</Link></Menu.Item>
+                                <Menu.Item key="4.2"><Link to={"/elementlist/ios"}>ios页面元素管理</Link></Menu.Item>
                             </Menu.SubMenu>
                         </Menu>
                     </Col>

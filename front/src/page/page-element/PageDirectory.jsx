@@ -193,6 +193,7 @@ export default class PageDirectory extends React.Component {
         console.log(' onSelect:',selectedKeys);
         this.state.selectedKeys = selectedKeys;
         this.setState({ selectedKeys });
+        this.props.selectPage(selectedKeys[0]);
     }
 
 

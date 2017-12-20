@@ -30,8 +30,12 @@ export default class ElementManage extends React.Component{
     state = {
         elements: [],
         id: '',
-        status: '',
         platform : '', //平台信息，前一个页面传值过来，默认为android
+        available : '0', //按状态查询标记,0:全部元素，1：可用，2：不可用
+        elementId : '',  //按照元素id查询标志
+        elementText : '', //按照元素文本查询标志
+        pageId : '',//当前所选中的所属页面
+
     }
 
     // react 生命周期函数  自己百度
@@ -60,7 +64,6 @@ export default class ElementManage extends React.Component{
         title: '操作',
         dataIndex: 'action',
         render: (text, record) => (
-
             <span>
                 <a onClick={() => this.handleEdit(record.id)}>编辑</a>
                 <Divider type="vertical"/>
@@ -68,43 +71,46 @@ export default class ElementManage extends React.Component{
             </span>
         ),
     }];
-    data = [{
-        key: '1',
-        elementNo: '1',
-        elementName: '元素1',
-        elementCategory: '1',
-        elementId: 'id',
-        elementText: 'android851',
-        elementXY: '1',
-        elementXpath: 'xxxx',
-        elementDes: 'android851',
-    }];
 
 
 
-    search = () => {
-        //ajax get请求  url 路径
-        const status = this.state.status;
+    getPlatform(){
         var platform;
         if (this.props.location.pathname.indexOf('ios') > 0) {
-            this.setState({
-                platform: 'ios'
-            })
             platform = 'ios'
         } else {
-            this.setState({
-                platform: 'android'
-            })
             platform = 'android'
-
         }
-        promiseAjax.get(`/element/search?status=${status}&platform=${platform}`).then(data => {
+        return platform;
+    }
+
+    /**
+     * 查询，获取元素列表信息
+     */
+    search = () => {
+        console.log("search---pageId:",this.state.pageId);
+        //ajax get请求  url 路径
+        var platform = this.getPlatform();
+        this.setState({
+            platform: platform,
+        })
+        var available = this.state.available;
+        var elementId = this.state.elementId;
+        var elementText = this.state.elementText;
+        var urlPath = `/element/search?platform=${platform}&available=${available}`;
+        if (elementId!=='')
+            urlPath = urlPath + `&elementId=${elementId}`;
+        if (elementText!=='')
+            urlPath = urlPath + `&elementText=${elementText}`;
+        promiseAjax.get(urlPath).then(data => {
             console.log('data: ', data);
-            if (data && data.length) {
+            if (data) {
+                //添加元素的顺序编号，在前端展示
+                for(var i=0;i<data.length;i++)
+                    data[i]["elementNo"] = (i+1).toString();
                 // 将数据存入state  渲染页面
                 this.setState({
                     elements: data,
-                    status: '',
                 });
             }
         });
@@ -117,7 +123,7 @@ export default class ElementManage extends React.Component{
      */
 
     handleDelete = (id) => {
-        promiseAjax.del(`/element/${id}`).then(() => {
+        promiseAjax.del(`/element/delete/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
@@ -126,11 +132,10 @@ export default class ElementManage extends React.Component{
 
 
     /**
-     *
+     * 编辑
      * @param id
      */
     handleEdit = (id) => {
-
         const platfrominfo = this.state.platform;
         const editPath = {
             pathname: '/addelement',
@@ -138,17 +143,7 @@ export default class ElementManage extends React.Component{
             id,
             platform:platfrominfo,
         }
-        console.log("elemanage-handleEdit-editPath:",editPath);
-        console.log("elemanage-handleEdit-history1:",this.props.history);
         this.props.history.push(editPath);
-        console.log("elemanage-handleEdit-history2:",this.props.history);
-
-    }
-
-    selectStatus = (status) => {
-        this.setState({
-            status
-        })
     }
 
     /**
@@ -167,20 +162,30 @@ export default class ElementManage extends React.Component{
         console.log("elemanage-handleClick-history2:",this.props.history);
     }
 
-    selectStatus = (status) => {
+    selectStatus = (key) => {
+        const available = key;
         this.setState({
-            status
+            available:available,
         })
     }
 
-    render() {
+    selectPage = (key) => {
+        const pageId = key;
+        this.setState({
+            pageId:pageId,
+        })
+        this.search();
+        console.log("selectPage---pageId:",pageId);
 
-        const platforminfo = this.state.platform;
+    }
+
+    render() {
+        const platform = this.getPlatform();
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <PageDirectory platform={platforminfo}/>
+                        <PageDirectory platform={platform} selectPage={this.selectPage}/>
                     </div>
                 </Sider>
                 <Content style={{ padding: "0px 0px 0px 20px" }}>

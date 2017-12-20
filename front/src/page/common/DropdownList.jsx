@@ -8,7 +8,7 @@ const FormItem = Form.Item;
 
 export default class DropdownList extends React.Component{
     handleMenuClick = (key) => {
-        console.log('click', key);
+        console.log('click----', key);
         this.props.selectStatus(key);
     }
     render() {
@@ -19,8 +19,9 @@ export default class DropdownList extends React.Component{
                 notFoundContent="暂无数据"
                 onSelect={this.handleMenuClick}
             >
-                <Option key="1">成功</Option>
-                <Option key="2">失败</Option>
+                <Option key="0">全部</Option>
+                <Option key="1">可用</Option>
+                <Option key="2">不可用</Option>
             </Select>
         )
     }
