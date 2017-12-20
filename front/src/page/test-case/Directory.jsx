@@ -20,13 +20,24 @@ class Directory extends React.Component {
         visible3: false,
         selectedKeys: [],
         data : [],
-        platform : "",
         dirName : "",
+        platform : "",
+        parentId : "",
+
     }
 
 
     // 显示新建对话框
     showModalNew = () => {
+        const data = [...this.state.data];
+        const node = this.getNodeName(data)
+        const dirName = node.nodeName;
+        const parentId = node.parentNodeId;
+        this.setState({
+            dirName : dirName,
+            parentId : parentId,
+            visible2: true,
+        });
         this.setState({
             visible1: true,
         });
@@ -35,9 +46,12 @@ class Directory extends React.Component {
     // 显示编辑对话框
     showModalEdit = () => {
         const data = [...this.state.data];
-        const dirName = this.getNodeName(data);
+        const node = this.getNodeName(data)
+        const dirName = node.nodeName;
+        const parentId = node.parentNodeId;
         this.setState({
             dirName : dirName,
+            parentId : parentId,
             visible2: true,
         });
     }
@@ -57,6 +71,7 @@ class Directory extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             values["platform"] = this.state.platform;
+
             console.log("values:",values);
             if (!err) {
                 promiseAjax.post('/dir/add', values).then(() => {
@@ -154,16 +169,16 @@ class Directory extends React.Component {
 
 
     getNodeName(data) {
-        var nodeName = '';
+        var node = '';
         data.map((item) => {
             if (item.nodeId === this.state.selectedKeys[0]) {
-                nodeName = item.nodeName;
+                node = item;
             } else {
                 if (item.children.length !== 0)
                     this.getNodeName(item.children);
             }
         });
-        return nodeName;
+        return node;
     }
 
     /**
