@@ -31,7 +31,7 @@ export default class ElementManage extends React.Component{
         elements: [],
         id: '',
         status: '',
-        platform : '', //平台信息，前一个页面传值过来
+        platform : '', //平台信息，前一个页面传值过来，默认为android
     }
 
     // react 生命周期函数  自己百度
@@ -82,10 +82,15 @@ export default class ElementManage extends React.Component{
 
 
     search = () => {
-        const platform = this.props.location.query.platform;
-        this.setState({ platform: platform });
+        const query = this.props.location.query;
+        if ((null != query)&&(null != query.platform)) {
+            this.setState({ platform: query.platform });
+            console.log("elemanage-search-query:",query.platform );
+            console.log("elemanage-search-state:",this.state.platform);
+        }
         //ajax get请求  url 路径
         const status = this.state.status;
+        const platform = this.state.status;
         promiseAjax.get(`/element/search?status=${status}&platform=${platform}`).then(data => {
             console.log('data: ', data);
             if (data && data.length) {
@@ -118,14 +123,19 @@ export default class ElementManage extends React.Component{
      * @param id
      */
     handleEdit = (key) => {
-        const platfrominfo = this.props.location.query.platform;
+
+        const platfrominfo = this.state.platform;
         const editPath = {
-            pathname: '/addelement',
+            pathname: '/addelement111',
             query: 'edit',
             key,
             platform:platfrominfo,
         }
+        console.log("elemanage-handleEdit-editPath:",editPath);
+        console.log("elemanage-handleEdit-history1:",this.props.history);
         this.props.history.push(editPath);
+        console.log("elemanage-handleEdit-history2:",this.props.history);
+
     }
 
     selectStatus = (status) => {
@@ -139,12 +149,15 @@ export default class ElementManage extends React.Component{
      * @param id
      */
     handleClick = (key) => {
-        const platfrominfo = this.props.location.query.platform;
+        const platfrominfo = this.state.platform;
+        console.log("elemanage-handleClick-state:",this.state.platform);
         const editPath = {
-            pathname: '/addelement',
-            platform:platfrominfo,
+            pathname : '/addelement',
+            platform : platfrominfo,
         }
+        console.log("elemanage-handleClick-history1:",this.props.history);
         this.props.history.push(editPath);
+        console.log("elemanage-handleClick-history2:",this.props.history);
     }
 
     selectStatus = (status) => {
@@ -154,14 +167,14 @@ export default class ElementManage extends React.Component{
     }
 
     render() {
-        const platfrominfo = this.props.location.query.platform;
-        console.log("path.query1111:",platfrominfo);
+
+        const platforminfo = this.props.location.query.platform;
 
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <PageDirectory platform={platfrominfo}/>
+                        <PageDirectory platform={platforminfo}/>
                     </div>
                 </Sider>
                 <Content style={{ padding: "0px 0px 0px 20px" }}>

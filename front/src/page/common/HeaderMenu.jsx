@@ -14,7 +14,7 @@ const {Header} = Layout;
         super(props);
         this.state = {
             path : {
-                pathName : '',
+                pathname : '',
                 query : {
                     platform : '',
                     category : '',
@@ -30,13 +30,13 @@ const {Header} = Layout;
         var path = this.state.path;
         var data = menu.key.split(".");
         if(data[0] === "1")
-            path.pathName = "/testplanemanage";
+            path.pathname = "/testplanemanage";
         else if(data[0] === "2")
-            path.pathName = "/testcasemanage";
+            path.pathname = "/testcasemanage";
         else if(data[0] === "3")
-            path.pathName = "";
+            path.pathname = "";
         else if(data[0] === "4")
-            path.pathName = "/elementlist";
+            path.pathname = "/elementlist";
 
         if(data[1] === "1")
             path.query.platform = "android";
@@ -51,8 +51,11 @@ const {Header} = Layout;
         this.setState({
             path : path,
         })
+        console.log("menu:",path);
 
+        console.log("menu-clickItem-history1:",this.props.history);
         this.props.history.push(path);
+        console.log("menu-clickItem-history2:",this.props.history);
 
     }
 

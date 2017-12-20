@@ -39,6 +39,7 @@ export default class ElementNew extends React.Component {
     componentDidMount() {
         // 如果是修改 回显数据
         const id = this.props.location.id;
+        console.log("eladd-componentDidMount-location:",this.props.location);
         if (this.props.location.query === 'edit') {
             promiseAjax.get(`/element/${id}`).then((data) => {
                 this.setState({
@@ -51,7 +52,8 @@ export default class ElementNew extends React.Component {
 
     render() {
         const platfrominfo = this.props.location.platform;
-        console.log("path.query222222:",this.props.location.platform);
+        console.log("eladd-render-platfrominfo:",platfrominfo);
+        console.log("eladd-render-location:",this.props.location);
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
