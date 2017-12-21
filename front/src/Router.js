@@ -7,7 +7,7 @@ import {
 import TestPlane from './page/test-plane/TestPlane';
 import IndexPage from './page/home/IndexPage';
 import ElementManage from './page/page-element/ElementManage';
-import ElementNew from './page/page-element/ElementNew';
+import ElementNew from './page/page-element/ElementNew-Older';
 import TestCaseManage from './page/test-case/TestCaseManage';
 import TestCase from './page/test-case/TestCase';
 import TestPlaneManage from './page/test-plane/TestPlaneManage';

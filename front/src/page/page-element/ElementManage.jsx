@@ -3,7 +3,7 @@ import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,
 import PageDirectory from './PageDirectory';
 import DropdownList from '../common/DropdownList';
 import {promiseAjax} from '../common/an';
-import ElementNewB from './ElementNewB';
+import ElementNew from './ElementNew';
 import ElementEdit from './ElementEdit';
 /*
 *页面名称：页面元素管理
@@ -209,7 +209,7 @@ export default class ElementManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <ElementNewB platform={platform}/>
+                                        <ElementNew platform={platform}/>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>
