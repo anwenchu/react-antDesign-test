@@ -38,7 +38,7 @@ public class PageController extends AbstractController{
      * @return
      */
     @ApiOperation(value = "删除页面", notes = "删除页面")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
         return wrapperConsumer((p) -> pageRepository.delete(p), id);
     }
@@ -61,10 +61,12 @@ public class PageController extends AbstractController{
      */
     @ApiOperation(value = "查询所有页面", notes = "查询所有页面")
     @GetMapping(value = "/list")
-    public ResponseEntity list() {
-        System.out.print("1111111");
-        return wrapperSupplier(() -> pageRepository.findAll(), false);
+    public ResponseEntity list(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L;//0:未删除，默认查询所有未删除的页面
+        //return wrapperSupplier(() -> pageRepository.findAll(), false);
+        return wrapperSupplier(() -> pageRepository.findElementDomainByIsDeleteAndPlatform(isDelete,platform), false);
     }
+
 
     /**
      * 查询页面

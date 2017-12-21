@@ -25,8 +25,8 @@ public class ElementDomain {
     @GeneratedValue
     private Long id;
     //页面id
-    @Column(name = "page_id", columnDefinition = "int(x) COMMENT 'xx'")
-    private Long pageId;
+    @Column(name = "page_id", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String pageId;
     //页面是否可用，0不可用，1可用
     @Column(name = "available", columnDefinition = "int(x) COMMENT 'xx'")
     private Long available;

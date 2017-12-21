@@ -2,11 +2,9 @@ import React from "react";
 import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import PageDirectory from './PageDirectory';
 import DropdownList from '../common/DropdownList';
-import {
-    Link
-} from 'react-router-dom'
 import {promiseAjax} from '../common/an';
-
+import ElementNewB from './ElementNewB';
+import ElementEdit from './ElementEdit';
 /*
 *页面名称：页面元素管理
 * 入口：点击顶部导航中的元素管理进入（ios元素管理点击进入后数据为ios元素数据，android同理）
@@ -34,7 +32,7 @@ export default class ElementManage extends React.Component{
         available : '0', //按状态查询标记,0:全部元素，1：可用，2：不可用
         elementId : '',  //按照元素id查询标志
         elementText : '', //按照元素文本查询标志
-        pageId : '',//当前所选中的所属页面
+        pageId : '',
 
     }
 
@@ -65,7 +63,7 @@ export default class ElementManage extends React.Component{
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                <a onClick={() => this.handleEdit(record.id)}>编辑</a>
+                <ElementEdit item={record}/>
                 <Divider type="vertical"/>
                 <a  onClick={() => this.handleDelete(record.id)}>删除</a>
             </span>
@@ -87,8 +85,7 @@ export default class ElementManage extends React.Component{
     /**
      * 查询，获取元素列表信息
      */
-    search = () => {
-        console.log("search---pageId:",this.state.pageId);
+    search = (pageId) => {
         //ajax get请求  url 路径
         var platform = this.getPlatform();
         this.setState({
@@ -97,11 +94,15 @@ export default class ElementManage extends React.Component{
         var available = this.state.available;
         var elementId = this.state.elementId;
         var elementText = this.state.elementText;
+
         var urlPath = `/element/search?platform=${platform}&available=${available}`;
         if (elementId!=='')
             urlPath = urlPath + `&elementId=${elementId}`;
         if (elementText!=='')
             urlPath = urlPath + `&elementText=${elementText}`;
+        if (null !== pageId) {
+            urlPath = urlPath + `&pageId=${pageId}`;
+        }
         promiseAjax.get(urlPath).then(data => {
             console.log('data: ', data);
             if (data) {
@@ -170,17 +171,18 @@ export default class ElementManage extends React.Component{
     }
 
     selectPage = (key) => {
-        const pageId = key;
+        this.search(key);
         this.setState({
-            pageId:pageId,
+            pageId:key,
         })
-        this.search();
-        console.log("selectPage---pageId:",pageId);
+        console.log("selectPage---pageId:",key);
 
     }
 
     render() {
         const platform = this.getPlatform();
+        const elementId = this.state.elementId;
+        console.log("render---state.pageId:",this.state.pageId);
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
@@ -207,7 +209,7 @@ export default class ElementManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary" onClick={this.handleClick}><Link to={'/addelement'}> + 新建</Link></Button>
+                                        <ElementNewB platform={platform}/>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>

@@ -37,6 +37,8 @@ public class ElementController extends AbstractController{
     @ApiOperation(value = "新增元素", notes = "新增元素")
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody ElementDomain element) {
+        element.setIsDelete(0L);
+        element.setAvailable(1L);
         return wrapperConsumer((p) -> elementRepository.save(p), element);
     }
 
@@ -60,6 +62,8 @@ public class ElementController extends AbstractController{
     @ApiOperation(value = "修改元素", notes = "修改元素")
     @PutMapping(value = "/update")
     public ResponseEntity update(@RequestBody ElementDomain element) {
+        element.setIsDelete(0L);
+        element.setAvailable(1L);
         return wrapperConsumer((p) -> elementRepository.save(p), element);
     }
 
