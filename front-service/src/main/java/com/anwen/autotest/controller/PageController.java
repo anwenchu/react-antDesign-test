@@ -29,6 +29,8 @@ public class PageController extends AbstractController{
     @ApiOperation(value = "新增页面", notes = "新增页面")
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody PageDomain element) {
+        element.setIsDelete(0L);
+        element.setAvailable(1L);
         return wrapperConsumer((p) -> pageRepository.save(p), element);
     }
 

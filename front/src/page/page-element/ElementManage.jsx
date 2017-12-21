@@ -11,17 +11,6 @@ import ElementEdit from './ElementEdit';
 */
 
 const {Content, Sider } = Layout;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item key="1">下拉列表内</Menu.Item>
-    </Menu>
-);
-
-
-function handleMenuClick(e) {
-    message.info('Click on menu item.');
-    console.log('click', e);
-}
 
 export default class ElementManage extends React.Component{
     // 一个全局状态 改变后会从新渲染页面
@@ -63,9 +52,15 @@ export default class ElementManage extends React.Component{
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                <ElementEdit item={record}/>
-                <Divider type="vertical"/>
-                <a  onClick={() => this.handleDelete(record.id)}>删除</a>
+                <Row>
+                    <Col span={9}>
+                        <ElementEdit item={record}/>
+                    </Col>
+                    <Col span={15}>
+                        <Divider type="vertical"/>
+                        <a onClick={() => this.handleDelete(record.id)}>删除</a>
+                    </Col>
+                </Row>
             </span>
         ),
     }];
@@ -175,13 +170,11 @@ export default class ElementManage extends React.Component{
         this.setState({
             pageId:key,
         })
-        console.log("selectPage---pageId:",key);
 
     }
 
     render() {
         const platform = this.getPlatform();
-        const elementId = this.state.elementId;
         console.log("render---state.pageId:",this.state.pageId);
         return (
             <Layout>
@@ -223,7 +216,8 @@ export default class ElementManage extends React.Component{
                                 <Table
                                     columns={this.columns}
                                     rowKey={(record) => record.id}
-                                    dataSource={this.state.elements}/>
+                                    dataSource={this.state.elements}
+                                />
                             </div>
                         </div>
                     </div>

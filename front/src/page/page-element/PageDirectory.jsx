@@ -2,8 +2,9 @@ import React from "react";
 import {promiseAjax} from "../common/an";
 import { Tree,Button,Row, Col ,Modal,Input,Form,Divider } from 'antd';
 /*
-* 元素管理页面的目录，跟用例管理页面目录不同，这个添加目录关系只有一级，添加目录为一级目录
-* 数据：来自page表（这个目录只有一级，展示出来每个页面即可）
+* 元素目录页面
+* 未解决问题：1、修改使用的为新增接口来完成修改功能
+*           2、点击左侧目录右侧列表内容需要刷新，父子传值已经完成，后端搜索接口bug未修复
 */
 
 const TreeNode = Tree.TreeNode;
@@ -39,6 +40,7 @@ export default class PageDirectory extends React.Component {
         });
     }
 
+
     // 显示编辑对话框
     showModalEdit = () => {
         const data = [...this.state.data];
@@ -68,8 +70,8 @@ export default class PageDirectory extends React.Component {
     handleOkNew = (e) => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            values["platform"] = this.state.platform;
-            values["isDelete"] = 1;
+            values.platform = this.state.platform;
+            console.log('handleOkEdit-values : ', values);
             if (!err) {
                 promiseAjax.post('/page/add', values).then(() => {
                     this.search();
@@ -109,10 +111,9 @@ export default class PageDirectory extends React.Component {
     handleOkEdit = (e) => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            values["platform"] = this.state.platform;
-            values["isDelete"] = 1;
             if (!err) {
                 values.id = this.state.selectedKeys[0];
+                values.platform = this.state.platform;
                 promiseAjax.post('/page/add', values).then(() => {
                     this.search();
                     this.setState({
@@ -137,7 +138,7 @@ export default class PageDirectory extends React.Component {
      */
     handleOkDel = (e) => {
         var id = this.state.selectedKeys[0]
-        promiseAjax.del(`/page/${id}`).then(() => {
+        promiseAjax.del(`/page/delete/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
@@ -169,7 +170,7 @@ export default class PageDirectory extends React.Component {
             platform: platform,
         });
         //ajax get请求  url 路径
-        promiseAjax.get(`/page/search?status=1&platform=${platform}`).then(data => {
+        promiseAjax.get(`/page/list?platform=${platform}`).then(data => {
             if (data && data.length) {
                 var datalist = [];
                 for (var i = 0;i<data.length;i++) {
@@ -189,11 +190,13 @@ export default class PageDirectory extends React.Component {
     }
 
 
-    onSelect = (selectedKeys) => {
+    selectPage = (selectedKeys) => {
         console.log(' onSelect:',selectedKeys);
         this.state.selectedKeys = selectedKeys;
         this.setState({ selectedKeys });
         this.props.selectPage(selectedKeys[0]);
+        //查询某一页面下的元素内容
+
     }
 
 
@@ -241,7 +244,7 @@ export default class PageDirectory extends React.Component {
                 <Tree
                     showLine
                     defaultExpandedKeys={['0-0-0']}
-                    onSelect={this.onSelect}
+                    onSelect={this.selectPage}
                     selectedKeys={this.state.selectedKeys}
                 >
                     {this.renderTreeNodes(this.state.data)}
@@ -254,6 +257,8 @@ export default class PageDirectory extends React.Component {
                                    visible={this.state.visible1}
                                    onOk={this.handleOkNew}
                                    onCancel={this.handleCancelNew}
+                                   okText="保存"
+                                   cancelText="取消"
                             >
                                 <Form >
                                     <FormItem
@@ -276,6 +281,8 @@ export default class PageDirectory extends React.Component {
                                    visible={this.state.visible2}
                                    onOk={this.handleOkEdit}
                                    onCancel={this.handleCancelEdit}
+                                   okText="保存"
+                                   cancelText="取消"
                             >
                                 <Form >
                                     <FormItem
@@ -299,6 +306,8 @@ export default class PageDirectory extends React.Component {
                                 visible={this.state.visible3}
                                 onOk={this.handleOkDel}
                                 onCancel={this.handleCancelDel}
+                                okText="保存"
+                                cancelText="取消"
                             >
                                 <p>确认要删除目录吗？</p>
                             </Modal>
