@@ -21,7 +21,7 @@ public class CaseController extends AbstractController{
     private CaseRepository caseRepository;
 
     /**
-     * 新增目录
+     * 新增用例
      *
      * @param dir 需要新增的对象
      * @return 返回成功或失败
@@ -33,7 +33,7 @@ public class CaseController extends AbstractController{
     }
 
     /**
-     * 删除目录
+     * 删除用例
      * @param id 需要删除目录的id
      * @return
      */
@@ -44,7 +44,7 @@ public class CaseController extends AbstractController{
     }
 
     /**
-     * 修改元素
+     * 修改用例
      *
      * @param dir 需要修改的目录
      * @return
@@ -56,7 +56,7 @@ public class CaseController extends AbstractController{
     }
 
     /**
-     * 查询所有目录
+     * 查询所有用例
      * @return
      */
     @ApiOperation(value = "查询所有目录", notes = "查询所有目录")
@@ -67,7 +67,7 @@ public class CaseController extends AbstractController{
     }
 
     /**
-     * 查询目录
+     * 查询某一个用例
      * @return
      */
     @ApiOperation(value = "查询目录", notes = "查询目录")

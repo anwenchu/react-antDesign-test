@@ -6,26 +6,14 @@ import DropdownList from '../common/DropdownList';
 import {
     Link
 } from 'react-router-dom'
+import {promiseAjax} from "../common/an";
 /*
 *页面名称：测试用例管理页面
 * 入口：点击顶部导航中的用例管理进入（ios导航点击进入后数据为ios用例数据，android导航点击进入后数据为android用例数据）
 */
 
-const { Header, Content, Footer, Sider } = Layout;
-const menu = (
-    <Menu onClick={handleMenuClick}>
-        <Menu.Item key="1">下拉列表内</Menu.Item>
-    </Menu>
-);
-function handleButtonClick(e) {
-    message.info('Click on left button.');
-    console.log('click left button', e);
-}
+const { Content, Sider } = Layout;
 
-function handleMenuClick(e) {
-    message.info('Click on menu item.');
-    console.log('click', e);
-}
 
 export default class TestCaseManage extends React.Component{
     state = {
@@ -67,6 +55,60 @@ export default class TestCaseManage extends React.Component{
         ),
     }];
 
+    // react 生命周期函数  自己百度
+    componentDidMount() {
+        // 页面渲染完成，进行一次查询
+        this.search()
+    }
+
+    getPlatform(){
+        var platform;
+        if (this.props.location.pathname.indexOf('ios') > 0) {
+            platform = 'ios'
+        } else {
+            platform = 'android'
+        }
+        return platform;
+    }
+
+    /**
+     * 查询，获取元素列表信息
+     */
+    search = (dirId) => {
+        //ajax get请求  url 路径
+        var platform = this.getPlatform();
+        this.setState({
+            platform: platform,
+        })
+        var available = this.state.available;
+        var elementId = this.state.elementId;
+        var elementText = this.state.elementText;
+
+        var urlPath = `/element/search?platform=${platform}&available=${available}`;
+        if (elementId!=='')
+            urlPath = urlPath + `&elementId=${elementId}`;
+        if (elementText!=='')
+            urlPath = urlPath + `&elementText=${elementText}`;
+        if (null !== dirId) {
+            urlPath = urlPath + `&pageId=${dirId}`;
+        }
+        promiseAjax.get(urlPath).then(data => {
+            console.log('data: ', data);
+            if (data) {
+                //添加元素的顺序编号，在前端展示
+                for(var i=0;i<data.length;i++)
+                    data[i]["elementNo"] = (i+1).toString();
+                // 将数据存入state  渲染页面
+                this.setState({
+                    elements: data,
+                });
+            }
+        });
+    }
+
+
+
+
 
     /**
      *
@@ -90,11 +132,12 @@ export default class TestCaseManage extends React.Component{
     }
 
     render() {
+        const platform = this.getPlatform();
         return(
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5" }}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <Directory />
+                        <Directory platform={platform} />
                     </div>
                 </Sider>
                 <Content style={{ padding: " 0px 0px 0px 20px" }}>

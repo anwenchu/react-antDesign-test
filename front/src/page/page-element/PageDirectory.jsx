@@ -81,21 +81,6 @@ export default class PageDirectory extends React.Component {
                 });
             }
         });
-
-        //const data = [...this.state.data];
-        //var nameText = document.getElementById('dirName').value;
-        //if (nameText !== '')
-        //    //输入目录名称后插入数据
-        //    data.push(
-        //        {
-        //            title : nameText,
-        //            key : (data.length + 1).toString()
-        //        }
-        //    );
-        //this.setState({
-        //    data: data,
-        //    visible1: false,
-        //});
     }
     // 取消新建
     handleCancelNew = (e) => {
@@ -165,7 +150,6 @@ export default class PageDirectory extends React.Component {
      */
     search = () => {
         const platform = this.props.platform;
-        console.log("path.tree:",platform);
         this.setState({
             platform: platform,
         });

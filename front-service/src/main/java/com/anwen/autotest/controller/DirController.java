@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class DirController extends AbstractController{
     @ApiOperation(value = "新增目录", notes = "新增目录")
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody DirDomain dir) {
+        dir.setIsDelete(0L);
+        dir.setAvailable(1L);
         System.out.print(dir);
         return wrapperConsumer((p) -> dirRepository.save(p), dir);
     }
@@ -71,29 +74,7 @@ public class DirController extends AbstractController{
      */
     @ApiOperation(value = "查询所有目录", notes = "查询所有目录")
     @GetMapping(value = "/list")
-    public ResponseEntity list() {
-        return wrapperSupplier(() -> dirRepository.findAll(), false);
-
-    }
-
-    /**
-     * 查询目录
-     * @return
-     */
-    @ApiOperation(value = "查询目录", notes = "查询目录")
-    @GetMapping(value = "/{id}")
-    public ResponseEntity detail(@PathVariable(name = "id") Long id) {
-        return wrapperSupplier(() -> dirRepository.findOne(id), false);
-    }
-
-
-    /**
-     * 条件查询
-     * @return
-     */
-    @ApiOperation(value = "条件查询", notes = "条件查询")
-    @GetMapping(value = "/search")
-    public ResponseEntity search(@RequestParam(value = "platform") String platform) {
+    public ResponseEntity list(@RequestParam(value = "platform") String platform) {
 
         Long isDelete = 0L; // 0代表未删除，1代表删除
         List<DirDomain> resultList = dirRepository.findDirDomainByIsDeleteAndPlatform(isDelete,platform);
@@ -121,6 +102,29 @@ public class DirController extends AbstractController{
         String data = JSONObject.toJSONString(treeNode, filter);
 
         return wrapperSupplier(() -> data, false);
+
+    }
+
+    /**
+     * 查询目录
+     * @return
+     */
+    @ApiOperation(value = "查询目录", notes = "查询目录")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity detail(@PathVariable(name = "id") Long id) {
+        return wrapperSupplier(() -> dirRepository.findOne(id), false);
+    }
+
+
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "条件查询", notes = "条件查询")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "platform") String platform) {
+
+        return null;
     }
 
 

@@ -18,7 +18,7 @@ class Directory extends React.Component {
         visible1: false,
         visible2: false,
         visible3: false,
-        selectedKeys: [],
+        selectedKey: '',
         data : [],
         dirName : "",
         platform : "",
@@ -70,8 +70,8 @@ class Directory extends React.Component {
     handleOkNew = (e) => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            values["platform"] = this.state.platform;
-
+            values.platform = this.state.platform;
+            values.parentId = this.state.selectedKey;
             console.log("values:",values);
             if (!err) {
                 promiseAjax.post('/dir/add', values).then(() => {
@@ -186,12 +186,13 @@ class Directory extends React.Component {
      * @param all
      */
     search = () => {
-        const platform = "android";//this.props.platform;
+        const platform = this.props.platform;
+        console.log("path.tree:",platform);
         this.setState({
             platform: platform,
         });
         //ajax get请求  url 路径
-        promiseAjax.get(`/dir/search?platform=${platform}`).then(data => {
+        promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
             if (null != data) {
                 var data = data.children;
                 // 将数据存入state  渲染页面
@@ -203,10 +204,9 @@ class Directory extends React.Component {
     }
 
 
-    onSelect = (selectedKeys) => {
-        console.log(' onSelect:',selectedKeys);
-        this.state.selectedKeys = selectedKeys;
-        this.setState({ selectedKeys });
+    onSelect = (selectedKeys,e) => {
+        const selectedKey = selectedKeys[0];
+        this.setState({ selectedKey:selectedKey });
     }
 
 
