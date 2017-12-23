@@ -2,6 +2,7 @@ package com.anwen.autotest.controller;
 
 import com.anwen.autotest.domain.ElementDomain;
 import com.anwen.autotest.repository.ElementRepository;
+import com.anwen.autotest.service.ElementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.bind.Element;
+
 
 /**
  * Created by an_wch on 2017/12/13.
@@ -27,6 +30,9 @@ public class ElementController extends AbstractController{
 
     @Autowired
     private ElementRepository elementRepository;
+
+    @Autowired
+    private ElementService elementService;
 
     /**
      * 新增元素
@@ -101,28 +107,16 @@ public class ElementController extends AbstractController{
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
     public ResponseEntity search(@RequestParam(value = "platform") String platform,String elementText,String elementId,Long available) {
-        Long isDelete = 0L;
-        // available为0时查找所有
-        if (available==0) {
-            if ((null == elementText )&&(null == elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatform(isDelete, platform), false);
-            else if ((null != elementText )&&(null == elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementId(isDelete, platform, elementId), false);
-            else if ((null == elementText )&&(null != elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementText(isDelete, platform, elementText), false);
-            else
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndElementTextAndElementId(isDelete, platform,elementText, elementId), false);
 
-        }else {
-            if ((null == elementText )&&(null == elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailable(isDelete, platform, available), false);
-            else if ((null != elementText )&&(null == elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementId(isDelete, platform, available, elementId), false);
-            else if ((null == elementText )&&(null != elementId))
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementText(isDelete, platform, available, elementText), false);
-            else
-                return wrapperSupplier(() -> elementRepository.findElementDomainByIsDeleteAndPlatformAndAvailableAndElementTextAndElementId(isDelete, platform, available, elementText, elementId), false);
-        }
+
+        ElementDomain elementDomain = new ElementDomain();
+        elementDomain.setPlatform(platform);
+        elementDomain.setElementText(elementText);
+        elementDomain.setElementId(elementId);
+        elementDomain.setAvailable(available);
+        elementService.findAll(elementDomain);
+        return wrapperSupplier(() -> elementService.findAll(elementDomain), false);
+
 
     }
 

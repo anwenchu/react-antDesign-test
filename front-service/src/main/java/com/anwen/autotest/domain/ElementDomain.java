@@ -58,4 +58,11 @@ public class ElementDomain {
     @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
     private Long isDelete;
 
+
+
+    public static final String FIELD_AVAILABLE = "available";
+    public static final String FIELD_PLATFORM = "platform";
+    public static final String FIELD_ELEMENT_TEXT = "elementText";
+    public static final String FIELD_ELEMENT_ID = "elementId";
+    public static final String FIELD_IS_DELETE = "isDelete";
 }

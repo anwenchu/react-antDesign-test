@@ -86,7 +86,8 @@ export default class ElementManage extends React.Component{
         this.setState({
             platform: platform,
         })
-        var available = this.state.available;
+        var available = this.state.available === '0' ? '' : this.state.available;
+
         var elementId = this.state.elementId;
         var elementText = this.state.elementText;
 

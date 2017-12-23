@@ -39,7 +39,6 @@ public class DirController extends AbstractController{
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody DirDomain dir) {
         dir.setIsDelete(0L);
-        dir.setAvailable(1L);
         System.out.print(dir);
         return wrapperConsumer((p) -> dirRepository.save(p), dir);
     }
