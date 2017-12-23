@@ -18,40 +18,29 @@ class Directory extends React.Component {
         visible1: false,
         visible2: false,
         visible3: false,
-        selectedKey: '',
         data : [],
         dirName : "",
         platform : "",
+        selectedKeys:[],
         parentId : "",
+        rootId : '',
 
     }
 
 
     // 显示新建对话框
     showModalNew = () => {
-        const data = [...this.state.data];
-        const node = this.getNodeName(data)
-        const dirName = node.nodeName;
-        const parentId = node.parentNodeId;
-        this.setState({
-            dirName : dirName,
-            parentId : parentId,
-            visible2: true,
-        });
         this.setState({
             visible1: true,
         });
+
     }
 
     // 显示编辑对话框
     showModalEdit = () => {
         const data = [...this.state.data];
-        const node = this.getNodeName(data)
-        const dirName = node.nodeName;
-        const parentId = node.parentNodeId;
+        this.getNodeName(data);
         this.setState({
-            dirName : dirName,
-            parentId : parentId,
             visible2: true,
         });
     }
@@ -71,7 +60,10 @@ class Directory extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             values.platform = this.state.platform;
-            values.parentId = this.state.selectedKey;
+            values.parentId = this.state.selectedKeys[0];
+            if (null == values.parentId)
+                values.parentId = this.state.rootId;
+            console.log("this.state.rootId:",this.state.rootId);
             console.log("values:",values);
             if (!err) {
                 promiseAjax.post('/dir/add', values).then(() => {
@@ -112,8 +104,8 @@ class Directory extends React.Component {
     handleOkEdit = (e) => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            values["platform"] = this.state.platform;
-            values["isDelete"] = 1;
+            values.platform = this.state.platform;
+            values.parentId = this.state.parentId;
             if (!err) {
                 values.id = this.state.selectedKeys[0];
                 promiseAjax.post('/dir/add', values).then(() => {
@@ -169,16 +161,20 @@ class Directory extends React.Component {
 
 
     getNodeName(data) {
-        var node = '';
         data.map((item) => {
             if (item.nodeId === this.state.selectedKeys[0]) {
-                node = item;
+                const dirName = item.nodeName;
+                const parentId = item.parentNodeId;
+                console.log("parentId:",parentId);
+                this.setState({
+                    dirName: dirName,
+                    parentId:parentId,
+                });
             } else {
                 if (item.children.length !== 0)
                     this.getNodeName(item.children);
             }
         });
-        return node;
     }
 
     /**
@@ -187,28 +183,29 @@ class Directory extends React.Component {
      */
     search = () => {
         const platform = this.props.platform;
-        console.log("path.tree:",platform);
         this.setState({
             platform: platform,
         });
         //ajax get请求  url 路径
         promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
             if (null != data) {
+                var rootId = data.nodeId;
                 var data = data.children;
                 // 将数据存入state  渲染页面
                 this.setState({
-                    data: data,
+                    data : data,
+                    rootId : rootId,
                 });
             }
         });
     }
 
 
-    onSelect = (selectedKeys,e) => {
-        const selectedKey = selectedKeys[0];
-        this.setState({ selectedKey:selectedKey });
+    onSelect = (selectedKeys) => {
+        this.setState({
+            selectedKeys:selectedKeys,
+        });
     }
-
 
 
 
@@ -265,6 +262,7 @@ class Directory extends React.Component {
                     defaultExpandedKeys={['0-0-0']}
                     onSelect={this.onSelect}
                     selectedKeys={this.state.selectedKeys}
+                    onDrop={this.onDrop}
                 >
                     {this.renderTreeNodes(this.state.data)}
                 </Tree>

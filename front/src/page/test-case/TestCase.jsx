@@ -7,6 +7,7 @@ import Animate from 'rc-animate';
 import 'rc-table/assets/index.css';
 import 'rc-table/assets/animation.css';;
 import DropdownList from '../common/DropdownList';
+import {promiseAjax} from "../common/an";
 
 /*
 *页面名称：新建、保存用例页面
@@ -87,16 +88,29 @@ export default class TestCase extends React.Component {
             cityOptions: [],
             citiesList:[cityData[provinceData[0]]],
             secondCityList:[cityData[provinceData[0]][0]],
-
+            platform:'',
         };
     }
 
     componentDidMount() {
         // 页面渲染完成，进行一次查询
+        this.initPlatform();
+        this.initPageOptions();
+        this.initElementOptions();
+        //初始化平台信息
 
-        this.provinceOptions()
-        this.cityOptions();
     }
+
+    initPlatform() {
+        // 获取平台信息
+        var platform = this.props.location.platform;
+        this.setState({
+            platform: platform,
+        });
+    }
+
+
+
 
     onProvinceChange(key,value){
         var key_i =  parseInt(key);
@@ -122,13 +136,34 @@ export default class TestCase extends React.Component {
             secondCityList : secondCityList,
         });
     }
-    cityOptions () {
+    initElementOptions () {
         const cityOptions = cityData[provinceData[0]].map(city => <Option key={city}>{city}</Option>);
         this.setState({
             cityOptions : cityOptions,
         });
     }
-    provinceOptions(key){
+    initPageOptions(key){
+        const platform = this.props.location.platform;
+        console.log("initPageOptions:",platform);
+        //ajax get请求  url 路径
+        promiseAjax.get(`/page/list?platform=${platform}`).then(data => {
+            if (data && data.length) {
+                var datalist = [];
+                for (var i = 0;i<data.length;i++) {
+                    datalist.push(
+                        {
+                            key : data[i].id.toString(),
+                            title : data[i].pageName,
+                        }
+                    )
+                }
+                // 将数据存入state  渲染页面
+                this.setState({
+                    data: datalist,
+                });
+            }
+        });
+
         console.log('provinceOptions-key:', key);
         const data = provinceData.map(province => <Option key={province}>{province}</Option>);
         this.setState({
@@ -150,8 +185,8 @@ export default class TestCase extends React.Component {
         const secondCityList = [...this.state.data];
         citiesList.push(cityData[provinceData[0]]);
         secondCityList.push(cityData[provinceData[0]][0]);
-        var key_i = parseInt(key)
-        var stepNo = key_i + 1
+        var key_i = parseInt(key);
+        var stepNo = key_i + 1;
         var el = {
             stepNo: stepNo.toString(),
             key: stepNo.toString(),
@@ -171,11 +206,13 @@ export default class TestCase extends React.Component {
     }
 
     render() {
+        const platform = this.props.location.platform;
+        console.log("testcase--render:",platform);
         return (
             <Layout>
                 <Sider width={260} style={{background: "#F0F2F5"}}>
                     <div style={{background: "#fff", padding: 10, minHeight: 960}}>
-                        <Directory/>
+                        <Directory platform={platform}/>
                     </div>
                 </Sider>
                 <Content style={{padding: "0px 0px 0px 20px"}}>

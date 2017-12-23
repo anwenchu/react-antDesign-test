@@ -28,6 +28,7 @@ export default class TestCaseManage extends React.Component{
             caseTile: '测试用例标题2，测试用例标题2',
             caseStatus: '失败',
         }],
+        platform:'',
     };
     columns = [{
         title: '编号',
@@ -80,27 +81,20 @@ export default class TestCaseManage extends React.Component{
         this.setState({
             platform: platform,
         })
-        var available = this.state.available;
-        var elementId = this.state.elementId;
-        var elementText = this.state.elementText;
 
-        var urlPath = `/element/search?platform=${platform}&available=${available}`;
-        if (elementId!=='')
-            urlPath = urlPath + `&elementId=${elementId}`;
-        if (elementText!=='')
-            urlPath = urlPath + `&elementText=${elementText}`;
+        var urlPath = `/testcase/list?platform=${platform}`;
         if (null !== dirId) {
             urlPath = urlPath + `&pageId=${dirId}`;
         }
         promiseAjax.get(urlPath).then(data => {
             console.log('data: ', data);
-            if (data) {
+            if (data && data.length!=0) {
                 //添加元素的顺序编号，在前端展示
                 for(var i=0;i<data.length;i++)
-                    data[i]["elementNo"] = (i+1).toString();
+                    data[i]["caseNo"] = (i+1).toString();
                 // 将数据存入state  渲染页面
                 this.setState({
-                    elements: data,
+                    data: data,
                 });
             }
         });
@@ -114,11 +108,10 @@ export default class TestCaseManage extends React.Component{
      *
      * @param id
      */
-    handleEdit = (id) => {
+    handleEdit() {
         const editPath = {
-            pathname: '/addtestcase',
-            query: 'edit',
-            id,
+            pathname : '/addtestcase',
+            platform : '',
         }
         this.props.history.push(editPath);
     }
@@ -130,6 +123,20 @@ export default class TestCaseManage extends React.Component{
         console.log('Delete', data);
         this.setState({ data });
     }
+
+    /**
+     *
+     * @param id
+     */
+    handleClickNew = (key) => {
+        const platfrominfo = this.state.platform;
+        const editPath = {
+            pathname : '/addtestcase',
+            platform : platfrominfo,
+        }
+        this.props.history.push(editPath);
+    }
+
 
     render() {
         const platform = this.getPlatform();
@@ -143,23 +150,10 @@ export default class TestCaseManage extends React.Component{
                 <Content style={{ padding: " 0px 0px 0px 20px" }}>
                     <div style={{ background: "#fff", padding: 50, minHeight: 960 }}>
                         <div className="gutter-example" style={{ padding: " 0px 0px 30px 0px" }}>
-                            <div style={{ padding: " 0px 0px 45px 0px" }}>
-                                <Row gutter={16} align="middle" >
-                                    <Col className="gutter-row" span={2}>
-                                        <div className="gutter-box" >状态：</div>
-                                    </Col>
-                                    <Col className="gutter-row" span={4}>
-                                        <DropdownList />
-                                    </Col>
-                                    <Col className="gutter-row" span={4}>
-                                        <Button type="primary">查找</Button>
-                                    </Col>
-                                </Row>
-                            </div>
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary"><Link to={"addtestcase"}>+ 新建</Link></Button>
+                                        <Button type="primary" onClick={this.handleClickNew}><Link to={"/addtestcase"}>+ 新建</Link></Button>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>

@@ -21,7 +21,7 @@ export default class TestPlaneCaseList extends React.Component {
         }, {
             title: '用例标题',
             dataIndex: 'caseTile',
-            render: text => <a href="#"><Link to={"addtestcase"}>{text}</Link></a>,
+            render: text => <a href="#"><Link to={"/addtestcase"}>{text}</Link></a>,
         }, {
             title: '执行次数',
             dataIndex: 'count',
@@ -31,10 +31,10 @@ export default class TestPlaneCaseList extends React.Component {
             dataIndex: 'action',
             render: (text, record) => (
                 <span>
-            <a href="#" onClick={e => this.upMove(record.key,e)}>上移</a>
-            <Divider type="vertical" />
-            <a href="#" onClick={e => this.downMove(record.key,e)}>下移</a>
-        </span>
+                    <a href="#" onClick={e => this.upMove(record.key,e)}>上移</a>
+                    <Divider type="vertical" />
+                    <a href="#" onClick={e => this.downMove(record.key,e)}>下移</a>
+                </span>
             ),
         }];
         this.state = {
