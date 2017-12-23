@@ -48,6 +48,9 @@ public class ElementServiceImpl implements ElementService{
             if (Objects.nonNull(vo.getElementText())) {
                 predicates.add(cb.like(root.get(ElementDomain.FIELD_ELEMENT_TEXT), vo.getElementText()));
             }
+            if (Objects.nonNull(vo.getPageId())) {
+                predicates.add(cb.equal(root.get(ElementDomain.FIELD_PAGE_ID), vo.getPageId()));
+            }
             // 只能查看未删除的
             predicates.add(cb.equal(root.get(ElementDomain.FIELD_IS_DELETE),0));
             return query.where(predicates.toArray(new Predicate[predicates.size()]))

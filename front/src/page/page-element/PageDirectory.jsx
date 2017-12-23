@@ -183,7 +183,16 @@ export default class PageDirectory extends React.Component {
 
     }
 
-
+    inputQuery = () => {
+        const {getFieldValue} = this.props.form;
+        const elementId = getFieldValue('elementId');
+        const elementText = getFieldValue('elementText');
+        const queryTerm = {
+            elementId,
+            elementText,
+        }
+        this.props.getQueryTerm(queryTerm);
+    }
 
 
     renderTreeNodes = (data) => {
@@ -212,18 +221,30 @@ export default class PageDirectory extends React.Component {
             },
         };
 
-
         return (
             <div>
                 <Divider>元素查找</Divider>
-                <div style={{ padding: " 15px" }}> 元素id：</div>
-                <div style={{ padding: " 0px 15px 0px 15px" }}>
-                    <Input placeholder="请输入元素id" />
-                </div>
-                <div style={{ padding: " 15px" }}> 元素文本：</div>
-                <div style={{ padding: " 0px 15px 15px 15px" }}>
-                    <Input placeholder="请输入元素文本" />
-                </div>
+                <Form layout="inline">
+                    <FormItem
+                        style={{ padding: " 15px" }}
+                        label="元素id：">
+                        {getFieldDecorator('elementId', {
+                            rules: [{ required: false, message: 'Please input your elementId!' }],
+                        })(
+                            <Input onBlur={this.inputQuery} placeholder="请输入元素id" />
+                        )}
+                    </FormItem>
+                    <FormItem
+                        style={{ padding: " 15px" }}
+                        label="元素文本：">
+                        {getFieldDecorator('elementText', {
+                            rules: [{ required: false, message: 'Please input your elementId!' }],
+                        })(
+                            <Input onBlur={this.inputQuery} placeholder="请输入元素文本" />
+                        )}
+                    </FormItem>
+
+                </Form>
                 <Divider>元素管理</Divider>
                 <Tree
                     showLine

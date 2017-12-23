@@ -64,5 +64,6 @@ public class ElementDomain {
     public static final String FIELD_PLATFORM = "platform";
     public static final String FIELD_ELEMENT_TEXT = "elementText";
     public static final String FIELD_ELEMENT_ID = "elementId";
+    public static final String FIELD_PAGE_ID = "pageId";
     public static final String FIELD_IS_DELETE = "isDelete";
 }

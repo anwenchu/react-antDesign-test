@@ -101,23 +101,14 @@ public class ElementController extends AbstractController{
     /**
      * 条件查询
      * 功能：默认查询未删除的所有元素
-     * @param platform 元素所属平台
+     * @param elementDomain 数据
      * @return
      */
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
-    public ResponseEntity search(@RequestParam(value = "platform") String platform,String elementText,String elementId,Long available) {
-
-
-        ElementDomain elementDomain = new ElementDomain();
-        elementDomain.setPlatform(platform);
-        elementDomain.setElementText(elementText);
-        elementDomain.setElementId(elementId);
-        elementDomain.setAvailable(available);
+    public ResponseEntity search(ElementDomain elementDomain) {
         elementService.findAll(elementDomain);
         return wrapperSupplier(() -> elementService.findAll(elementDomain), false);
-
-
     }
 
 }

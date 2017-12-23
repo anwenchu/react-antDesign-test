@@ -19,9 +19,8 @@ export default class ElementManage extends React.Component{
         id: '',
         platform : '', //平台信息，前一个页面传值过来，默认为android
         available : '0', //按状态查询标记,0:全部元素，1：可用，2：不可用
-        elementId : '',  //按照元素id查询标志
-        elementText : '', //按照元素文本查询标志
         pageId : '',
+        queryTerm: [],
 
     }
 
@@ -88,19 +87,18 @@ export default class ElementManage extends React.Component{
         })
         var available = this.state.available === '0' ? '' : this.state.available;
 
-        var elementId = this.state.elementId;
-        var elementText = this.state.elementText;
+        var elementId = this.state.queryTerm.elementId == undefined ? '' : this.state.queryTerm.elementId;
+        var elementText = this.state.queryTerm.elementText == undefined ? '' : this.state.queryTerm.elementText;
 
         var urlPath = `/element/search?platform=${platform}&available=${available}`;
         if (elementId!=='')
             urlPath = urlPath + `&elementId=${elementId}`;
         if (elementText!=='')
             urlPath = urlPath + `&elementText=${elementText}`;
-        if (null !== pageId) {
+        if (null !== pageId && typeof pageId === 'string') {
             urlPath = urlPath + `&pageId=${pageId}`;
         }
         promiseAjax.get(urlPath).then(data => {
-            console.log('data: ', data);
             if (data) {
                 //添加元素的顺序编号，在前端展示
                 for(var i=0;i<data.length;i++)
@@ -149,14 +147,11 @@ export default class ElementManage extends React.Component{
      */
     handleClick = (key) => {
         const platfrominfo = this.state.platform;
-        console.log("elemanage-handleClick-state:",this.state.platform);
         const editPath = {
             pathname : '/addelement',
             platform : platfrominfo,
         }
-        console.log("elemanage-handleClick-history1:",this.props.history);
         this.props.history.push(editPath);
-        console.log("elemanage-handleClick-history2:",this.props.history);
     }
 
     selectStatus = (key) => {
@@ -174,14 +169,20 @@ export default class ElementManage extends React.Component{
 
     }
 
+    getQueryTerm = (queryTerm) => {
+        console.log('getQueryTerm: ', queryTerm);
+        this.setState({
+            queryTerm,
+        })
+    }
+
     render() {
         const platform = this.getPlatform();
-        console.log("render---state.pageId:",this.state.pageId);
         return (
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5"}}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <PageDirectory platform={platform} selectPage={this.selectPage}/>
+                        <PageDirectory platform={platform} getForm={this.props.form} getQueryTerm={this.getQueryTerm} selectPage={this.selectPage}/>
                     </div>
                 </Sider>
                 <Content style={{ padding: "0px 0px 0px 20px" }}>
