@@ -4,14 +4,13 @@ import {
     Route,
     Link
 } from 'react-router-dom'
-import TestPlane from './page/test-plane/TestPlane';
 import IndexPage from './page/home/IndexPage';
 import ElementManage from './page/page-element/ElementManage';
 import ElementNew from './page/page-element/ElementNew-Older';
 import TestCaseManage from './page/test-case/TestCaseManage';
 import TestCase from './page/test-case/TestCase';
 import TestPlaneManage from './page/test-plane/TestPlaneManage';
-import TestPlaneForm from './page/test-plane/TestPlaneForm';
+import TestPlane from './page/test-plane/TestPlane';
 import { DatePicker, version, Layout, Menu, Breadcrumb } from "antd";
 import HeaderMenu from '../src/page/common/HeaderMenu';
 
@@ -26,7 +25,6 @@ export default class Router extends React.Component {
                         <HeaderMenu />
                         <Content style={{padding: 30 }}>
                             <div>
-                                <Route exact path="/testplane" component={TestPlane}/>
                                 <Route path="/index" component={IndexPage}/>
                                 <Route path="/elementlist/android"  component={ElementManage}/>
                                 <Route path="/elementlist/ios" component={ElementManage}/>
@@ -40,7 +38,7 @@ export default class Router extends React.Component {
                                 <Route path="/testplanemanage/ios" component={TestPlaneManage}/>
                                 <Route path="/testplanemanage/performance/ios" component={TestPlaneManage}/>
                                 <Route path="/testplanemanage/performance/android" component={TestPlaneManage}/>
-                                <Route path="/addplane" component={TestPlaneForm}/>
+                                <Route exact path="/addplane" component={TestPlane}/>
                             </div>
                         </Content>
                         <Footer style={{textAlign: "center"}}>

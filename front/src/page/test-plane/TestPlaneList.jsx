@@ -34,7 +34,7 @@ export default class TestPlaneList extends React.Component {
     }, {
         title: '计划标题',
         dataIndex: 'caseTile',
-        render: text => <a href="#"><Link to={"testplane"}>{text}</Link></a> ,
+        render: text => <a href="#"><Link to={"/addplane"}>{text}</Link></a> ,
     }, {
         title: '客户端版本',
         dataIndex: 'caseStatus',
