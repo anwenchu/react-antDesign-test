@@ -1,7 +1,6 @@
 import React from "react";
-import {Layout,Form, Input, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete} from "antd";
+import {Layout,Form, Input, Cascader, Select, Row, Col, Checkbox, Button, Table} from "antd";
 import "antd/dist/antd.css";
-import TestPlaneCaseList from './TestPlaneCaseList';
 import {promiseAjax} from '../common/an';
 /*
  *页面名称：新建、编辑测试计划页面
@@ -11,36 +10,37 @@ import {promiseAjax} from '../common/an';
 const {Header, Content, Footer} = Layout;
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
 const { TextArea } = Input;
-const residences = [{
-    value: '1',
-    label: '冒烟基本功能用例',
-    children: [{
-        value: '2',
-        label: '首页',
-        children: [{
-            value: '3',
-            label: '附近的人',
-        }],
-    }],
-}, {
-    value: '4',
-    label: '公共用例',
-    children: [{
-        value: '5',
-        label: '注册登录',
-    }],
-}];
 
 @Form.create()
 export default class TestPlane extends React.Component {
     state = {
-        confirmDirty: false,
-        autoCompleteResult: [],
         caseDir:[],
+        caseData:[],
+
     };
+    columns = [{
+        title: '编号',
+        dataIndex: 'caseNo',
+    }, {
+        title: '用例标题',
+        dataIndex: 'caseTile',
+        render: text => <a href="#"><Link to={"/addtestcase"}>{text}</Link></a>,
+    }, {
+        title: '执行次数',
+        dataIndex: 'count',
+        render: () => <Input placeholder="1" />
+    }, {
+        title: '操作',
+        dataIndex: 'action',
+        render: (text, record) => (
+            <span>
+                    <a href="#" onClick={e => this.upMove(record.key,e)}>上移</a>
+                    <Divider type="vertical" />
+                    <a href="#" onClick={e => this.downMove(record.key,e)}>下移</a>
+                </span>
+        ),
+    }];
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -58,23 +58,18 @@ export default class TestPlane extends React.Component {
 
 
     getData(data){
-        var newdata = data;
-        newdata.map((item) => {
-            item.value = item.nodeId;
-            item.lable = item.nodeName;
-            //console.log("getdata-item:",item);
-            while(item.children.length !== 0){
-                item = item.children
-                item.map((d) =>{
-                    d.value = d.nodeId;
-                    d.label = d.nodeName;
-                    item = d;
-                    }
-                )
-            }
+        return data.map((item) => {
+            var str = {};
+            str.value = item.nodeId;
+            str.label = item.nodeName;
+            if (item.children.length !== 0) {
+                str.children = this.getData(item.children);
+                return str;
 
+            }else {
+                return str;
+            }
         });
-        console.log("getdata-item:111",data);
     }
 
     /**
@@ -83,29 +78,91 @@ export default class TestPlane extends React.Component {
      */
     search = () => {
         const platform = this.props.location.platform;
-        this.setState({
-            platform: platform,
-        });
         //ajax get请求  url 路径
         promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
             if (null != data) {
-                var data = data.children;
                 // 将数据存入state  渲染页面
-                data = this.getData(data);
+                data = data.children;
+                var data = this.getData(data);
                 console.log("serch-getdata:",data);
                 this.setState({
                     caseDir : data,
                 });
             }
         });
-        console.log("serach-caseDir:",this.state.caseDir)
+    }
+
+
+    /**
+     * 查询用例目录
+     * @param all
+     */
+    caseListSearch = () => {
+        const platform = this.props.location.platform;
+        //ajax get请求  url 路径
+        promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
+            if (null != data) {
+                // 将数据存入state  渲染页面
+                data = data.children;
+                var data = this.getData(data);
+                console.log("serch-getdata:",data);
+                this.setState({
+                    caseDir : data,
+                });
+            }
+        });
+    }
+
+
+    onChange(value) {
+        console.log("onChange-value:",value);
     }
 
 
 
+    upMove(key,e) {
+
+        const data = [...this.state.data];
+        e.preventDefault();
+        var key_i = parseInt(key);
+
+        if (key_i > 1)
+        {
+            var temp = data[key_i-2];
+            data[key_i-2] = data[key_i-1];
+            data[key_i-1] = temp;
+
+            var tempKey = data[key_i-2].key;
+            data[key_i-2].key = data[key_i-1].key;
+            data[key_i-1].key = tempKey;
+        }
+        this.setState({ data });
+    }
+
+    downMove(key, e) {
+
+        const data = [...this.state.data];
+        e.preventDefault();
+        var key_i = parseInt(key);
+
+        if (key_i < data.length)
+        {
+            var temp = data[key_i];
+            data[key_i] = data[key_i-1];
+            data[key_i-1] = temp;
+
+            var tempKey = data[key_i].key;
+            data[key_i].key = data[key_i-1].key;
+            data[key_i-1].key = tempKey;
+        }
+        this.setState({ data });
+
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { autoCompleteResult } = this.state;
+        const datasource = this.state.caseDir;
+        console.log("render-datasource:",datasource);
 
         const formItemLayout = {
             labelCol: {
@@ -116,9 +173,18 @@ export default class TestPlane extends React.Component {
             },
         };
 
-        const websiteOptions = autoCompleteResult.map(website => (
-            <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-        ));
+        // rowSelection object indicates the need for row selection
+        const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Disabled User', // Column configuration not to be checked
+
+            }),
+        };
+
+
         return (
             <Content >
                 <div style={{background: "#fff", padding: 24, minHeight: 430}}>
@@ -202,11 +268,11 @@ export default class TestPlane extends React.Component {
                                     {getFieldDecorator('residence', {
                                         rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
                                     })(
-                                        <Cascader placeholder="请选择" options={residences} />
+                                        <Cascader placeholder="请选择" options={datasource} onChange={this.onChange}/>
                                     )}
                                 </FormItem>
                                 <FormItem>
-                                    <TestPlaneCaseList />
+                                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data}/>
                                 </FormItem>
                                 <FormItem>
                                     <Row gutter={16} align={"middle"} justify={"center"}>
