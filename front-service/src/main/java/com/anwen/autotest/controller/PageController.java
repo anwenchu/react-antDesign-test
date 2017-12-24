@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * Created by an_wch on 2017/12/13.
@@ -65,6 +67,21 @@ public class PageController extends AbstractController{
     @GetMapping(value = "/list")
     public ResponseEntity list(@RequestParam(value = "platform") String platform) {
         Long isDelete = 0L;//0:未删除，默认查询所有未删除的页面
+        //return wrapperSupplier(() -> pageRepository.findAll(), false);
+        return wrapperSupplier(() -> pageRepository.findElementDomainByIsDeleteAndPlatform(isDelete,platform), false);
+    }
+
+
+    /**
+     * 查询所有页面
+     * @return
+     */
+    @ApiOperation(value = "查询所有页面", notes = "查询所有页面")
+    @GetMapping(value = "/findAllPageElement")
+    public ResponseEntity findAllPageElement(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L;//0:未删除，默认查询所有未删除的页面
+        List<PageDomain> pageDomainList = pageRepository.findElementDomainByIsDeleteAndPlatform(isDelete,platform);
+//        for (Pa)
         //return wrapperSupplier(() -> pageRepository.findAll(), false);
         return wrapperSupplier(() -> pageRepository.findElementDomainByIsDeleteAndPlatform(isDelete,platform), false);
     }

@@ -38,7 +38,7 @@ export default class TestCase extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select size={"small"} defaultValue={provinceData[0]} style={{ width: 110 }} onChange={e => this.onProvinceChange(record.key,e)}>
+                <Select size={"small"} style={{ width: 110 }} onChange={e => this.onProvinceChange(record.key,e)}>
                     {this.state.provinceOptions}
                 </Select>
             ),
@@ -48,7 +48,7 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"} value={this.state.secondCityList[parseInt(record.key)-1]} style={{ width: 110 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
+                <Select size={"small"}  style={{ width: 110 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
                     {this.state.cityOptions}
                 </Select>
             ),
@@ -58,7 +58,34 @@ export default class TestCase extends React.Component {
             dataIndex: 'step',
             key: 'step',
             render: (text, record) => (
-                <DropdownList />
+                <div>
+                    <Select size={"small"}  style={{ width: 110 }} onChange={e =>this.onAction1Change(record.key,e)}>
+                        {this.state.action1}
+                    </Select>
+                    {
+                        (this.state.isAction2 == true && this.state.action2Type === '1') ?
+                            <Select size={"small"} style={{width: 110,marginLeft:15}}
+                                    onChange={e => this.onAction2Change(record.key, e)}>
+                                {this.state.action2}
+                            </Select> : null
+                    }
+                    {
+                        (this.state.isAction2 == true && this.state.action2Type === '2')?
+                            <input onBlur={e => this.onAction2Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                    }
+                    {
+                        (this.state.isAction3 == true && this.state.action3Type === '1') ?
+                            <Select size={"small"} style={{width: 110,marginLeft:15}}
+                                    onChange={e => this.onAction3Change(record.key, e)}>
+                                {this.state.action3}
+                            </Select> : null
+                    }
+                    {
+                        (this.state.isAction3 == true && this.state.action3Type === '2')?
+                            <input onBlur={e => this.onAction3Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                    }
+                </div>
+
             ),
             width: 400
         }, {
@@ -83,12 +110,34 @@ export default class TestCase extends React.Component {
                 stepNo: '1',
                 status: '通过',
             }],
-            secondCity: cityData[provinceData[0]][0],
+            // secondCity: cityData[provinceData[0]][0],
             provinceOptions: [], // 页面下拉列表数据
             cityOptions: [],   // 元素下拉列表数据
             //citiesList:[cityData[provinceData[0]]],  // 存储每一行的元素下拉列表数据
-            secondCityList:[cityData[provinceData[0]][0]],  // 存储每一行的默认元素下拉列表数据
+            // secondCityList:[cityData[provinceData[0]][0]],  // 存储每一行的默认元素下拉列表数据
+            action1: [],//步骤第1列数据
+            action2: [],//步骤第2列数据
+            action3: [],//步骤第3列数据
+            isAction1: false,
+            isAction2: false,
+            isAction3: false,
+            action1Type: '',
+            action2Type: '',
+            action3Type: '',
             platform:'',
+            // 以下是存的数据
+            postCaseSteps: [{
+                parentId: '',
+                actionId: '',
+                subtext: '',
+                stepNo: '',
+                pageId: '',
+                elementId: '',
+            }],
+            caseTitle: '',
+            setupCaseId: '',
+            teardownCaseId: ''
+
         };
     }
 
@@ -98,6 +147,217 @@ export default class TestCase extends React.Component {
         this.initPageOptions();
         this.initElementOptions(provinceData[0]);
         //初始化平台信息
+
+        //初始化page下拉列表
+        this.initPageSelect();
+        // 初始化步骤action下拉列表
+        this.initAction1();
+
+    }
+
+    initAction1() {
+        promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
+            if (rsp != null && rsp.length > 0) {
+                var actionSelect = [];
+                for (var i = 0; i < rsp.length; i++) {
+                    actionSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            actionName : rsp[i].actionName,
+                        }
+                    )
+                }
+                const data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                this.setState({
+                    action1: data
+                });
+            } else {
+                this.setState({
+                    action1: []
+                });
+            }
+        });
+    }
+
+    onAction1Change(key, id) {
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                actionId: id,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].actionId = id;
+        }
+        this.setState({
+            postCaseSteps,
+        })
+
+        promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
+            if (rsp != null && rsp.length > 0) {
+                var actionSelect = [];
+                var action2Type = '1';
+                var data;
+                for (var i = 0; i < rsp.length; i++) {
+                    if (rsp[i].category === 2) {
+                        action2Type = '2';
+                    }
+                    actionSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            actionName : rsp[i].actionName,
+                            category: rsp[i].category,
+                        }
+                    )
+                }
+                if (action2Type === '1') {
+                    data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                    this.setState({
+                        isAction2: true,
+                        action2: data,
+                        action2Type,
+                    });
+                } else {
+                    this.setState({
+                        isAction2: true,
+                        action2Type,
+                    });
+                }
+
+            } else {
+                this.setState({
+                    isAction2: false,
+                    action2: [],
+                });
+            }
+        });
+    }
+
+
+    onAction2Change(key, id) {
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                actionId: id,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].actionId = `${postCaseSteps[key].actionId},${id}`;
+        }
+        this.setState({
+            postCaseSteps,
+        })
+        promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
+            if (rsp != null && rsp.length > 0) {
+                var actionSelect = [];
+                var action3Type = '1';
+                var data;
+                for (var i = 0; i < rsp.length; i++) {
+                    console.log('rsp[i].category=====::', rsp[i].category);
+                    if (rsp[i].category === '2') {
+                        console.log('lalalalalal');
+                        action3Type = '2';
+                    }
+                    actionSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            actionName : rsp[i].actionName,
+                            category: rsp[i].category,
+                        }
+                    )
+                }
+                if (action3Type === '1') {
+                    data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                    this.setState({
+                        isAction3: true,
+                        action3: data,
+                        action3Type,
+                    });
+                } else {
+                    this.setState({
+                        isAction3: true,
+                        action3Type,
+                    });
+                }
+
+            } else {
+                this.setState({
+                    isAction3: false,
+                    action3: [],
+                });
+            }
+        });
+    }
+
+    onAction3Change(key, id) {
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                actionId: id,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].actionId = `${postCaseSteps[key].actionId},${id}`;
+        }
+        this.setState({
+            postCaseSteps,
+        })
+    }
+
+    onAction2Input(key, value) {
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                subtext: value,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].subtext = value;
+        }
+        this.setState({
+            postCaseSteps,
+        })
+    }
+
+    onAction3Input(key, value) {
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                subtext: value,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].subtext = value;
+        }
+        this.setState({
+            postCaseSteps,
+        })
+    }
+    initPageSelect() {
+        // const platform = this.props.location.platform;
+        const platform = 'android';
+        promiseAjax.get(`/page/list?platform=${platform}`).then((rsp) => {
+            if (rsp != null && rsp.length > 0) {
+                var pageSelect = [];
+                for (var i = 0; i < rsp.length; i++) {
+                    pageSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            pageName : rsp[i].pageName,
+                        }
+                    )
+                }
+                const data = pageSelect.map(province => <Option key={province.id}>{province.pageName}</Option>);
+                this.setState({
+                    provinceOptions: data
+                });
+            }
+        });
 
     }
 
@@ -110,34 +370,83 @@ export default class TestCase extends React.Component {
     }
 
 
-
     // 选择页面发生变化
     onProvinceChange(key,value){
-        console.log("onProvinceChange:value:",value);
-        var key_i =  parseInt(key);
-        //var citiesList = [...this.state.citiesList];
-        var secondCityList = [...this.state.secondCityList];
-        //citiesList[key_i-1] = cityData[value];
-        secondCityList[key_i-1] = cityData[value][0]
+        const platform = 'android';
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        console.log('====postCaseSteps====:', postCaseSteps);
+        console.log('====key====:', key);
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                pageId: value,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].pageId = value;
+        }
         this.setState({
-            cities: cityData[value],
-            secondCity: cityData[value][0],
-            //citiesList : citiesList,
-            secondCityList : secondCityList,
-
+            postCaseSteps,
+        })
+        promiseAjax.get(`/element/search?platform=${platform}&pageId=${value}`).then((rsp) => {
+            if (rsp != null && rsp.length > 0) {
+                var pageSelect = [];
+                for (var i = 0; i < rsp.length; i++) {
+                    pageSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            elementName : rsp[i].elementName,
+                        }
+                    )
+                }
+                const data = pageSelect.map(province => <Option key={province.id}>{province.elementName}</Option>);
+                this.setState({
+                    cityOptions: data
+                });
+            } else {
+                this.setState({
+                    cityOptions: []
+                });
+            }
         });
-        this.initElementOptions(value);
+
+        // var key_i =  parseInt(key);
+        // //var citiesList = [...this.state.citiesList];
+        // var secondCityList = [...this.state.secondCityList];
+        // //citiesList[key_i-1] = cityData[value];
+        // secondCityList[key_i-1] = cityData[value][0]
+        // this.setState({
+        //     cities: cityData[value],
+        //     secondCity: cityData[value][0],
+        //     //citiesList : citiesList,
+        //     secondCityList : secondCityList,
+        //
+        // });
+        // this.initElementOptions(value);
 
     }
 
     onSecondCityChange (key,value) {
-        var key_i =  parseInt(key);
-        var secondCityList = [...this.state.secondCityList];
-        secondCityList[key_i-1] = value;
+        // 保存选中
+        const postCaseSteps = this.state.postCaseSteps;
+        if (postCaseSteps.length <= key) {
+            const caseStep = {
+                elementId: value,
+            }
+            postCaseSteps.push(caseStep);
+        } else {
+            postCaseSteps[key].elementId = value;
+        }
         this.setState({
-            secondCity: value,
-            secondCityList : secondCityList,
-        });
+            postCaseSteps,
+        })
+        // var key_i =  parseInt(key);
+        // var secondCityList = [...this.state.secondCityList];
+        // secondCityList[key_i-1] = value;
+        // this.setState({
+        //     secondCity: value,
+        //     secondCityList : secondCityList,
+        // });
     }
     initElementOptions (value) {
         const cityOptions = cityData[value].map(city => <Option key={city}>{city}</Option>);
@@ -146,9 +455,8 @@ export default class TestCase extends React.Component {
         });
     }
     // 初始化页面
-    initPageOptions(key){
+    initPageOptions(key) {
         const platform = this.props.location.platform;
-        console.log("initPageOptions:",platform);
         var datalist = [];
         //ajax get请求  url 路径
         promiseAjax.get(`/page/list?platform=${platform}`).then(data => {
@@ -168,17 +476,11 @@ export default class TestCase extends React.Component {
                 });
             }
         });
-        console.log("initpageOptions:",datalist);
 
-        console.log('provinceOptions-key:', key);
-        const data = provinceData.map(province => <Option key={province}>{province}</Option>);
-        this.setState({
-            provinceOptions: data
-        });
+
     }
 
     onDelete(key, e) {
-        console.log('Delete', key);
         e.preventDefault();
         const data = this.state.data.filter(item => item.key !== key);
         this.setState({ data });
@@ -212,9 +514,33 @@ export default class TestCase extends React.Component {
         this.setState({ data });
     }
 
+    setTitle(value) {
+        console.log('????????', value);
+        this.setState({
+            caseTitle: value
+        });
+    }
+
+    SetupCaseId (value){
+        this.setState({
+            setupCaseId: value
+        });
+    }
+
+    TeardownCaseId = (value) => {
+        this.setState({
+            teardownCaseId: value
+        });
+    }
+
+    submit = () => {
+        console.log('====this.state.postCaseSteps====', this.state.postCaseSteps);
+        console.log('====this.state.caseTitle====', this.state.caseTitle);
+        console.log('====this.state.setupCaseId====', this.state.setupCaseId);
+        console.log('====this.state.teardownCaseId====', this.state.teardownCaseId);
+    }
     render() {
         const platform = this.props.location.platform;
-        console.log("testcase--render:",platform);
         return (
             <Layout>
                 <Sider width={260} style={{background: "#F0F2F5"}}>
@@ -232,7 +558,7 @@ export default class TestCase extends React.Component {
                                     </Col>
                                     <Col className="gutter-row" span={21}>
                                         <div className="gutter-box">
-                                            <Input placeholder="请输入用例标题"/>
+                                            <Input onblur={(e) => this.setTitle(e)}  placeholder="请输入用例标题"/>
                                         </div>
                                     </Col>
                                 </Row>
@@ -244,7 +570,7 @@ export default class TestCase extends React.Component {
                                     </Col>
                                     <Col className="gutter-row" span={6}>
                                         <div className="gutter-box">
-                                            <Input placeholder="请输入用例编号"/>
+                                            <Input onblur={(e) => this.SetupCaseId(e)} placeholder="请输入用例编号"/>
                                         </div>
                                     </Col>
                                 </Row>
@@ -269,19 +595,17 @@ export default class TestCase extends React.Component {
                                     </Col>
                                     <Col className="gutter-row" span={6}>
                                         <div className="gutter-box">
-                                            <Input placeholder="请输入用例编号"/>
+                                            <Input onblur={(e) => this.TeardownCaseId(e)}  placeholder="请输入用例编号"/>
                                         </div>
                                     </Col>
                                 </Row>
                             </div>
                             <div style={{padding: " 30px 0px 0px 0px"}}>
-                                this.state.flag === null  ? '' : {
                                 <Row gutter={16} align="middle">
                                     <Col className="gutter-row" offset={20} span={2}>
-                                        <Button type="primary">保存</Button>
+                                        <Button onClick={this.submit} type="primary">保存</Button>
                                     </Col>
                                 </Row>
-                            }
 
                             </div>
                         </div>
