@@ -87,6 +87,20 @@ public class ElementController extends AbstractController{
 
     }
 
+    /**
+     * 获取元素列表
+     * 功能：根据平台信息，默认查询未删除的所有元素
+     * @param platform 元素所属平台
+     * @return
+     */
+    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
+    @GetMapping(value = "/findByPageId")
+    public ResponseEntity findByPageId(@RequestParam(value = "platform") String platform, @RequestParam(value = "pageId") String pageId) {
+        Long isDelete = 0L;
+        return wrapperSupplier(() -> elementRepository.findAll(), false);
+
+    }
+
 
     /**
      * 查询元素

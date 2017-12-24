@@ -35,10 +35,10 @@ public class CaseStepDomain {
     //步骤编号
     @Column(name = "step_no", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String stepNo;
-    //步骤编号
+    //页面id
     @Column(name = "page_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String pageId;
-    //步骤编号
+    //元素id
     @Column(name = "element_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String elementId;
 

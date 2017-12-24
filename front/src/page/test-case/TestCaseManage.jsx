@@ -37,7 +37,7 @@ export default class TestCaseManage extends React.Component{
         title: '用例标题',
         dataIndex: 'caseTile',
         render: (text, record) => (
-            <a href="#" onClick={() => this.handleEdit(record.key)}><Link to={"addtestcase"}>{text}</Link></a>
+            <a onClick={() => this.handleEdit(record.key)}>{text}</a>
         )
     }, {
         title: '状态',
@@ -111,7 +111,7 @@ export default class TestCaseManage extends React.Component{
     handleEdit() {
         const editPath = {
             pathname : '/addtestcase',
-            platform : '',
+            platform : this.getPlatform(),
         }
         this.props.history.push(editPath);
     }
