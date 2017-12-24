@@ -80,16 +80,12 @@ const {Header} = Layout;
 
                         >
                             <Menu.SubMenu key="1" title="测试计划">
-                                <Menu.Item key="1.1" ><Link to={"/testplanemanage/android"}>android自动化测试计划</Link></Menu.Item>
-                                <Menu.Item key="1.2"><Link to={"/testplanemanage/ios"}>ios自动化测试计划</Link></Menu.Item>
-                                <Menu.Item key="1.3"><Link to={"/testplanemanage/performance/android"}>android性能基准测试计划</Link></Menu.Item>
-                                <Menu.Item key="1.4"><Link to={"/testplanemanage/performance/ios"}>ios性能基准测试计划</Link></Menu.Item>
+                                <Menu.Item key="1.1" ><Link to={"/testplanemanage/android"}>android测试计划</Link></Menu.Item>
+                                <Menu.Item key="1.2"><Link to={"/testplanemanage/ios"}>ios测试计划</Link></Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu key="2" title="用例管理">
-                                <Menu.Item key="2.1"><Link to={"/testcasemanage/android"}>android自动化用例管理</Link></Menu.Item>
-                                <Menu.Item key="2.2"><Link to={"/testcasemanage/ios"}>ios自动化用例管理</Link></Menu.Item>
-                                <Menu.Item key="2.3"><Link to={"/testcasemanage/performance/andorid"}>android性能基准测试用例管理</Link></Menu.Item>
-                                <Menu.Item key="2.4"><Link to={"/testcasemanage/performance/ios"}>ios性能基准测试用例管理</Link></Menu.Item>
+                                <Menu.Item key="2.1"><Link to={"/testcasemanage/android"}>android用例管理</Link></Menu.Item>
+                                <Menu.Item key="2.2"><Link to={"/testcasemanage/ios"}>ios用例管理</Link></Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu key="3" title="测试报告">
                                 <Menu.Item key="3.1">android自动化测试报告</Menu.Item>

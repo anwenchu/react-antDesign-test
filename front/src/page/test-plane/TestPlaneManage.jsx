@@ -1,10 +1,10 @@
 import React from "react";
-import { DatePicker, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
+import { version, Layout, Popconfirm, Divider,Row, Col ,Table, Button} from "antd";
 import "antd/dist/antd.css";
-import TestPlaneList from './TestPlaneList';
 import {
     Link
 } from 'react-router-dom'
+import {promiseAjax} from "../common/an";
 /*
 *页面名称：测试计划管理页面
 * 入口：点击导航中的测试计划管理进入（ios入口进入数据为ios测试计划，android入口进入数据为android测试计划）
@@ -14,6 +14,112 @@ const { Header, Content, Footer } = Layout;
 
 
 export default class TestPlaneManage extends React.Component {
+
+
+    state = {
+        data : [{
+            key: '1',
+            caseNo: '1',
+            caseTile: 'New York No. 1 Lake Park',
+            caseStatus: 'android851',
+        }, {
+            key: '2',
+            caseNo: '2',
+            caseTile: 'New York No. 1 Lake Park',
+            caseStatus: 'ios851',
+        }],
+    };
+
+    columns = [{
+        title: '编号',
+        dataIndex: 'caseNo',
+    }, {
+        title: '计划标题',
+        dataIndex: 'caseTile',
+        render: text => <a href="#"><Link to={"/addplane"}>{text}</Link></a> ,
+    }, {
+        title: '客户端版本',
+        dataIndex: 'caseStatus',
+    }, {
+        title: '操作',
+        dataIndex: 'action',
+        render: (text, record) => (
+            <span>
+                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.key, e)}>
+                    <a href="#">删除</a>
+                </Popconfirm>
+            </span>
+        ),
+    }];
+
+    onDelete(key, e) {
+        console.log('Delete', key);
+        e.preventDefault();
+        const data = this.state.data.filter(item => item.key !== key);
+        console.log('Delete', data);
+        this.setState({ data });
+    }
+
+
+
+    // 获取平台信息
+    getPlatform(){
+        var platform;
+        if (this.props.location.pathname.indexOf('ios') > 0) {
+            platform = 'ios'
+        } else {
+            platform = 'android'
+        }
+        return platform;
+    }
+
+
+    /**
+     * 查询，获取元素列表信息
+     */
+    search = (pageId) => {
+        //ajax get请求  url 路径
+        var platform = this.getPlatform();
+        this.setState({
+            platform: platform,
+        })
+
+        promiseAjax.get(`/plane/list?platform=${platform}`).then(data => {
+            if (data) {
+                //添加元素的顺序编号，在前端展示
+                for(var i=0;i<data.length;i++)
+                    data[i]["elementNo"] = (i+1).toString();
+                // 将数据存入state  渲染页面
+                this.setState({
+                    elements: data,
+                });
+            }
+        });
+    }
+
+
+    // react 生命周期函数
+    componentDidMount() {
+        //初始化数据
+        this.search()
+    }
+
+
+    /**
+     * 删除
+     * @param id
+     */
+
+    handleDelete = (id) => {
+        promiseAjax.del(`/element/delete/${id}`).then(() => {
+            // todo: low一点 重新查询 可以优化
+            this.search();
+        });
+    }
+
+
+
+
     render() {
         return(
             <Content>
@@ -22,7 +128,10 @@ export default class TestPlaneManage extends React.Component {
                         <Button type="primary"><Link to={"/addplane"}>+ 新建测试计划</Link></Button>
                     </div>
                     <div style={{ padding: " 0px 0px 15px 0px" }}>
-                        <TestPlaneList />
+                        <Table
+                            dataSource={this.state.data}
+                            columns={this.columns}
+                        />
                     </div>
                 </div>
             </Content>

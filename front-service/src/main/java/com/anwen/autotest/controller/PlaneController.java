@@ -61,8 +61,10 @@ public class PlaneController extends AbstractController{
      */
     @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
     @GetMapping(value = "/list")
-    public ResponseEntity list() {
-        return wrapperSupplier(() -> planeRepository.findAll(), false);
+    public ResponseEntity list(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L;//0:未删除，默认查询所有未删除的页面
+        //return wrapperSupplier(() -> planeRepository.findAll(), false);
+        return wrapperSupplier(() -> planeRepository.findPlaneDomainByIsDeleteAndPlatform(isDelete,platform), false);
     }
 
     /**

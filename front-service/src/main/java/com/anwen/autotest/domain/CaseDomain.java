@@ -41,9 +41,6 @@ public class CaseDomain {
     //元素所属平台：android、ios
     @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;
-    //用例类别
-    @Column(name = "case_category", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String caseCategory;
     //删除状态
     @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
     private Long isDelete;
