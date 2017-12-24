@@ -1,7 +1,10 @@
 import React from "react";
-import {Layout,Form, Input, Cascader, Select, Row, Col, Checkbox, Button, Table} from "antd";
+import {Layout,Form, Input, Cascader, Divider, Row, Col, Checkbox, Button, Table} from "antd";
 import "antd/dist/antd.css";
 import {promiseAjax} from '../common/an';
+import {
+    Link
+} from 'react-router-dom'
 /*
  *页面名称：新建、编辑测试计划页面
  * 入口：测试计划管理页面点击新建测试计划进入
@@ -17,14 +20,13 @@ export default class TestPlane extends React.Component {
     state = {
         caseDir:[],
         caseData:[],
-
     };
     columns = [{
         title: '编号',
-        dataIndex: 'caseNo',
+        dataIndex: 'id',
     }, {
         title: '用例标题',
-        dataIndex: 'caseTile',
+        dataIndex: 'caseTitle',
         render: text => <a href="#"><Link to={"/addtestcase"}>{text}</Link></a>,
     }, {
         title: '执行次数',
@@ -93,29 +95,20 @@ export default class TestPlane extends React.Component {
     }
 
 
-    /**
-     * 查询用例目录
-     * @param all
-     */
-    caseListSearch = () => {
+    // 根据选择的目录展示用例信息
+    onChange(value) {
+        console.log("onChange-value:",value);
         const platform = this.props.location.platform;
         //ajax get请求  url 路径
-        promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
+        promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${value[value.length-1]}`).then(data => {
             if (null != data) {
                 // 将数据存入state  渲染页面
-                data = data.children;
-                var data = this.getData(data);
-                console.log("serch-getdata:",data);
+                console.log("onChange-data",data);
                 this.setState({
-                    caseDir : data,
+                    caseData : data,
                 });
             }
         });
-    }
-
-
-    onChange(value) {
-        console.log("onChange-value:",value);
     }
 
 
@@ -162,7 +155,8 @@ export default class TestPlane extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const datasource = this.state.caseDir;
-        console.log("render-datasource:",datasource);
+        const casesource = this.state.caseData;
+        console.log("render-casesource",casesource);
 
         const formItemLayout = {
             labelCol: {
@@ -268,11 +262,11 @@ export default class TestPlane extends React.Component {
                                     {getFieldDecorator('residence', {
                                         rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
                                     })(
-                                        <Cascader placeholder="请选择" options={datasource} onChange={this.onChange}/>
+                                        <Cascader placeholder="请选择" options={datasource} onChange={this.onChange.bind(this)}/>
                                     )}
                                 </FormItem>
                                 <FormItem>
-                                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data}/>
+                                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={casesource}/>
                                 </FormItem>
                                 <FormItem>
                                     <Row gutter={16} align={"middle"} justify={"center"}>
