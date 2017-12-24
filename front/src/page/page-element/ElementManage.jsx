@@ -125,35 +125,6 @@ export default class ElementManage extends React.Component{
     }
 
 
-
-    /**
-     * 编辑
-     * @param id
-     */
-    handleEdit = (id) => {
-        const platfrominfo = this.state.platform;
-        const editPath = {
-            pathname: '/addelement',
-            query: 'edit',
-            id,
-            platform:platfrominfo,
-        }
-        this.props.history.push(editPath);
-    }
-
-    /**
-     *
-     * @param id
-     */
-    handleClick = (key) => {
-        const platfrominfo = this.state.platform;
-        const editPath = {
-            pathname : '/addelement',
-            platform : platfrominfo,
-        }
-        this.props.history.push(editPath);
-    }
-
     selectStatus = (key) => {
         const available = key;
         this.setState({

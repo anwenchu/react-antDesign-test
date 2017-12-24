@@ -54,7 +54,7 @@ export default class ElementEidt extends React.Component {
             values.platform = platform;
             values.id = id;
             if (!err) {
-                promiseAjax.post('/element/add', values).then(() => {
+                promiseAjax.put('/element/update', values).then(() => {
                     form.resetFields();
                     this.setState({ visible: false });
                 });
