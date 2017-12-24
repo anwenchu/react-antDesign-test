@@ -42,15 +42,6 @@ export default class TestPlaneManage extends React.Component {
         ),
     }];
 
-    onDelete(key, e) {
-        console.log('Delete', key);
-        e.preventDefault();
-        const data = this.state.data.filter(item => item.key !== key);
-        console.log('Delete', data);
-        this.setState({ data });
-    }
-
-
 
     // 获取平台信息
     getPlatform(){
@@ -107,12 +98,15 @@ export default class TestPlaneManage extends React.Component {
 
 
 
+
+
     render() {
+        const platform = this.getPlatform();
         return(
             <Content>
                 <div style={{ background: "#fff", padding: 20, minHeight: 450 }}>
                     <div style={{ padding: " 10px 0px 20px 0px" }}>
-                        <Button type="primary"><Link to={"/addplane"}>+ 新建测试计划</Link></Button>
+                        <Button type="primary" ><Link to={{platform:platform,pathname:"/addplane"}}>+ 新建测试计划</Link></Button>
                     </div>
                     <div style={{ padding: " 0px 0px 15px 0px" }}>
                         <Table

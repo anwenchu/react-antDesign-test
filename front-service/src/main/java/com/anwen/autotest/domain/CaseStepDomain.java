@@ -23,15 +23,9 @@ public class CaseStepDomain {
     //用例id
     @Column(name = "case_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String caseId;
-    //父节点
-    @Column(name = "parent_id", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String parentId;
     //行为id
     @Column(name = "action_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String actionId;
-    //二级行为id
-    @Column(name = "subaction_id", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String subactionId;
     //输入文本
     @Column(name = "subtext", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String subtext;
@@ -41,4 +35,11 @@ public class CaseStepDomain {
     //步骤编号
     @Column(name = "step_no", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String stepNo;
+    //步骤编号
+    @Column(name = "page_id", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String pageId;
+    //步骤编号
+    @Column(name = "element_id", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String elementId;
+
 }
