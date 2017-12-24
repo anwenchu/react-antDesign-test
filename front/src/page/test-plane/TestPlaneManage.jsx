@@ -97,9 +97,6 @@ export default class TestPlaneManage extends React.Component {
 
 
 
-
-
-
     render() {
         const platform = this.getPlatform();
         return(

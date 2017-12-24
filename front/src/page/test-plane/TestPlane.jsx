@@ -15,21 +15,21 @@ const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
 const { TextArea } = Input;
 const residences = [{
-    value: '冒烟基本功能用例',
+    value: '1',
     label: '冒烟基本功能用例',
     children: [{
-        value: '首页',
+        value: '2',
         label: '首页',
         children: [{
-            value: '附近的人',
+            value: '3',
             label: '附近的人',
         }],
     }],
 }, {
-    value: '公共用例',
+    value: '4',
     label: '公共用例',
     children: [{
-        value: '注册登录',
+        value: '5',
         label: '注册登录',
     }],
 }];
@@ -56,12 +56,33 @@ export default class TestPlane extends React.Component {
         this.search()
     }
 
+
+    getData(data){
+        var newdata = data;
+        newdata.map((item) => {
+            item.value = item.nodeId;
+            item.lable = item.nodeName;
+            //console.log("getdata-item:",item);
+            while(item.children.length !== 0){
+                item = item.children
+                item.map((d) =>{
+                    d.value = d.nodeId;
+                    d.label = d.nodeName;
+                    item = d;
+                    }
+                )
+            }
+
+        });
+        console.log("getdata-item:111",data);
+    }
+
     /**
      * 查询用例目录
      * @param all
      */
     search = () => {
-        const platform = this.props.platform;
+        const platform = this.props.location.platform;
         this.setState({
             platform: platform,
         });
@@ -70,11 +91,14 @@ export default class TestPlane extends React.Component {
             if (null != data) {
                 var data = data.children;
                 // 将数据存入state  渲染页面
+                data = this.getData(data);
+                console.log("serch-getdata:",data);
                 this.setState({
                     caseDir : data,
                 });
             }
         });
+        console.log("serach-caseDir:",this.state.caseDir)
     }
 
 
