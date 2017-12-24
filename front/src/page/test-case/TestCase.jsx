@@ -84,10 +84,10 @@ export default class TestCase extends React.Component {
                 status: '通过',
             }],
             secondCity: cityData[provinceData[0]][0],
-            provinceOptions: [],
-            cityOptions: [],
-            citiesList:[cityData[provinceData[0]]],
-            secondCityList:[cityData[provinceData[0]][0]],
+            provinceOptions: [], // 页面下拉列表数据
+            cityOptions: [],   // 元素下拉列表数据
+            //citiesList:[cityData[provinceData[0]]],  // 存储每一行的元素下拉列表数据
+            secondCityList:[cityData[provinceData[0]][0]],  // 存储每一行的默认元素下拉列表数据
             platform:'',
         };
     }
@@ -96,7 +96,7 @@ export default class TestCase extends React.Component {
         // 页面渲染完成，进行一次查询
         this.initPlatform();
         this.initPageOptions();
-        this.initElementOptions();
+        this.initElementOptions(provinceData[0]);
         //初始化平台信息
 
     }
@@ -111,20 +111,23 @@ export default class TestCase extends React.Component {
 
 
 
-
+    // 选择页面发生变化
     onProvinceChange(key,value){
+        console.log("onProvinceChange:value:",value);
         var key_i =  parseInt(key);
-        var citiesList = [...this.state.citiesList];
+        //var citiesList = [...this.state.citiesList];
         var secondCityList = [...this.state.secondCityList];
-        citiesList[key_i-1] = cityData[value];
+        //citiesList[key_i-1] = cityData[value];
         secondCityList[key_i-1] = cityData[value][0]
         this.setState({
             cities: cityData[value],
             secondCity: cityData[value][0],
-            citiesList : citiesList,
+            //citiesList : citiesList,
             secondCityList : secondCityList,
 
         });
+        this.initElementOptions(value);
+
     }
 
     onSecondCityChange (key,value) {
@@ -136,19 +139,20 @@ export default class TestCase extends React.Component {
             secondCityList : secondCityList,
         });
     }
-    initElementOptions () {
-        const cityOptions = cityData[provinceData[0]].map(city => <Option key={city}>{city}</Option>);
+    initElementOptions (value) {
+        const cityOptions = cityData[value].map(city => <Option key={city}>{city}</Option>);
         this.setState({
             cityOptions : cityOptions,
         });
     }
+    // 初始化页面
     initPageOptions(key){
         const platform = this.props.location.platform;
         console.log("initPageOptions:",platform);
+        var datalist = [];
         //ajax get请求  url 路径
         promiseAjax.get(`/page/list?platform=${platform}`).then(data => {
             if (data && data.length) {
-                var datalist = [];
                 for (var i = 0;i<data.length;i++) {
                     datalist.push(
                         {
@@ -157,12 +161,14 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
+
                 // 将数据存入state  渲染页面
                 this.setState({
                     data: datalist,
                 });
             }
         });
+        console.log("initpageOptions:",datalist);
 
         console.log('provinceOptions-key:', key);
         const data = provinceData.map(province => <Option key={province}>{province}</Option>);
@@ -181,10 +187,11 @@ export default class TestCase extends React.Component {
     onAdd(key, e) {
 
         const data = [...this.state.data];
-        const citiesList = [...this.state.data];
+        //const citiesList = [...this.state.data];
         const secondCityList = [...this.state.data];
-        citiesList.push(cityData[provinceData[0]]);
+        //citiesList.push(cityData[provinceData[0]]);
         secondCityList.push(cityData[provinceData[0]][0]);
+        this.initElementOptions(provinceData[0]);
         var key_i = parseInt(key);
         var stepNo = key_i + 1;
         var el = {
@@ -268,11 +275,14 @@ export default class TestCase extends React.Component {
                                 </Row>
                             </div>
                             <div style={{padding: " 30px 0px 0px 0px"}}>
+                                this.state.flag === null  ? '' : {
                                 <Row gutter={16} align="middle">
                                     <Col className="gutter-row" offset={20} span={2}>
                                         <Button type="primary">保存</Button>
                                     </Col>
                                 </Row>
+                            }
+
                             </div>
                         </div>
                     </div>
