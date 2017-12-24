@@ -17,35 +17,25 @@ export default class TestPlaneManage extends React.Component {
 
 
     state = {
-        data : [{
-            key: '1',
-            caseNo: '1',
-            caseTile: 'New York No. 1 Lake Park',
-            caseStatus: 'android851',
-        }, {
-            key: '2',
-            caseNo: '2',
-            caseTile: 'New York No. 1 Lake Park',
-            caseStatus: 'ios851',
-        }],
+        testPlane:[],
     };
 
     columns = [{
         title: '编号',
-        dataIndex: 'caseNo',
+        dataIndex: 'id',
     }, {
         title: '计划标题',
-        dataIndex: 'caseTile',
+        dataIndex: 'testPlaneName',
         render: text => <a href="#"><Link to={"/addplane"}>{text}</Link></a> ,
     }, {
         title: '客户端版本',
-        dataIndex: 'caseStatus',
+        dataIndex: 'appVersion',
     }, {
         title: '操作',
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.key, e)}>
+                <Popconfirm title="Delete?" onConfirm={e => this.handleDelete(record.id, e)}>
                     <a href="#">删除</a>
                 </Popconfirm>
             </span>
@@ -80,9 +70,6 @@ export default class TestPlaneManage extends React.Component {
     search = (pageId) => {
         //ajax get请求  url 路径
         var platform = this.getPlatform();
-        this.setState({
-            platform: platform,
-        })
 
         promiseAjax.get(`/plane/list?platform=${platform}`).then(data => {
             if (data) {
@@ -91,7 +78,7 @@ export default class TestPlaneManage extends React.Component {
                     data[i]["elementNo"] = (i+1).toString();
                 // 将数据存入state  渲染页面
                 this.setState({
-                    elements: data,
+                    testPlane: data,
                 });
             }
         });
@@ -111,7 +98,7 @@ export default class TestPlaneManage extends React.Component {
      */
 
     handleDelete = (id) => {
-        promiseAjax.del(`/element/delete/${id}`).then(() => {
+        promiseAjax.del(`/plane/delete/${id}`).then(() => {
             // todo: low一点 重新查询 可以优化
             this.search();
         });
@@ -129,7 +116,7 @@ export default class TestPlaneManage extends React.Component {
                     </div>
                     <div style={{ padding: " 0px 0px 15px 0px" }}>
                         <Table
-                            dataSource={this.state.data}
+                            dataSource={this.state.testPlane}
                             columns={this.columns}
                         />
                     </div>

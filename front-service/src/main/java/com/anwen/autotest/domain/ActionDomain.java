@@ -26,4 +26,7 @@ public class ActionDomain {
     //父节点
     @Column(name = "parent_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String parentId;
+    //控件类型
+    @Column(name = "category", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String category;
 }

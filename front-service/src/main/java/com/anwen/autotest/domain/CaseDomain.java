@@ -32,12 +32,6 @@ public class CaseDomain {
     //后置用例id
     @Column(name = "directory_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String directoryId;
-    //选中状态
-    @Column(name = "is_select", columnDefinition = "int(x) COMMENT 'xx'")
-    private Long isSelect;
-    //执行次数
-    @Column(name = "run_count", columnDefinition = "int(x) COMMENT 'xx'")
-    private Long runCount;
     //元素所属平台：android、ios
     @Column(name = "platform", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String platform;

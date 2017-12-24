@@ -38,7 +38,7 @@ public class PlaneController extends AbstractController{
      * @return
      */
     @ApiOperation(value = "删除元素", notes = "删除元素")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
         return wrapperConsumer((p) -> planeRepository.delete(p), id);
     }
