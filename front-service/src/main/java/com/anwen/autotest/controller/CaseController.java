@@ -76,5 +76,17 @@ public class CaseController extends AbstractController{
         return wrapperSupplier(() -> caseRepository.findOne(id), false);
     }
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "查询目录", notes = "查询目录")
+    @GetMapping(value = "/search")
+    public ResponseEntity detail(String directoryId,String platform) {
+        Long isDelete = 0L;
+
+        return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId,platform,isDelete), false);
+    }
+
 
 }

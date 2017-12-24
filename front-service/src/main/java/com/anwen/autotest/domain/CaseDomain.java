@@ -11,7 +11,7 @@ import javax.persistence.*;
  * Created by an_wch on 2017/12/13.
  */
 @Entity
-@Table(name = "at_testCase")
+@Table(name = "at_testcase")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
