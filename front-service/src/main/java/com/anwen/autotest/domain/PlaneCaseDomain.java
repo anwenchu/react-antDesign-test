@@ -30,6 +30,6 @@ public class PlaneCaseDomain {
     @Column(name = "plane_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String planeId;
     //测试排序
-    @Column(name = "order", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String order;
+    @Column(name = "order_no", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String orderNo;
 }

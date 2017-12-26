@@ -38,7 +38,7 @@ export default class TestPlaneManage extends React.Component {
         render: (text, record) => (
             <span>
                 <Popconfirm title="Delete?" onConfirm={e => this.handleDelete(record.id, e)}>
-                    删除
+                    <a>删除</a>
                 </Popconfirm>
             </span>
         ),

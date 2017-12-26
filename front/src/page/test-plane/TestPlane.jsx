@@ -18,10 +18,11 @@ const { TextArea } = Input;
 @Form.create()
 export default class TestPlane extends React.Component {
     state = {
-        caseDir:[],
-        caseData:[],
-        selectedRowKeys:[],
+        caseDir : [],
+        caseData : [],
+        selectedRowKeys : [],
         plane : [],
+        platform : '',
     };
     columns = [{
         title: '执行顺序',
@@ -99,7 +100,8 @@ export default class TestPlane extends React.Component {
         var platform;
         if(null != isEidt){
             const plane = this.props.location.record;
-            plane.directoryId = [...plane.directoryId],
+            plane.directoryId = [...plane.directoryId];
+            platform = plane.platform;
             this.setState({
                 plane : plane,
             });
@@ -115,6 +117,7 @@ export default class TestPlane extends React.Component {
                 console.log("serch-getdata:",data);
                 this.setState({
                     caseDir : data,
+                    platform : platform,
                 });
             }
         });
@@ -127,7 +130,7 @@ export default class TestPlane extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         const form = this.props.form;
-        var platform = this.props.location.platform;
+        var platform = this.state.platform;
 
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -143,16 +146,15 @@ export default class TestPlane extends React.Component {
                         var selectCase = this.state.selectedRowKeys;
                         var caseData = this.state.caseData;
                         for(var i=0;i<selectCase.length;i++){
-                            var value = caseData[selectCase[i]-1]
-                            //caseValue["planecase["+i+"]"]={
+                            var value = caseData[selectCase[i]-1];//选择被选中的用例数据
                             planecase.push({
                                 caseId : value.id.toString(),
                                 caseCount : value.caseCount,
                                 planeId : data[0].id.toString(),  // 测试计划添加成功后返回的id
-                                order : value.key,
+                                orderNo : value.key,
                             })
                         }
-                        console.log("handleSubmit-caseValue:",planecase);
+                        console.log("handleSubmit-planecase:",planecase);
                         // 插入测试计划所选用例
                         promiseAjax.post('/planecase/add', planecase).then(data => {
                             if (null != data) {
@@ -170,7 +172,7 @@ export default class TestPlane extends React.Component {
     // 根据选择的目录展示用例信息
     onChange(value) {
         console.log("onChange-value:",value);
-        const platform = this.props.location.platform;
+        const platform = this.state.platform;
         // 条件查询接口
         promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${value[value.length-1]}`).then(data => {
             if (null != data) {

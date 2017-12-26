@@ -1,6 +1,5 @@
 package com.anwen.autotest.controller;
 
-import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import com.anwen.autotest.domain.PlaneCaseDomain;
 import com.anwen.autotest.repository.PlaneCaseRepository;
 import io.swagger.annotations.Api;
@@ -32,13 +31,15 @@ public class PlaneCaseController extends AbstractController{
      */
     @ApiOperation(value = "新增测试计划用例", notes = "新增测试计划用例")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planecase, String caseId, String caseCount, String planeId, String order) {
+    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planecase, Long caseId, String caseCount, String planeId, String orderNo) {
+        // 批量插入数据
+        for (int i=0;i<planecase.size();i++) {
+            planeCaseRepository.save(planecase.get(i));
+        }
 
-        System.out.print(planecase);
-        //String[] roleIds = request.getParameterValues("");
-
-        return wrapperSupplier(() -> planeCaseRepository.findAll(), false);
+        return wrapperSupplier(() -> "success", false);
     }
+
 
 
     /**
