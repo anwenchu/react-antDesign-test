@@ -27,7 +27,7 @@ export default class TestPlaneManage extends React.Component {
         title: '计划标题',
         dataIndex: 'testPlaneName',
         render: (text, record) => (
-            <a href="#"><Link to={{action:"edit",record:record,pathname:"/addplane"}}>{text}</Link></a>
+            <Link to={{action:"edit",record:record,pathname:"/addplane"}}>{text}</Link>
         ),
     }, {
         title: '客户端版本',
@@ -38,7 +38,7 @@ export default class TestPlaneManage extends React.Component {
         render: (text, record) => (
             <span>
                 <Popconfirm title="Delete?" onConfirm={e => this.handleDelete(record.id, e)}>
-                    <a href="#">删除</a>
+                    删除
                 </Popconfirm>
             </span>
         ),
@@ -109,6 +109,7 @@ export default class TestPlaneManage extends React.Component {
                     </div>
                     <div style={{ padding: " 0px 0px 15px 0px" }}>
                         <Table
+                            rowKey={(record) => record.id}
                             dataSource={this.state.testPlane}
                             columns={this.columns}
                         />

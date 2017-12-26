@@ -445,9 +445,11 @@ export default class TestPlane extends React.Component {
                                     label="选择用例目录"
                                 >
                                     {getFieldDecorator('directoryId', {
+                                        initialValue: plane == null ? '' : plane.directoryId,
+
                                         rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
                                     })(
-                                        <Cascader defaultValue={plane == null ? '' : plane.directoryId} placeholder="请选择" options={caseDir} onChange={this.onChange.bind(this)}/>
+                                        <Cascader placeholder="请选择" options={caseDir} onChange={this.onChange.bind(this)}/>
                                     )}
                                 </FormItem>
                                 <FormItem>
