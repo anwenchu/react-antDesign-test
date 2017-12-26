@@ -128,22 +128,25 @@ export default class TestPlane extends React.Component {
                     if (null != data) {
                         //插入测试计划的用例数据
                         //var caseValue = {};
-                        var planecase = [];
+                        var planecaseList = [];
                         var selectCase = this.state.selectedRowKeys;
                         var caseData = this.state.caseData;
                         for(var i=0;i<selectCase.length;i++){
                             var value = caseData[selectCase[i]]
                             //caseValue["planecase["+i+"]"]={
-                            planecase.push({
+                            planecaseList.push({
                                 caseId : value.id.toString(),
                                 caseCount : value.caseCount,
                                 planeId : data[0].id.toString(),  // 测试计划添加成功后返回的id
                                 order : value.key,
                             })
                         }
-                        console.log("handleSubmit-caseValue:",planecase);
+                        //var param={};
+                        //param["planecase"] = planecaseList;
+                        var param = {"titles":['col1','col2','col3']};
+                        console.log("handleSubmit-caseValue:",param);
                         // 插入测试计划所选用例
-                        promiseAjax.post('/planecase/add', planecase).then(data => {
+                        promiseAjax.post('/planecase/add', param).then(data => {
                             if (null != data) {
                                 //form.resetFields();
                                 this.props.history.goBack();
