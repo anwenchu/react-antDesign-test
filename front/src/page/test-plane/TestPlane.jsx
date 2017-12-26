@@ -30,7 +30,7 @@ export default class TestPlane extends React.Component {
     }, {
         title: '用例标题',
         dataIndex: 'caseTitle',
-        render: text => <a href="#"><Link to={"/addtestcase"}>{text}</Link></a>,
+        render: text => <Link to={"/addtestcase"}>{text}</Link>,
     }, {
         title: '执行次数',
         dataIndex: 'caseCount',
@@ -99,12 +99,14 @@ export default class TestPlane extends React.Component {
         const isEidt = this.props.location.action;
         var platform;
         if(null != isEidt){
+            // 如果是编辑状态，则初始化表单数据
             const plane = this.props.location.record;
-            plane.directoryId = [...plane.directoryId];
+            plane.directoryId = plane.directoryId.split(",");
             platform = plane.platform;
             this.setState({
                 plane : plane,
             });
+            this.getCaseData(platform,plane.directoryId);
         }else{
             platform = this.props.location.platform;
         }
@@ -141,7 +143,6 @@ export default class TestPlane extends React.Component {
                 promiseAjax.post('/plane/add', values).then(data => {
                     if (null != data) {
                         //插入测试计划的用例数据
-                        //var caseValue = {};
                         var planecase = [];
                         var selectCase = this.state.selectedRowKeys;
                         var caseData = this.state.caseData;
@@ -154,7 +155,6 @@ export default class TestPlane extends React.Component {
                                 orderNo : value.key,
                             })
                         }
-                        console.log("handleSubmit-planecase:",planecase);
                         // 插入测试计划所选用例
                         promiseAjax.post('/planecase/add', planecase).then(data => {
                             if (null != data) {
@@ -168,13 +168,9 @@ export default class TestPlane extends React.Component {
         });
     }
 
-
-    // 根据选择的目录展示用例信息
-    onChange(value) {
-        console.log("onChange-value:",value);
-        const platform = this.state.platform;
+    getCaseData(platform,directoryId){
         // 条件查询接口
-        promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${value[value.length-1]}`).then(data => {
+        promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${directoryId[directoryId.length-1]}`).then(data => {
             if (null != data) {
                 // 将数据存入state  渲染页面
                 console.log("onChange-data",data);
@@ -188,6 +184,14 @@ export default class TestPlane extends React.Component {
                 });
             }
         });
+    }
+
+
+    // 根据选择的目录展示用例信息
+    onChange(value) {
+        console.log("onChange-value:",value);
+        const platform = this.state.platform;
+        this.getCaseData(platform,value);
     }
 
 
