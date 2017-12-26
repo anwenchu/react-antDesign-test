@@ -25,7 +25,7 @@ public class PlaneCaseDomain {
     private String caseId;
     //用例次数
     @Column(name = "case_count", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String parentId;
+    private String caseCount;
     //测试计划id
     @Column(name = "plane_id", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String planeId;
