@@ -23,16 +23,18 @@ export default class TestPlane extends React.Component {
         selectedRowKeys:[],
     };
     columns = [{
-        title: '用例编号',
-        dataIndex: 'id',
+        title: '执行顺序',
+        dataIndex: 'key',
     }, {
         title: '用例标题',
         dataIndex: 'caseTitle',
         render: text => <a href="#"><Link to={"/addtestcase"}>{text}</Link></a>,
     }, {
         title: '执行次数',
-        dataIndex: 'count',
-        render: () => <Input placeholder="1" />
+        dataIndex: 'caseCount',
+        render: (text, record) => (
+            <Input placeholder="1" value={record.caseCount} onChange={e=>this.onChangeValue(record.key,e)}/>
+        ),
     }, {
         title: '操作',
         dataIndex: 'action',
@@ -44,6 +46,18 @@ export default class TestPlane extends React.Component {
                 </span>
         ),
     }];
+
+    onChangeValue = (key,e) => {
+        console.log("onChangeUserName-value:",e.target.value );
+        var key_i = parseInt(key)-1;
+        var data = [...this.state.caseData];
+        data[key_i].caseCount = e.target.value;
+        this.setState({
+            caseData:data,
+        });
+
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -113,8 +127,23 @@ export default class TestPlane extends React.Component {
                 promiseAjax.post('/plane/add', values).then(data => {
                     if (null != data) {
                         //插入测试计划的用例数据
-                        var caseValue;
-                        promiseAjax.post('/plane/add', caseValue).then(data => {
+                        //var caseValue = {};
+                        var planecase = [];
+                        var selectCase = this.state.selectedRowKeys;
+                        var caseData = this.state.caseData;
+                        for(var i=0;i<selectCase.length;i++){
+                            var value = caseData[selectCase[i]]
+                            //caseValue["planecase["+i+"]"]={
+                            planecase.push({
+                                caseId : value.id.toString(),
+                                caseCount : value.caseCount,
+                                planeId : data[0].id.toString(),  // 测试计划添加成功后返回的id
+                                order : value.key,
+                            })
+                        }
+                        console.log("handleSubmit-caseValue:",planecase);
+                        // 插入测试计划所选用例
+                        promiseAjax.post('/planecase/add', planecase).then(data => {
                             if (null != data) {
                                 //form.resetFields();
                                 this.props.history.goBack();
@@ -131,14 +160,16 @@ export default class TestPlane extends React.Component {
     onChange(value) {
         console.log("onChange-value:",value);
         const platform = this.props.location.platform;
-        //ajax get请求  url 路径
+        // 条件查询接口
         promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${value[value.length-1]}`).then(data => {
             if (null != data) {
                 // 将数据存入state  渲染页面
                 console.log("onChange-data",data);
                 // 增加排序字段
-                for(var i=0;i<data.length;i++)
-                    data[i]["order"] = (i+1).toString();
+                for(var i=0;i<data.length;i++){
+                    data[i]["key"] = (i+1).toString();
+                    data[i]["caseCount"] = '1';
+                }
                 this.setState({
                     caseData : data,
                 });
@@ -148,48 +179,80 @@ export default class TestPlane extends React.Component {
 
 
 
-    upMove(order,e) {
+    upMove(key,e) {
 
         const data = [...this.state.caseData];
-        console.log("render-upMove-key",order);
+        console.log("render-upMove-key",key);
         console.log("render-upMove-data-before",data);
         e.preventDefault();
-        var order_i = parseInt(order);
+        var key_i = parseInt(key);
 
-        if (order_i > 1)
+        if (key_i > 1)
         {
-            var temp = data[order_i-2];
-            data[order_i-2] = data[order_i-1];
-            data[order_i-1] = temp;
+            // 交换排序
+            var temp = data[key_i-2];
+            data[key_i-2] = data[key_i-1];
+            data[key_i-1] = temp;
 
-            var tempKey = data[order_i-2].order;
-            data[order_i-2].order = data[order_i-1].order;
-            data[order_i-1].order = tempKey;
+            // 交换数据内容
+            var tempKey = data[key_i-2].key;
+            data[key_i-2].key = data[key_i-1].key;
+            data[key_i-1].key = tempKey;
+
+            // 交换选中状态
+            var selectCase = this.state.selectedRowKeys;
+            if (selectCase.length !==0){
+                key_i = key_i -1;
+                for (var i=0;i<selectCase.length;i++){
+                    if(key_i===selectCase[i])
+                        selectCase[i] = selectCase[i]-1;
+                    else if((key_i-1)===selectCase[i])
+                        selectCase[i] = selectCase[i]+1;
+                }
+            }
+
         }
-        console.log("render-upMove-data-after",data);
         this.setState({
             caseData :data,
+            selectedRowKeys:selectCase,
         });
     }
 
-    downMove(order, e) {
+    downMove(key, e) {
 
         const data = [...this.state.caseData];
         e.preventDefault();
-        var order_i = parseInt(order);
+        var key_i = parseInt(key);
 
-        if (order_i < data.length)
+        if (key_i < data.length)
         {
-            var temp = data[order_i];
-            data[order_i] = data[order_i-1];
-            data[order_i-1] = temp;
+            // 交换排序
+            var temp = data[key_i];
+            data[key_i] = data[key_i-1];
+            data[key_i-1] = temp;
 
-            var tempKey = data[order_i].order;
-            data[order_i].order = data[order_i-1].order;
-            data[order_i-1].order = tempKey;
+            // 交换数据内容
+            var tempKey = data[key_i].key;
+            data[key_i].key = data[key_i-1].key;
+            data[key_i-1].key = tempKey;
+
+            // 交换选中状态
+            var selectCase = this.state.selectedRowKeys;
+            if(selectCase.length!==0){
+                key_i = key_i -1;
+                for (var i=0;i<selectCase.length;i++){
+                    if(key_i===selectCase[i])
+                        selectCase[i] = selectCase[i]+1;
+                    else if((key_i+1)===selectCase[i])
+                        selectCase[i] = selectCase[i]-1;
+                }
+            }
+
         }
+        console.log("render-downMove-data-selectCase",selectCase);
         this.setState({
             caseData:data,
+            selectedRowKeys:selectCase,
         });
 
     }

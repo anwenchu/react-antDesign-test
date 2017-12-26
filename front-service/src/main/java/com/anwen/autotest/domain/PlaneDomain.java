@@ -25,7 +25,7 @@ public class PlaneDomain {
     private Long id;
     //目录id
     @Column(name = "directory_Id", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private Long directoryId;
+    private String directoryId;
     //循环次数
     @Column(name = "testplane_count", columnDefinition = "int(x) COMMENT 'xx'")
     private Long testPlaneCount;

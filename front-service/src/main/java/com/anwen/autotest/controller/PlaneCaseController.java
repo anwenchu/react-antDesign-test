@@ -1,5 +1,6 @@
 package com.anwen.autotest.controller;
 
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import com.anwen.autotest.domain.PlaneCaseDomain;
 import com.anwen.autotest.repository.PlaneCaseRepository;
 import io.swagger.annotations.Api;
@@ -7,6 +8,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,10 +30,14 @@ public class PlaneCaseController extends AbstractController{
      * @param planecase 需要新增的测试用例数据集
      * @return 返回成功或失败
      */
-    @ApiOperation(value = "新增元素", notes = "新增元素")
+    @ApiOperation(value = "新增测试计划用例", notes = "新增测试计划用例")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody PlaneCaseDomain planecase) {
-        return wrapperConsumer((p) -> planeCaseRepository.save(p), planecase);
+    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planecase, String caseId, String caseCount, String planeId, String order) {
+
+        System.out.print(planecase);
+        //String[] roleIds = request.getParameterValues("");
+
+        return wrapperSupplier(() -> planeCaseRepository.findAll(), false);
     }
 
     /**
