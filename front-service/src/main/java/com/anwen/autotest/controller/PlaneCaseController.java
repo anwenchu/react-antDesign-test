@@ -27,18 +27,19 @@ public class PlaneCaseController extends AbstractController{
     /**
      * 批量新增测试用例
      *
-     * @param titles 需要新增的测试用例数据集
+     * @param planecase 需要新增的测试用例数据集
      * @return 返回成功或失败
      */
     @ApiOperation(value = "新增测试计划用例", notes = "新增测试计划用例")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestParam(value = "titles[]") String[] titles) {
+    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planecase, String caseId, String caseCount, String planeId, String order) {
 
-        System.out.print(titles);
+        System.out.print(planecase);
         //String[] roleIds = request.getParameterValues("");
 
         return wrapperSupplier(() -> planeCaseRepository.findAll(), false);
     }
+
 
     /**
      * 批量删除测试用例数据集
