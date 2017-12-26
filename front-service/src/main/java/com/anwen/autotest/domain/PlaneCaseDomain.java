@@ -22,8 +22,14 @@ public class PlaneCaseDomain {
     private Long id;
     //用例id
     @Column(name = "case_id", columnDefinition = "varchar(x) COMMENT 'xx'")
-    private String directoryName;
+    private String caseId;
     //用例次数
     @Column(name = "case_count", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String parentId;
+    //测试计划id
+    @Column(name = "plane_id", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String planeId;
+    //测试排序
+    @Column(name = "order", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String order;
 }

@@ -26,7 +26,9 @@ export default class TestPlaneManage extends React.Component {
     }, {
         title: '计划标题',
         dataIndex: 'testPlaneName',
-        render: text => <a href="#"><Link to={"/addplane"}>{text}</Link></a> ,
+        render: (text, record) => (
+            <a href="#"><Link to={{action:"edit",record:record,pathname:"/addplane"}}>{text}</Link></a>
+        ),
     }, {
         title: '客户端版本',
         dataIndex: 'appVersion',

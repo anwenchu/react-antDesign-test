@@ -21,6 +21,7 @@ export default class TestPlane extends React.Component {
         caseDir:[],
         caseData:[],
         selectedRowKeys:[],
+        plane : [],
     };
     columns = [{
         title: '执行顺序',
@@ -94,7 +95,17 @@ export default class TestPlane extends React.Component {
      * @param all
      */
     search = () => {
-        const platform = this.props.location.platform;
+        const isEidt = this.props.location.action;
+        var platform;
+        if(null != isEidt){
+            const plane = this.props.location.record;
+            plane.directoryId = [...plane.directoryId],
+            this.setState({
+                plane : plane,
+            });
+        }else{
+            platform = this.props.location.platform;
+        }
         //ajax get请求  url 路径
         promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
             if (null != data) {
@@ -268,7 +279,8 @@ export default class TestPlane extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { caseData,caseDir, selectedRowKeys } = this.state;
+        const { caseData,caseDir, selectedRowKeys,plane } = this.state;
+        console.log("render-plane:",plane);
         // 选择复选框
         const rowSelection = {
             selectedRowKeys,
@@ -284,8 +296,6 @@ export default class TestPlane extends React.Component {
         };
 
 
-
-
         return (
             <Content >
                 <div style={{background: "#fff", padding: 24, minHeight: 430}}>
@@ -299,6 +309,7 @@ export default class TestPlane extends React.Component {
                                     label="标题"
                                 >
                                     {getFieldDecorator('testPlaneName', {
+                                        initialValue: plane == null ? '' : plane.testPlaneName,
                                         rules: [{
                                             required: true, message: '请输入标题!',
                                         },{
@@ -314,6 +325,7 @@ export default class TestPlane extends React.Component {
                                     label="描述"
                                 >
                                     {getFieldDecorator('testPlaneDes', {
+                                        initialValue: plane == null ? '' : plane.testPlaneDes,
                                         rules: [{
                                             max:50, message: '最多允许输入50个字符!',
                                         }],
@@ -328,6 +340,7 @@ export default class TestPlane extends React.Component {
                                     label="执行次数"
                                 >
                                     {getFieldDecorator('testPlaneCount', {
+                                        initialValue: plane == null ? '' : plane.testPlaneCount,
                                         rules: [{
                                             pattern: "^[0-9]*$", message: '只允许输入数字!',
                                         },{
@@ -344,6 +357,7 @@ export default class TestPlane extends React.Component {
                                     label="执行时间(分钟)"
                                 >
                                     {getFieldDecorator('testPlaneRuntime', {
+                                        initialValue: plane == null ? '' : plane.testPlaneRuntime,
                                         rules: [{
                                             pattern: "^[0-9]*$", message: '只允许输入数字!',
                                         },{
@@ -360,6 +374,7 @@ export default class TestPlane extends React.Component {
                                     label="app地址"
                                 >
                                     {getFieldDecorator('appUrl', {
+                                        initialValue: plane == null ? '' : plane.appUrl,
                                         rules: [{
                                             required: true, message: '请输入app地址!',
                                         },{
@@ -374,6 +389,7 @@ export default class TestPlane extends React.Component {
                                     label="客户端版本号"
                                 >
                                     {getFieldDecorator('appVersion', {
+                                        initialValue: plane == null ? '' : plane.appVersion,
                                         rules: [{
                                             required: true, message: '请输入客户端版本号!',
                                         },{
@@ -388,6 +404,7 @@ export default class TestPlane extends React.Component {
                                     label="系统版本"
                                 >
                                     {getFieldDecorator('sysVersion', {
+                                        initialValue: plane == null ? '' : plane.sysVersion,
                                         rules: [{
                                             required: true, message: '请输入系统版本!',
                                         },{
@@ -402,6 +419,7 @@ export default class TestPlane extends React.Component {
                                     label="设备名称"
                                 >
                                     {getFieldDecorator('deviceName', {
+                                        initialValue: plane == null ? '' : plane.deviceName,
                                         rules: [{
                                             required: true, message: '请输入uuid!',
                                         },{
@@ -416,6 +434,7 @@ export default class TestPlane extends React.Component {
                                     label="uuis（ios）"
                                 >
                                     {getFieldDecorator('deviceUUID', {
+                                        initialValue: plane == null ? '' : plane.deviceUUID,
                                         rules: [{
                                             max:50,message: '最多允许输入50个字符!',
                                         }],
@@ -431,7 +450,7 @@ export default class TestPlane extends React.Component {
                                     {getFieldDecorator('directoryId', {
                                         rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
                                     })(
-                                        <Cascader placeholder="请选择" options={caseDir} onChange={this.onChange.bind(this)}/>
+                                        <Cascader defaultValue={plane == null ? '' : plane.directoryId} placeholder="请选择" options={caseDir} onChange={this.onChange.bind(this)}/>
                                     )}
                                 </FormItem>
                                 <FormItem>
