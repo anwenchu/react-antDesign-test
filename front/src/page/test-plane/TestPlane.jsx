@@ -20,9 +20,10 @@ export default class TestPlane extends React.Component {
     state = {
         caseDir:[],
         caseData:[],
+        selectedRowKeys:[],
     };
     columns = [{
-        title: '编号',
+        title: '用例编号',
         dataIndex: 'id',
     }, {
         title: '用例标题',
@@ -94,6 +95,37 @@ export default class TestPlane extends React.Component {
         });
     }
 
+    /**
+     * 新建测试计划
+     * @param all
+     */
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const form = this.props.form;
+        var platform = this.props.location.platform;
+
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                values.platform = platform;
+                values.directoryId = values.directoryId.toString();
+                console.log("handleSubmit-values:",values);
+                //ajax post请求  url 路径
+                promiseAjax.post('/plane/add', values).then(data => {
+                    if (null != data) {
+                        //插入测试计划的用例数据
+                        var caseValue;
+                        promiseAjax.post('/plane/add', caseValue).then(data => {
+                            if (null != data) {
+                                //form.resetFields();
+                                this.props.history.goBack();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
 
     // 根据选择的目录展示用例信息
     onChange(value) {
@@ -104,6 +136,9 @@ export default class TestPlane extends React.Component {
             if (null != data) {
                 // 将数据存入state  渲染页面
                 console.log("onChange-data",data);
+                // 增加排序字段
+                for(var i=0;i<data.length;i++)
+                    data[i]["order"] = (i+1).toString();
                 this.setState({
                     caseData : data,
                 });
@@ -113,51 +148,66 @@ export default class TestPlane extends React.Component {
 
 
 
-    upMove(key,e) {
+    upMove(order,e) {
 
-        const data = [...this.state.data];
+        const data = [...this.state.caseData];
+        console.log("render-upMove-key",order);
+        console.log("render-upMove-data-before",data);
         e.preventDefault();
-        var key_i = parseInt(key);
+        var order_i = parseInt(order);
 
-        if (key_i > 1)
+        if (order_i > 1)
         {
-            var temp = data[key_i-2];
-            data[key_i-2] = data[key_i-1];
-            data[key_i-1] = temp;
+            var temp = data[order_i-2];
+            data[order_i-2] = data[order_i-1];
+            data[order_i-1] = temp;
 
-            var tempKey = data[key_i-2].key;
-            data[key_i-2].key = data[key_i-1].key;
-            data[key_i-1].key = tempKey;
+            var tempKey = data[order_i-2].order;
+            data[order_i-2].order = data[order_i-1].order;
+            data[order_i-1].order = tempKey;
         }
-        this.setState({ data });
+        console.log("render-upMove-data-after",data);
+        this.setState({
+            caseData :data,
+        });
     }
 
-    downMove(key, e) {
+    downMove(order, e) {
 
-        const data = [...this.state.data];
+        const data = [...this.state.caseData];
         e.preventDefault();
-        var key_i = parseInt(key);
+        var order_i = parseInt(order);
 
-        if (key_i < data.length)
+        if (order_i < data.length)
         {
-            var temp = data[key_i];
-            data[key_i] = data[key_i-1];
-            data[key_i-1] = temp;
+            var temp = data[order_i];
+            data[order_i] = data[order_i-1];
+            data[order_i-1] = temp;
 
-            var tempKey = data[key_i].key;
-            data[key_i].key = data[key_i-1].key;
-            data[key_i-1].key = tempKey;
+            var tempKey = data[order_i].order;
+            data[order_i].order = data[order_i-1].order;
+            data[order_i-1].order = tempKey;
         }
-        this.setState({ data });
+        this.setState({
+            caseData:data,
+        });
 
     }
+
+    onSelectChange = (selectedRowKeys) => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        this.setState({ selectedRowKeys });
+    }
+
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const datasource = this.state.caseDir;
-        const casesource = this.state.caseData;
-        console.log("render-casesource",casesource);
-
+        const { caseData,caseDir, selectedRowKeys } = this.state;
+        // 选择复选框
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+        };
         const formItemLayout = {
             labelCol: {
                 span: 6 ,
@@ -167,16 +217,7 @@ export default class TestPlane extends React.Component {
             },
         };
 
-        // rowSelection object indicates the need for row selection
-        const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-                disabled: record.name === 'Disabled User', // Column configuration not to be checked
 
-            }),
-        };
 
 
         return (
@@ -191,8 +232,13 @@ export default class TestPlane extends React.Component {
                                     {...formItemLayout}
                                     label="标题"
                                 >
-                                    {getFieldDecorator('title', {
-                                        rules: [{required: true, message: '请输入标题!'}],
+                                    {getFieldDecorator('testPlaneName', {
+                                        rules: [{
+                                            required: true, message: '请输入标题!',
+                                        },{
+                                            max:50,message: '最多允许输入50个字符!',
+                                        }],
+
                                     })(
                                         <Input placeholder="请输入标题"/>
                                     )}
@@ -201,20 +247,58 @@ export default class TestPlane extends React.Component {
                                     {...formItemLayout}
                                     label="描述"
                                 >
-                                    <TextArea placeholder="请输入描述" autosize={{ minRows: 2, maxRows: 6 }} />
+                                    {getFieldDecorator('testPlaneDes', {
+                                        rules: [{
+                                            max:50, message: '最多允许输入50个字符!',
+                                        }],
+
+                                    })(
+                                        <TextArea placeholder="请输入描述" autosize={{ minRows: 2, maxRows: 6 }} />
+                                    )}
+
                                 </FormItem>
                                 <FormItem
                                     {...formItemLayout}
                                     label="执行次数"
                                 >
-                                    <Input placeholder="1"/>
+                                    {getFieldDecorator('testPlaneCount', {
+                                        rules: [{
+                                            pattern: "^[0-9]*$", message: '只允许输入数字!',
+                                        },{
+                                            max: 11, message: '输入超出范围!',
+                                        }],
+
+                                    })(
+                                        <Input placeholder="1"/>
+                                    )}
+
+                                </FormItem>
+                                <FormItem
+                                    {...formItemLayout}
+                                    label="执行时间(分钟)"
+                                >
+                                    {getFieldDecorator('testPlaneRuntime', {
+                                        rules: [{
+                                            pattern: "^[0-9]*$", message: '只允许输入数字!',
+                                        },{
+                                            max: 11, message: '输入超出范围!',
+                                        }],
+
+                                    })(
+                                        <Input placeholder="请输入执行时间"/>
+                                    )}
+
                                 </FormItem>
                                 <FormItem
                                     {...formItemLayout}
                                     label="app地址"
                                 >
-                                    {getFieldDecorator('appurl', {
-                                        rules: [{ required: true, message: '请输入app地址!' }],
+                                    {getFieldDecorator('appUrl', {
+                                        rules: [{
+                                            required: true, message: '请输入app地址!',
+                                        },{
+                                            max:50,message: '最多允许输入100个字符!',
+                                        }],
                                     })(
                                         <Input placeholder="请输入app地址"/>
                                     )}
@@ -223,18 +307,26 @@ export default class TestPlane extends React.Component {
                                     {...formItemLayout}
                                     label="客户端版本号"
                                 >
-                                    {getFieldDecorator('appversion', {
-                                        rules: [{required: true, message: '请输入客户端版本号!'}],
+                                    {getFieldDecorator('appVersion', {
+                                        rules: [{
+                                            required: true, message: '请输入客户端版本号!',
+                                        },{
+                                            max:50,message: '最多允许输入50个字符!',
+                                        }],
                                     })(
-                                        <Input placeholder="请输入app地址"/>
+                                        <Input placeholder="请输入客户端版本号"/>
                                     )}
                                 </FormItem>
                                 <FormItem
                                     {...formItemLayout}
                                     label="系统版本"
                                 >
-                                    {getFieldDecorator('sysversion', {
-                                        rules: [{required: true, message: '请输入系统版本!',}],
+                                    {getFieldDecorator('sysVersion', {
+                                        rules: [{
+                                            required: true, message: '请输入系统版本!',
+                                        },{
+                                            max:50,message: '最多允许输入50个字符!',
+                                        }],
                                     })(
                                         <Input placeholder="请输入系统版本"/>
                                     )}
@@ -243,8 +335,12 @@ export default class TestPlane extends React.Component {
                                     {...formItemLayout}
                                     label="设备名称"
                                 >
-                                    {getFieldDecorator('devicename', {
-                                        rules: [{required: true, message: '请输入设备名称!',}],
+                                    {getFieldDecorator('deviceName', {
+                                        rules: [{
+                                            required: true, message: '请输入uuid!',
+                                        },{
+                                            max:50,message: '最多允许输入50个字符!',
+                                        }],
                                     })(
                                         <Input placeholder="请输入设备名称"/>
                                     )}
@@ -253,20 +349,27 @@ export default class TestPlane extends React.Component {
                                     {...formItemLayout}
                                     label="uuis（ios）"
                                 >
-                                    <Input placeholder="请输入uuid"/>
+                                    {getFieldDecorator('deviceUUID', {
+                                        rules: [{
+                                            max:50,message: '最多允许输入50个字符!',
+                                        }],
+                                    })(
+                                        <Input placeholder="请输入uuid"/>
+                                    )}
+
                                 </FormItem>
                                 <FormItem
                                     {...formItemLayout}
                                     label="选择用例目录"
                                 >
-                                    {getFieldDecorator('residence', {
+                                    {getFieldDecorator('directoryId', {
                                         rules: [{ type: 'array', required: true, message: '请选择用例组目录!' }],
                                     })(
-                                        <Cascader placeholder="请选择" options={datasource} onChange={this.onChange.bind(this)}/>
+                                        <Cascader placeholder="请选择" options={caseDir} onChange={this.onChange.bind(this)}/>
                                     )}
                                 </FormItem>
                                 <FormItem>
-                                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={casesource}/>
+                                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={caseData}/>
                                 </FormItem>
                                 <FormItem>
                                     <Row gutter={16} align={"middle"} justify={"center"}>

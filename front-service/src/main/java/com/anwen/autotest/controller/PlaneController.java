@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by an_wch on 2017/12/13.
  */
-@Api(description = "元素管理相关接口")
+@Api(description = "计划管理相关接口")
 @RestController
 @RequestMapping("/plane")
 public class PlaneController extends AbstractController{
@@ -21,15 +24,19 @@ public class PlaneController extends AbstractController{
     private PlaneRepository planeRepository;
 
     /**
-     * 新增元素
+     * 新增计划
      *
-     * @param element 需要新增的对象
-     * @return 返回成功或失败
+     * @param plane 需要新增的对象
+     * @return 成功后返回当前插入的记录
      */
-    @ApiOperation(value = "新增元素", notes = "新增元素")
+    @ApiOperation(value = "新增计划", notes = "新增计划")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody PlaneDomain element) {
-        return wrapperConsumer((p) -> planeRepository.save(p), element);
+    public ResponseEntity save(@RequestBody PlaneDomain plane) {
+        plane.setIsDelete(0L);  // 新加元素删除状态默认都是0
+        planeRepository.save(plane);
+        List<PlaneDomain> planeList = new ArrayList<PlaneDomain>();
+        planeList.add(plane);
+        return wrapperSupplier(() -> planeList, false);
     }
 
     /**
@@ -37,7 +44,7 @@ public class PlaneController extends AbstractController{
      * @param id
      * @return
      */
-    @ApiOperation(value = "删除元素", notes = "删除元素")
+    @ApiOperation(value = "删除计划", notes = "删除计划")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
         return wrapperConsumer((p) -> planeRepository.delete(p), id);
@@ -46,20 +53,20 @@ public class PlaneController extends AbstractController{
     /**
      * 修改元素
      *
-     * @param element 需要修改元素
+     * @param plane 需要修改计划
      * @return
      */
-    @ApiOperation(value = "修改元素", notes = "修改元素")
+    @ApiOperation(value = "修改计划", notes = "修改计划")
     @PutMapping(value = "/update")
-    public ResponseEntity update(@RequestBody PlaneDomain element) {
-        return wrapperConsumer((p) -> planeRepository.save(p), element);
+    public ResponseEntity update(@RequestBody PlaneDomain plane) {
+        return wrapperConsumer((p) -> planeRepository.save(p), plane);
     }
 
     /**
-     * 查询所有元素
+     * 查询所有计划
      * @return
      */
-    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
+    @ApiOperation(value = "查询所有计划", notes = "查询所有计划")
     @GetMapping(value = "/list")
     public ResponseEntity list(@RequestParam(value = "platform") String platform) {
         Long isDelete = 0L;//0:未删除，默认查询所有未删除的页面
@@ -68,10 +75,10 @@ public class PlaneController extends AbstractController{
     }
 
     /**
-     * 查询元素
+     * 查询计划
      * @return
      */
-    @ApiOperation(value = "查询元素", notes = "查询元素")
+    @ApiOperation(value = "查询计划", notes = "查询计划")
     @GetMapping(value = "/{id}")
     public ResponseEntity detail(@PathVariable(name = "id") Long id) {
         return wrapperSupplier(() -> planeRepository.findOne(id), false);

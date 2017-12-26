@@ -38,7 +38,7 @@ export default class ElementNew extends React.Component {
         const form = this.props.form;
         var platform = this.props.platform;
         form.validateFields((err, values) => {
-            values["platform"] = platform;
+            values.platform = platform;
             if (!err) {
                 promiseAjax.post('/element/add', values).then(() => {
                     form.resetFields();
