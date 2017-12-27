@@ -202,9 +202,11 @@ class Directory extends React.Component {
 
 
     onSelect = (selectedKeys) => {
+        console.log("DirTree-selectKeys:",selectedKeys);
         this.setState({
             selectedKeys:selectedKeys,
         });
+        this.props.selectPage(selectedKeys[0]);
     }
 
 

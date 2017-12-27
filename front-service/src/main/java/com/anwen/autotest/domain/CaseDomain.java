@@ -38,4 +38,14 @@ public class CaseDomain {
     //删除状态
     @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
     private Long isDelete;
+
+
+
+    public static final String FIELD_DIRECTORY_ID = "directoryId";
+    public static final String FIELD_PLATFORM = "platform";
+    public static final String FIELD_TEARDOWN_CASE_ID = "teardownCaseId";
+    public static final String FIELD_SETUP_CASE_ID = "setupCaseId";
+    public static final String FIELD_CASE_TITLE = "caseTitle";
+    public static final String FIELD_IS_DELETE = "isDelete";
+
 }

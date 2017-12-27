@@ -112,7 +112,7 @@ export default class TestPlane extends React.Component {
             this.getCaseData(plane.directoryId);
             //获取用例列表数据
             promiseAjax.get(`/planecase/search?planeId=${plane.id}`).then(data => {
-                if (null != data) {
+                if (data && data.length!=0) {
                     // 根据返回结果修改选中状态
                     var selectedRowKeys = this.state.selectedRowKeys;
                     var caseData = this.state.selectedRowKeys;
@@ -207,7 +207,7 @@ export default class TestPlane extends React.Component {
     getCaseData(directoryId){
         // 条件查询接口
         promiseAjax.get(`/testcase/search?directoryId=${directoryId[directoryId.length-1]}`).then(data => {
-            if (null != data) {
+            if (data && data.length!=0) {
                 // 将数据存入state  渲染页面
                 console.log("onChange-data",data);
                 // 增加排序字段

@@ -17,25 +17,16 @@ const { Content, Sider } = Layout;
 
 export default class TestCaseManage extends React.Component{
     state = {
-        data : [{
-            key: '1',
-            caseNo: '1',
-            caseTile: '测试用例标题1',
-            caseStatus: '通过',
-        }, {
-            key: '2',
-            caseNo: '2',
-            caseTile: '测试用例标题2，测试用例标题2',
-            caseStatus: '失败',
-        }],
+        data : [],
         platform:'',
+        dirId:'',
     };
     columns = [{
         title: '编号',
-        dataIndex: 'caseNo',
+        dataIndex: 'id',
     }, {
         title: '用例标题',
-        dataIndex: 'caseTile',
+        dataIndex: 'caseTitle',
         render: (text, record) => (
             <a onClick={() => this.handleEdit(record.key)}>{text}</a>
         )
@@ -73,25 +64,21 @@ export default class TestCaseManage extends React.Component{
     }
 
     /**
-     * 查询，获取元素列表信息
+     * 查询，获取用例列表信息
      */
     search = (dirId) => {
-        //ajax get请求  url 路径
+
         var platform = this.getPlatform();
         this.setState({
             platform: platform,
         })
-
-        var urlPath = `/testcase/list?platform=${platform}`;
-        if (null !== dirId) {
-            urlPath = urlPath + `&pageId=${dirId}`;
-        }
+        // 用例列表接口
+        var urlPath = `/testcase/search?platform=${platform}`;
+        if (dirId !== null &&  dirId !== undefined)
+            urlPath = urlPath + `&directoryId=${dirId}`;
         promiseAjax.get(urlPath).then(data => {
             console.log('data: ', data);
-            if (data && data.length!=0) {
-                //添加元素的顺序编号，在前端展示
-                for(var i=0;i<data.length;i++)
-                    data[i]["caseNo"] = (i+1).toString();
+            if (data) {
                 // 将数据存入state  渲染页面
                 this.setState({
                     data: data,
@@ -138,13 +125,22 @@ export default class TestCaseManage extends React.Component{
     }
 
 
+    selectPage = (key) => {
+        console.log("caseManage-selectKeys:",key);
+        this.search(key);
+        this.setState({
+            pageId:key,
+        })
+
+    }
+
     render() {
         const platform = this.getPlatform();
         return(
             <Layout>
                 <Sider width={260} style={{ background: "#F0F2F5" }}>
                     <div style={{ background: "#fff", padding: 10, minHeight: 960 }}>
-                        <Directory platform={platform} />
+                        <Directory platform={platform} selectPage={this.selectPage}/>
                     </div>
                 </Sider>
                 <Content style={{ padding: " 0px 0px 0px 20px" }}>

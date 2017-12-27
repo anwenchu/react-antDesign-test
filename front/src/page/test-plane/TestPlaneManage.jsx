@@ -65,7 +65,7 @@ export default class TestPlaneManage extends React.Component {
         var platform = this.getPlatform();
 
         promiseAjax.get(`/plane/list?platform=${platform}`).then(data => {
-            if (data) {
+            if (data && data.length!=0) {
                 //添加元素的顺序编号，在前端展示
                 for(var i=0;i<data.length;i++)
                     data[i]["elementNo"] = (i+1).toString();

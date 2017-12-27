@@ -2,6 +2,7 @@ package com.anwen.autotest.controller;
 
 import com.anwen.autotest.domain.CaseDomain;
 import com.anwen.autotest.repository.CaseRepository;
+import com.anwen.autotest.service.CaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class CaseController extends AbstractController{
 
     @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private CaseService caseService;
 
     /**
      * 新增用例
@@ -61,9 +65,9 @@ public class CaseController extends AbstractController{
      */
     @ApiOperation(value = "查询所有目录", notes = "查询所有目录")
     @GetMapping(value = "/list")
-    public ResponseEntity list() {
-        return wrapperSupplier(() -> caseRepository.findAll(), false);
-
+    public ResponseEntity list(@RequestParam(value = "platform") String platform) {
+        Long isDelete = 0L;
+        return wrapperSupplier(() -> caseRepository.findCaseDomainByPlatformAndIsDelete(platform,isDelete), false);
     }
 
     /**
@@ -82,13 +86,16 @@ public class CaseController extends AbstractController{
      */
     @ApiOperation(value = "查询目录", notes = "查询目录")
     @GetMapping(value = "/search")
-    public ResponseEntity detail(String directoryId,String platform) {
-        Long isDelete = 0L;
-        if (null == platform) {
-            return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndIsDelete(directoryId,isDelete), false);
-        } else {
-            return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId, platform, isDelete), false);
-        }
+    public ResponseEntity detail(CaseDomain casedomain) {
+        //Long isDelete = 0L;
+        //if (null == platform) {
+        //    return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndIsDelete(directoryId,isDelete), false);
+        //} else {
+        //    return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId, platform, isDelete), false);
+        //}
+
+        caseService.findAll(casedomain);
+        return wrapperSupplier(() -> caseService.findAll(casedomain), false);
     }
 
 
