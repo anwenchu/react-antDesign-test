@@ -19,11 +19,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const AnimateBody = (props) =>
     <Animate transitionName="move" component="tbody" {...props} />;
 const Option = Select.Option;
-const provinceData = ['访客页', '登录页'];
-const cityData ={
-    访客页: ['登录按钮', '注册按钮', 'qq登录入口'],
-    登录页: ['账号文本框', '密码文本框', '登录按钮'],
-};
+
 
 export default class TestCase extends React.Component {
     constructor(props) {
@@ -38,8 +34,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select size={"small"} style={{ width: 110 }} onChange={e => this.onProvinceChange(record.key,e)}>
-                    {this.state.provinceOptions}
+                <Select  size={"small"} style={{ width: 110 }} onChange={e => this.onPageChange(record.key,e)}>
+                    {this.state.pageOptions}
                 </Select>
             ),
             width: 120
@@ -48,8 +44,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"}  style={{ width: 110 }} onChange={e =>this.onSecondCityChange(record.key,e)}>
-                    {this.state.cityOptions}
+                <Select size={"small"}  style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                    {this.state.elementOptions}
                 </Select>
             ),
             width: 120
@@ -105,16 +101,11 @@ export default class TestCase extends React.Component {
             ),
         }];
         this.state = {
-            data: [{
-                key: '1',
-                stepNo: '1',
-                status: '通过',
-            }],
-            // secondCity: cityData[provinceData[0]][0],
-            provinceOptions: [], // 页面下拉列表数据
-            cityOptions: [],   // 元素下拉列表数据
-            //citiesList:[cityData[provinceData[0]]],  // 存储每一行的元素下拉列表数据
-            // secondCityList:[cityData[provinceData[0]][0]],  // 存储每一行的默认元素下拉列表数据
+            setpData: [{
+                key:"1"
+            }],// 记录步骤数据
+            pageOptions: [], //记录页面下拉列表数据
+            elementOptionsList: [], //记录每一行的元素下拉列表数据
             action1: [],//步骤第1列数据
             action2: [],//步骤第2列数据
             action3: [],//步骤第3列数据
@@ -136,25 +127,21 @@ export default class TestCase extends React.Component {
             }],
             caseTitle: '',
             setupCaseId: '',
-            teardownCaseId: ''
+            teardownCaseId: '',
 
         };
     }
 
     componentDidMount() {
-        // 页面渲染完成，进行一次查询
+        // 初始化平台信息
         this.initPlatform();
-        this.initPageOptions();
-        this.initElementOptions(provinceData[0]);
-        //初始化平台信息
-
         //初始化page下拉列表
         this.initPageSelect();
         // 初始化步骤action下拉列表
         this.initAction1();
-
     }
 
+    // 获取步骤描述中的操作行为数据
     initAction1() {
         promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
             if (rsp != null && rsp.length > 0) {
@@ -167,7 +154,7 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
-                const data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                 this.setState({
                     action1: data
                 });
@@ -179,6 +166,7 @@ export default class TestCase extends React.Component {
         });
     }
 
+    // 根据选中的操作行为展示后续控件
     onAction1Change(key, id) {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
@@ -212,7 +200,7 @@ export default class TestCase extends React.Component {
                     )
                 }
                 if (action2Type === '1') {
-                    data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                    data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                     this.setState({
                         isAction2: true,
                         action2: data,
@@ -234,7 +222,7 @@ export default class TestCase extends React.Component {
         });
     }
 
-
+    // 根据子操作行为展示后续控件
     onAction2Change(key, id) {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
@@ -269,7 +257,7 @@ export default class TestCase extends React.Component {
                     )
                 }
                 if (action3Type === '1') {
-                    data = actionSelect.map(province => <Option key={province.id}>{province.actionName}</Option>);
+                    data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                     this.setState({
                         isAction3: true,
                         action3: data,
@@ -291,6 +279,7 @@ export default class TestCase extends React.Component {
         });
     }
 
+    // 根据3级操作展示后续控件
     onAction3Change(key, id) {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
@@ -338,9 +327,9 @@ export default class TestCase extends React.Component {
             postCaseSteps,
         })
     }
+    // 初始化页面数据下拉列表
     initPageSelect() {
-        // const platform = this.props.location.platform;
-        const platform = 'android';
+        const platform = this.props.location.platform;
         promiseAjax.get(`/page/list?platform=${platform}`).then((rsp) => {
             if (rsp != null && rsp.length > 0) {
                 var pageSelect = [];
@@ -352,15 +341,15 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
-                const data = pageSelect.map(province => <Option key={province.id}>{province.pageName}</Option>);
+                const data = pageSelect.map(page => <Option key={page.id}>{page.pageName}</Option>);
                 this.setState({
-                    provinceOptions: data
+                    pageOptions: data
                 });
             }
         });
 
     }
-
+    // 初始化平台
     initPlatform() {
         // 获取平台信息
         var platform = this.props.location.platform;
@@ -370,13 +359,13 @@ export default class TestCase extends React.Component {
     }
 
 
-    // 选择页面发生变化
-    onProvinceChange(key,value){
-        const platform = 'android';
+    // 根据选择不同的页面初始化元素下拉列表数值--这里的元素只展示有元素名称的元素
+    onPageChange(key,value){
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
-        console.log('====postCaseSteps====:', postCaseSteps);
+        console.log('====pageOptions====:', this.state.pageOptions);
         console.log('====key====:', key);
+        console.log('====value====:', value);
         if (postCaseSteps.length <= key) {
             const caseStep = {
                 pageId: value,
@@ -388,24 +377,26 @@ export default class TestCase extends React.Component {
         this.setState({
             postCaseSteps,
         })
-        promiseAjax.get(`/element/search?platform=${platform}&pageId=${value}`).then((rsp) => {
-            if (rsp != null && rsp.length > 0) {
-                var pageSelect = [];
+        promiseAjax.get(`/element/elementforpage?pageId=${value}`).then((rsp) => {
+            if (rsp != null && rsp.length!==0) {
+                var elementSelect = [];
                 for (var i = 0; i < rsp.length; i++) {
-                    pageSelect.push(
+                    elementSelect.push(
                         {
                             id : rsp[i].id.toString(),
                             elementName : rsp[i].elementName,
                         }
                     )
                 }
-                const data = pageSelect.map(province => <Option key={province.id}>{province.elementName}</Option>);
+                const data = elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
                 this.setState({
-                    cityOptions: data
+                    elementOptions:data,
+                    elementValue:elementSelect[0].id,
                 });
             } else {
                 this.setState({
-                    cityOptions: []
+                    elementOptions: [],
+                    elementValue:''
                 });
             }
         });
@@ -426,7 +417,7 @@ export default class TestCase extends React.Component {
 
     }
 
-    onSecondCityChange (key,value) {
+    onElementChange (key,value) {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
         if (postCaseSteps.length <= key) {
@@ -438,7 +429,8 @@ export default class TestCase extends React.Component {
             postCaseSteps[key].elementId = value;
         }
         this.setState({
-            postCaseSteps,
+            postCaseSteps:postCaseSteps,
+            elementValue:value,
         })
         // var key_i =  parseInt(key);
         // var secondCityList = [...this.state.secondCityList];
@@ -448,60 +440,25 @@ export default class TestCase extends React.Component {
         //     secondCityList : secondCityList,
         // });
     }
-    initElementOptions (value) {
-        const cityOptions = cityData[value].map(city => <Option key={city}>{city}</Option>);
-        this.setState({
-            cityOptions : cityOptions,
-        });
-    }
-    // 初始化页面
-    initPageOptions(key) {
-        const platform = this.props.location.platform;
-        var datalist = [];
-        //ajax get请求  url 路径
-        promiseAjax.get(`/page/list?platform=${platform}`).then(data => {
-            if (data && data.length) {
-                for (var i = 0;i<data.length;i++) {
-                    datalist.push(
-                        {
-                            key : data[i].id.toString(),
-                            title : data[i].pageName,
-                        }
-                    )
-                }
-
-                // 将数据存入state  渲染页面
-                this.setState({
-                    data: datalist,
-                });
-            }
-        });
-
-
-    }
 
     onDelete(key, e) {
         e.preventDefault();
-        const data = this.state.data.filter(item => item.key !== key);
-        this.setState({ data });
+        const setpData = this.state.setpData.filter(item => item.key !== key);
+        this.setState({ setpData });
     }
 
     onAdd(key, e) {
 
-        const data = [...this.state.data];
-        //const citiesList = [...this.state.data];
-        const secondCityList = [...this.state.data];
-        //citiesList.push(cityData[provinceData[0]]);
-        secondCityList.push(cityData[provinceData[0]][0]);
-        this.initElementOptions(provinceData[0]);
+        const data = [...this.state.setpData];
         var key_i = parseInt(key);
+        // 在所选行下方插入一行数据
         var stepNo = key_i + 1;
         var el = {
             stepNo: stepNo.toString(),
             key: stepNo.toString(),
         }
-
         data.splice(key_i, 0, el);
+        // 新数据后的所有数据序号+1
         for (var i=0;i<data.length;i++)
         {
             if (i>key_i)
@@ -511,7 +468,7 @@ export default class TestCase extends React.Component {
 
             }
         }
-        this.setState({ data });
+        this.setState({ setpData:data });
     }
 
     setTitle(value) {
@@ -580,7 +537,7 @@ export default class TestCase extends React.Component {
                             <div style={{margin: 5}}>
                                 <TableRC
                                     columns={this.columns}
-                                    data={this.state.data}
+                                    data={this.state.setpData}
                                     components={{
                                         body: {wrapper: AnimateBody},
                                     }}
