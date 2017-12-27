@@ -44,8 +44,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"}  style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
-                    {this.state.elementOptions}
+                <Select size={"small"} value={this.state.elementList[parseInt(record.key)-1]} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                    {this.state.elementOptionsList[parseInt(record.key)-1]}
                 </Select>
             ),
             width: 120
@@ -105,7 +105,9 @@ export default class TestCase extends React.Component {
                 key:"1"
             }],// 记录步骤数据
             pageOptions: [], //记录页面下拉列表数据
-            elementOptionsList: [], //记录每一行的元素下拉列表数据
+            elementOptionsList: [], //记录元素下拉列表数据
+            pageList:[], //记录每一行的页面列表数据
+            elementList:[],//记录每一行的元素列表数据
             action1: [],//步骤第1列数据
             action2: [],//步骤第2列数据
             action3: [],//步骤第3列数据
@@ -361,8 +363,18 @@ export default class TestCase extends React.Component {
 
     // 根据选择不同的页面初始化元素下拉列表数值--这里的元素只展示有元素名称的元素
     onPageChange(key,value){
+
+        // 所选页面变更时，不管是不是能取到元素列表信息，都置空元素列表的展示
+        const elementList = this.state.elementList;
+        elementList[parseInt(key)-1] = '';
+        console.log("onPageChange-elementList:",elementList);
+        this.setState({
+            elementList:elementList,
+        });
+
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
+        const elementOptionsList = this.state.elementOptionsList;
         console.log('====pageOptions====:', this.state.pageOptions);
         console.log('====key====:', key);
         console.log('====value====:', value);
@@ -389,17 +401,18 @@ export default class TestCase extends React.Component {
                     )
                 }
                 const data = elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
+                elementOptionsList[parseInt(key)-1] = data;
                 this.setState({
-                    elementOptions:data,
-                    elementValue:elementSelect[0].id,
+                    elementOptionsList:elementOptionsList,
                 });
             } else {
+                elementOptionsList[parseInt(key)-1] = [];
                 this.setState({
-                    elementOptions: [],
-                    elementValue:''
+                    elementOptionsList: elementOptionsList,
                 });
             }
         });
+
 
         // var key_i =  parseInt(key);
         // //var citiesList = [...this.state.citiesList];
@@ -420,6 +433,7 @@ export default class TestCase extends React.Component {
     onElementChange (key,value) {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
+        const elementList = this.state.elementList;
         if (postCaseSteps.length <= key) {
             const caseStep = {
                 elementId: value,
@@ -428,9 +442,11 @@ export default class TestCase extends React.Component {
         } else {
             postCaseSteps[key].elementId = value;
         }
+        elementList[parseInt(key)-1] = value;
+        console.log("onElementChange-elementList:",elementList);
         this.setState({
             postCaseSteps:postCaseSteps,
-            elementValue:value,
+            elementList:elementList,
         })
         // var key_i =  parseInt(key);
         // var secondCityList = [...this.state.secondCityList];
@@ -449,7 +465,7 @@ export default class TestCase extends React.Component {
 
     onAdd(key, e) {
 
-        const data = [...this.state.setpData];
+        const data = this.state.setpData;
         var key_i = parseInt(key);
         // 在所选行下方插入一行数据
         var stepNo = key_i + 1;
@@ -468,7 +484,10 @@ export default class TestCase extends React.Component {
 
             }
         }
-        this.setState({ setpData:data });
+
+        this.setState({
+            setpData:data,
+        });
     }
 
     setTitle(value) {
