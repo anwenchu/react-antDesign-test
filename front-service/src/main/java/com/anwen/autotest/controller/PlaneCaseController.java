@@ -65,4 +65,15 @@ public class PlaneCaseController extends AbstractController{
     }
 
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "查询指定计划中的用例数据", notes = "查询指定计划中的用例数据")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "planeId") String planeId) {
+        return wrapperSupplier(() -> planeCaseRepository.findPlaneCaseDomainByPlaneId(planeId), false);
+    }
+
+
 }

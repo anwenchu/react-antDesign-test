@@ -84,8 +84,11 @@ public class CaseController extends AbstractController{
     @GetMapping(value = "/search")
     public ResponseEntity detail(String directoryId,String platform) {
         Long isDelete = 0L;
-
-        return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId,platform,isDelete), false);
+        if (null == platform) {
+            return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndIsDelete(directoryId,isDelete), false);
+        } else {
+            return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId, platform, isDelete), false);
+        }
     }
 
 

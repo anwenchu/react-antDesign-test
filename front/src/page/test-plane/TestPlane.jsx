@@ -20,9 +20,10 @@ export default class TestPlane extends React.Component {
     state = {
         caseDir : [],
         caseData : [],
-        selectedRowKeys : [],
+        selectedRowKeys : [], // 记录选中的用例序号
         plane : [],
         platform : '',
+        selectCase : [],  // 记录被选中的用例信息
     };
     columns = [{
         title: '执行顺序',
@@ -75,7 +76,7 @@ export default class TestPlane extends React.Component {
         this.search()
     }
 
-
+    // 将返回的目录数据转为级联控件需要的格式
     getData(data){
         return data.map((item) => {
             var str = {};
@@ -97,6 +98,7 @@ export default class TestPlane extends React.Component {
      */
     search = () => {
         const isEidt = this.props.location.action;
+        console.log("search-isEdit:",isEidt);
         var platform;
         if(null != isEidt){
             // 如果是编辑状态，则初始化表单数据
@@ -104,13 +106,47 @@ export default class TestPlane extends React.Component {
             plane.directoryId = plane.directoryId.split(",");
             platform = plane.platform;
             this.setState({
-                plane : plane,
+                plane : plane
             });
-            this.getCaseData(platform,plane.directoryId);
+            // 获取当前目录下的所有用例数据
+            this.getCaseData(plane.directoryId);
+            //获取用例列表数据
+            promiseAjax.get(`/planecase/search?planeId=${plane.id}`).then(data => {
+                if (null != data) {
+                    // 根据返回结果修改选中状态
+                    var selectedRowKeys = this.state.selectedRowKeys;
+                    var caseData = this.state.selectedRowKeys;
+                    data.map((item)=>{
+                        selectedRowKeys.push(item.orderNo);
+                        for(var i=0;i<caseData.length;i++)
+                            if (caseData[i].caseId === item.caseId){
+                                // 修改用例执行次数
+                                caseData[i].caseCount = item.caseCount;
+                                // 修改被选中用例的位置
+                                if ((parseInt(caseData[i].key)-1) !== item.orderNo){
+                                    // 交换序号key
+                                    var tempKey = caseData[parseInt(item.orderNo)].key;
+                                    caseData[parseInt(item.orderNo)].key = caseData[i].key;
+                                    caseData[i].key = tempKey;
+                                    // 交换位置
+                                    var temp = caseData[parseInt(item.orderNo)];
+                                    caseData[parseInt(item.orderNo)] = caseData[i];
+                                    caseData[i] = temp;
+                                }
+                            }
+                    });
+
+
+                    this.setState({
+                        selectCase : data,
+                    });
+                }
+            });
+
         }else{
             platform = this.props.location.platform;
         }
-        //ajax get请求  url 路径
+        // 获取目录数据
         promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
             if (null != data) {
                 // 将数据存入state  渲染页面
@@ -168,9 +204,9 @@ export default class TestPlane extends React.Component {
         });
     }
 
-    getCaseData(platform,directoryId){
+    getCaseData(directoryId){
         // 条件查询接口
-        promiseAjax.get(`/testcase/search?platform=${platform}&directoryId=${directoryId[directoryId.length-1]}`).then(data => {
+        promiseAjax.get(`/testcase/search?directoryId=${directoryId[directoryId.length-1]}`).then(data => {
             if (null != data) {
                 // 将数据存入state  渲染页面
                 console.log("onChange-data",data);
@@ -189,9 +225,7 @@ export default class TestPlane extends React.Component {
 
     // 根据选择的目录展示用例信息
     onChange(value) {
-        console.log("onChange-value:",value);
-        const platform = this.state.platform;
-        this.getCaseData(platform,value);
+        this.getCaseData(value);
     }
 
 

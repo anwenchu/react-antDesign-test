@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface CaseRepository extends JpaRepository<CaseDomain, Long> {
     List<CaseDomain> findCaseDomainByDirectoryIdAndPlatformAndIsDelete(String directoryId,String platform,Long isDelete);
+    List<CaseDomain> findCaseDomainByDirectoryIdAndIsDelete(String directoryId,Long isDelete);
 }
