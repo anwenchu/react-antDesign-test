@@ -182,6 +182,7 @@ class Directory extends React.Component {
      * @param all
      */
     search = () => {
+        //console.log("add test case:",this.props.location);
         const platform = this.props.platform;
         this.setState({
             platform: platform,

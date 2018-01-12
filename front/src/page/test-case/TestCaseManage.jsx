@@ -77,7 +77,6 @@ export default class TestCaseManage extends React.Component{
         if (dirId !== null &&  dirId !== undefined)
             urlPath = urlPath + `&directoryId=${dirId}`;
         promiseAjax.get(urlPath).then(data => {
-            console.log('data: ', data);
             if (data) {
                 // 将数据存入state  渲染页面
                 this.setState({
@@ -111,25 +110,30 @@ export default class TestCaseManage extends React.Component{
         this.setState({ data });
     }
 
-    /**
-     *
-     * @param id
-     */
+    // 点击新建按钮事件
     handleClickNew = (key) => {
         const platfrominfo = this.state.platform;
-        const editPath = {
-            pathname : '/addtestcase',
-            platform : platfrominfo,
+        const directoryId = this.state.dirId;
+        // 没有选择用例目录不允许创建用例
+        if (directoryId!=='' && directoryId!==undefined) {
+            const editPath = {
+                pathname : '/addtestcase',
+                platform : platfrominfo,
+                directoryId : directoryId,
+            }
+            this.props.history.push(editPath);
+            console.log(" test case1111:",this.props.history);
+        }else {
+            message.info('新建用例前，请先选择用例目录！');
         }
-        this.props.history.push(editPath);
+
     }
 
 
     selectPage = (key) => {
-        console.log("caseManage-selectKeys:",key);
         this.search(key);
         this.setState({
-            pageId:key,
+            dirId:key,
         })
 
     }
@@ -149,7 +153,7 @@ export default class TestCaseManage extends React.Component{
                             <div style={{ padding: " 0px 0px 15px 0px" }}>
                                 <Row gutter={16} align="middle" >
                                     <Col className="gutter-row" span={3}>
-                                        <Button type="primary" onClick={this.handleClickNew}><Link to={"/addtestcase"}>+ 新建</Link></Button>
+                                        <Button type="primary" onClick={this.handleClickNew}>+ 新建</Button>
                                     </Col>
                                     <Col className="gutter-row" span={3}>
                                         <Button >批量操作</Button>

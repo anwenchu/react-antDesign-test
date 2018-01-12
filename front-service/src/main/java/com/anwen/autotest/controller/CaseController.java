@@ -27,13 +27,14 @@ public class CaseController extends AbstractController{
     /**
      * 新增用例
      *
-     * @param dir 需要新增的对象
+     * @param testcase 需要新增的对象
      * @return 返回成功或失败
      */
-    @ApiOperation(value = "新增目录", notes = "新增目录")
+    @ApiOperation(value = "新增用例", notes = "新增用例")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody CaseDomain dir) {
-        return wrapperConsumer((p) -> caseRepository.save(p), dir);
+    public ResponseEntity save(@RequestBody CaseDomain testcase) {
+        testcase.setIsDelete(0L);
+        return wrapperConsumer((p) -> caseRepository.save(p), testcase);
     }
 
     /**
@@ -87,14 +88,7 @@ public class CaseController extends AbstractController{
     @ApiOperation(value = "查询目录", notes = "查询目录")
     @GetMapping(value = "/search")
     public ResponseEntity detail(CaseDomain casedomain) {
-        //Long isDelete = 0L;
-        //if (null == platform) {
-        //    return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndIsDelete(directoryId,isDelete), false);
-        //} else {
-        //    return wrapperSupplier(() -> caseRepository.findCaseDomainByDirectoryIdAndPlatformAndIsDelete(directoryId, platform, isDelete), false);
-        //}
-
-        caseService.findAll(casedomain);
+        //caseService.findAll(casedomain);
         return wrapperSupplier(() -> caseService.findAll(casedomain), false);
     }
 

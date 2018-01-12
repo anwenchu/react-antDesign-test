@@ -1,12 +1,11 @@
 import React from "react";
-import { version, Layout, Menu, Select, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
+import { version, Layout, Menu, Select, Divider,Input,Row, Col ,Table, Icon,Form, Button,message} from "antd";
 import "antd/dist/antd.css";
 import Directory from './Directory';
 import TableRC from 'rc-table';
 import Animate from 'rc-animate';
 import 'rc-table/assets/index.css';
-import 'rc-table/assets/animation.css';;
-import DropdownList from '../common/DropdownList';
+import 'rc-table/assets/animation.css';
 import {promiseAjax} from "../common/an";
 
 /*
@@ -15,12 +14,13 @@ import {promiseAjax} from "../common/an";
 */
 
 
-const { Header, Content, Footer, Sider } = Layout;
+const {  Content,  Sider } = Layout;
 const AnimateBody = (props) =>
     <Animate transitionName="move" component="tbody" {...props} />;
 const Option = Select.Option;
+const FormItem = Form.Item;
 
-
+@Form.create()
 export default class TestCase extends React.Component {
     constructor(props) {
         super(props);
@@ -44,8 +44,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"} value={this.state.elementList[parseInt(record.key)-1]} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
-                    {this.state.elementOptionsList[parseInt(record.key)-1]}
+                <Select size={"small"} value={this.state.stepElement[parseInt(record.key)-1].elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                    {this.state.stepElement[parseInt(record.key)-1].elementOptions}
                 </Select>
             ),
             width: 120
@@ -56,28 +56,28 @@ export default class TestCase extends React.Component {
             render: (text, record) => (
                 <div>
                     <Select size={"small"}  style={{ width: 110 }} onChange={e =>this.onAction1Change(record.key,e)}>
-                        {this.state.action1}
+                        {this.state.action1Option}
                     </Select>
                     {
-                        (this.state.isAction2 == true && this.state.action2Type === '1') ?
+                        (this.state.stepAction[parseInt(record.key)-1].isAction2 === true && this.state.stepAction[parseInt(record.key)-1].action2Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}}
                                     onChange={e => this.onAction2Change(record.key, e)}>
-                                {this.state.action2}
+                                {this.state.stepAction[parseInt(record.key)-1].action2}
                             </Select> : null
                     }
                     {
-                        (this.state.isAction2 == true && this.state.action2Type === '2')?
+                        (this.state.stepAction[parseInt(record.key)-1].isAction2 === true && this.state.stepAction[parseInt(record.key)-1].action2Type === '2')?
                             <input onBlur={e => this.onAction2Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                     {
-                        (this.state.isAction3 == true && this.state.action3Type === '1') ?
+                        (this.state.stepAction[parseInt(record.key)-1].isAction3 === true && this.state.stepAction[parseInt(record.key)-1].action3Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}}
                                     onChange={e => this.onAction3Change(record.key, e)}>
-                                {this.state.action3}
+                                {this.state.stepAction[parseInt(record.key)-1].action3}
                             </Select> : null
                     }
                     {
-                        (this.state.isAction3 == true && this.state.action3Type === '2')?
+                        (this.state.stepAction[parseInt(record.key)-1].isAction3 === true && this.state.stepAction[parseInt(record.key)-1].action3Type === '2')?
                             <input onBlur={e => this.onAction3Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                 </div>
@@ -102,22 +102,29 @@ export default class TestCase extends React.Component {
         }];
         this.state = {
             setpData: [{
-                key:"1"
+                key:"1",
+                stepNo:"1",
             }],// 记录步骤数据
             pageOptions: [], //记录页面下拉列表数据
-            elementOptionsList: [], //记录元素下拉列表数据
-            pageList:[], //记录每一行的页面列表数据
-            elementList:[],//记录每一行的元素列表数据
-            action1: [],//步骤第1列数据
-            action2: [],//步骤第2列数据
-            action3: [],//步骤第3列数据
-            isAction1: false,
-            isAction2: false,
-            isAction3: false,
-            action1Type: '',
-            action2Type: '',
-            action3Type: '',
-            platform:'',
+            // 记录每行操作对象（页面及元素）内容
+            stepElement:[{
+                elementOptions:'',
+                pageId:'',
+                elementId:'',
+            }],
+            action1Option:'',//记录1级行为下拉列表数据
+            // 需要记录下每行的用例步骤数据与控件展示状态
+            stepAction:[{
+                action1:'',
+                action2:'',
+                action3:'',
+                isAction1: false,
+                isAction2: false,
+                isAction3: false,
+                action1Type: '',
+                action2Type: '',
+                action3Type: '',
+            }],
             // 以下是存的数据
             postCaseSteps: [{
                 parentId: '',
@@ -127,10 +134,8 @@ export default class TestCase extends React.Component {
                 pageId: '',
                 elementId: '',
             }],
-            caseTitle: '',
-            setupCaseId: '',
-            teardownCaseId: '',
-
+            directoryId:'',//记录用例所属目录id
+            platform:'',
         };
     }
 
@@ -143,7 +148,7 @@ export default class TestCase extends React.Component {
         this.initAction1();
     }
 
-    // 获取步骤描述中的操作行为数据
+    // 获取步骤描述中的一级（parentId=0）操作行为数据
     initAction1() {
         promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
             if (rsp != null && rsp.length > 0) {
@@ -158,11 +163,11 @@ export default class TestCase extends React.Component {
                 }
                 const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                 this.setState({
-                    action1: data
+                    action1Option: data
                 });
             } else {
                 this.setState({
-                    action1: []
+                    action1Option: []
                 });
             }
         });
@@ -170,6 +175,7 @@ export default class TestCase extends React.Component {
 
     // 根据选中的操作行为展示后续控件
     onAction1Change(key, id) {
+        key = parseInt(key);
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
         if (postCaseSteps.length <= key) {
@@ -183,28 +189,28 @@ export default class TestCase extends React.Component {
         this.setState({
             postCaseSteps,
         })
-
+        // 获取二级行为操作数据
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
             if (rsp != null && rsp.length > 0) {
-                var actionSelect = [];
-                var action2Type = '1';
-                var data;
-                for (var i = 0; i < rsp.length; i++) {
-                    if (rsp[i].category === 2) {
-                        action2Type = '2';
+
+                // 设置二级行为控件可见
+                var stepAction = this.state.stepAction;
+                stepAction[key-1].isAction2 = true;
+
+                // 如果action2的类别是下拉列表，则生成下拉列表数据
+                if (rsp[0].category === '1') {
+                    var actionSelect = [];
+                    for (var i = 0; i < rsp.length; i++) {
+                        actionSelect.push(
+                            {
+                                id : rsp[i].id.toString(),
+                                actionName : rsp[i].actionName,
+                            }
+                        )
                     }
-                    actionSelect.push(
-                        {
-                            id : rsp[i].id.toString(),
-                            actionName : rsp[i].actionName,
-                            category: rsp[i].category,
-                        }
-                    )
-                }
-                if (action2Type === '1') {
-                    data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                    var data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                    stepAction[key-1].action2Type='1'
                     this.setState({
-                        isAction2: true,
                         action2: data,
                         action2Type,
                     });
@@ -351,12 +357,14 @@ export default class TestCase extends React.Component {
         });
 
     }
-    // 初始化平台
+    // 初始化平台和目录id
     initPlatform() {
-        // 获取平台信息
+        // 获取平台信息和目录id
         var platform = this.props.location.platform;
+        var directoryId = this.props.location.directoryId;
         this.setState({
             platform: platform,
+            directoryId:directoryId,
         });
     }
 
@@ -375,9 +383,6 @@ export default class TestCase extends React.Component {
         // 保存选中
         const postCaseSteps = this.state.postCaseSteps;
         const elementOptionsList = this.state.elementOptionsList;
-        console.log('====pageOptions====:', this.state.pageOptions);
-        console.log('====key====:', key);
-        console.log('====value====:', value);
         if (postCaseSteps.length <= key) {
             const caseStep = {
                 pageId: value,
@@ -412,22 +417,6 @@ export default class TestCase extends React.Component {
                 });
             }
         });
-
-
-        // var key_i =  parseInt(key);
-        // //var citiesList = [...this.state.citiesList];
-        // var secondCityList = [...this.state.secondCityList];
-        // //citiesList[key_i-1] = cityData[value];
-        // secondCityList[key_i-1] = cityData[value][0]
-        // this.setState({
-        //     cities: cityData[value],
-        //     secondCity: cityData[value][0],
-        //     //citiesList : citiesList,
-        //     secondCityList : secondCityList,
-        //
-        // });
-        // this.initElementOptions(value);
-
     }
 
     onElementChange (key,value) {
@@ -443,18 +432,10 @@ export default class TestCase extends React.Component {
             postCaseSteps[key].elementId = value;
         }
         elementList[parseInt(key)-1] = value;
-        console.log("onElementChange-elementList:",elementList);
         this.setState({
             postCaseSteps:postCaseSteps,
             elementList:elementList,
-        })
-        // var key_i =  parseInt(key);
-        // var secondCityList = [...this.state.secondCityList];
-        // secondCityList[key_i-1] = value;
-        // this.setState({
-        //     secondCity: value,
-        //     secondCityList : secondCityList,
-        // });
+        });
     }
 
     onDelete(key, e) {
@@ -463,8 +444,7 @@ export default class TestCase extends React.Component {
         this.setState({ setpData });
     }
 
-    onAdd(key, e) {
-
+    onAdd(key) {
         const data = this.state.setpData;
         var key_i = parseInt(key);
         // 在所选行下方插入一行数据
@@ -475,48 +455,64 @@ export default class TestCase extends React.Component {
         }
         data.splice(key_i, 0, el);
         // 新数据后的所有数据序号+1
-        for (var i=0;i<data.length;i++)
-        {
-            if (i>key_i)
-            {
+        for (var i=0;i<data.length;i++) {
+            if (i>key_i) {
                 data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
                 data[i].key = data[i].stepNo;
-
             }
         }
-
         this.setState({
             setpData:data,
         });
     }
 
-    setTitle(value) {
-        console.log('????????', value);
-        this.setState({
-            caseTitle: value
-        });
-    }
 
-    SetupCaseId (value){
-        this.setState({
-            setupCaseId: value
-        });
-    }
 
-    TeardownCaseId = (value) => {
-        this.setState({
-            teardownCaseId: value
-        });
-    }
-
-    submit = () => {
+    /**
+     * 新建测试用例与测试步骤
+     */
+    handleSubmit = (e) => {
+        e.preventDefault();
         console.log('====this.state.postCaseSteps====', this.state.postCaseSteps);
-        console.log('====this.state.caseTitle====', this.state.caseTitle);
-        console.log('====this.state.setupCaseId====', this.state.setupCaseId);
-        console.log('====this.state.teardownCaseId====', this.state.teardownCaseId);
+        const form = this.props.form;
+        var platform = this.state.platform;
+        var directoryId = this.state.directoryId;
+
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                values.platform = platform;
+                values.directoryId = directoryId.toString();
+                console.log("handleSubmit-values:",values);
+                //ajax post请求  url 路径
+                promiseAjax.post('/testcase/add', values).then(data => {
+                    if (null != data) {
+                        //测试用例保存成功后，保存测试步骤数据
+                        this.props.history.goBack();
+                    }
+                });
+            }
+        });
+
     }
     render() {
         const platform = this.props.location.platform;
+        const { getFieldDecorator } = this.props.form;
+        const formItemLayoutCaseTile = {
+            labelCol: {
+                span: 2 ,
+            },
+            wrapperCol: {
+                span: 18 ,
+            },
+        };
+        const formItemLayout = {
+            labelCol: {
+                span: 2 ,
+            },
+            wrapperCol: {
+                span: 5 ,
+            },
+        };
         return (
             <Layout>
                 <Sider width={260} style={{background: "#F0F2F5"}}>
@@ -526,34 +522,40 @@ export default class TestCase extends React.Component {
                 </Sider>
                 <Content style={{padding: "0px 0px 0px 20px"}}>
                     <div style={{background: "#fff", padding: 50, minHeight: 960}}>
-                        <div className="gutter-example" style={{padding: " 0px 0px 30px 0px"}}>
-                            <div style={{padding: " 0px 0px 15px 0px"}}>
-                                <Row gutter={16} align="middle">
-                                    <Col className="gutter-row" span={3}>
-                                        <div className="gutter-box">用例标题：</div>
-                                    </Col>
-                                    <Col className="gutter-row" span={21}>
-                                        <div className="gutter-box">
-                                            <Input onblur={(e) => this.setTitle(e)}  placeholder="请输入用例标题"/>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div>
-                                <Row gutter={16} align="middle">
-                                    <Col className="gutter-row" span={4}>
-                                        <div className="gutter-box">前置用例依赖：</div>
-                                    </Col>
-                                    <Col className="gutter-row" span={6}>
-                                        <div className="gutter-box">
-                                            <Input onblur={(e) => this.SetupCaseId(e)} placeholder="请输入用例编号"/>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </div>
-                        </div>
-                        <div className="caseStepList">
-                            <div style={{margin: 5}}>
+                        <Form onSubmit={this.handleSubmit}>
+                            <FormItem
+                                {...formItemLayoutCaseTile}
+                                label="用例标题"
+                            >
+                                {getFieldDecorator('caseTitle', {
+                                    rules: [{
+                                        required: true, message: '请输入用例标题!',
+                                    },{
+                                        max:50,message: '最多允许输入50个字符!',
+                                    }],
+
+                                })(
+                                    <Input  placeholder="请输入用例标题"/>
+                                )}
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="前置用例"
+                            >
+                                {getFieldDecorator('setupCaseId', {
+                                    rules: [{
+                                        message: '请输入前置用例编号!',
+                                    },{
+                                        max:50,message: '最多允许输入50个字符!',
+                                    }],
+
+                                })(
+                                    <Input placeholder="请输入前置用例编号"/>
+                                )}
+                            </FormItem>
+                            <FormItem
+                            >
+                                <div>用例步骤：</div>
                                 <TableRC
                                     columns={this.columns}
                                     data={this.state.setpData}
@@ -561,30 +563,33 @@ export default class TestCase extends React.Component {
                                         body: {wrapper: AnimateBody},
                                     }}
                                 />
-                            </div>
-                        </div>
-                        <div className="gutter-example">
-                            <div style={{padding: " 30px 0px 0px 0px"}}>
-                                <Row gutter={16} align="middle">
-                                    <Col className="gutter-row" span={4}>
-                                        <div className="gutter-box">后置用例依赖：</div>
-                                    </Col>
-                                    <Col className="gutter-row" span={6}>
-                                        <div className="gutter-box">
-                                            <Input onblur={(e) => this.TeardownCaseId(e)}  placeholder="请输入用例编号"/>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <div style={{padding: " 30px 0px 0px 0px"}}>
-                                <Row gutter={16} align="middle">
-                                    <Col className="gutter-row" offset={20} span={2}>
-                                        <Button onClick={this.submit} type="primary">保存</Button>
-                                    </Col>
-                                </Row>
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="后置用例"
+                            >
+                                {getFieldDecorator('teardownCaseId', {
+                                    rules: [{
+                                         message: '请输入后置用例编号!',
+                                    },{
+                                        max:50,message: '最多允许输入50个字符!',
+                                    }],
 
-                            </div>
-                        </div>
+                                })(
+                                    <Input  placeholder="请输入后置用例编号"/>
+                                )}
+                            </FormItem>
+                            <FormItem>
+                                <Row gutter={16} align={"middle"} justify={"center"}>
+                                    <Col className="gutter-row" span={2} offset={16}>
+                                        <Button onClick={()=>{this.props.history.goBack()}}>取消</Button>
+                                    </Col>
+                                    <Col className="gutter-row" span={2} offset={2}>
+                                        <Button type="primary" htmlType="submit">保存</Button>
+                                    </Col>
+                                </Row>
+                            </FormItem>
+                        </Form>
                     </div>
                 </Content>
             </Layout>
