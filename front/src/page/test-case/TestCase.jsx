@@ -44,8 +44,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"} value={this.state.stepElement[parseInt(record.key)-1].elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
-                    {this.state.stepElement[parseInt(record.key)-1].elementOptions}
+                <Select size={"small"} value={text.elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                    {text.elementOptions}
                 </Select>
             ),
             width: 120
@@ -59,26 +59,26 @@ export default class TestCase extends React.Component {
                         {this.state.action1Option}
                     </Select>
                     {
-                        (this.state.stepAction[parseInt(record.key)-1].isAction2 === true && this.state.stepAction[parseInt(record.key)-1].action2Type === '1') ?
+                        (text.isAction2 === true && text.action2Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}}
                                     onChange={e => this.onAction2Change(record.key, e)}>
-                                {this.state.stepAction[parseInt(record.key)-1].action2}
+                                {text.action2}
                             </Select> : null
                     }
                     {
-                        (this.state.stepAction[parseInt(record.key)-1].isAction2 === true && this.state.stepAction[parseInt(record.key)-1].action2Type === '2')?
-                            <input onBlur={e => this.onAction2Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                        (text.isAction2 === true && text.action2Type === '2')?
+                            <input size={"small"} onBlur={e => this.onAction2Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                     {
-                        (this.state.stepAction[parseInt(record.key)-1].isAction3 === true && this.state.stepAction[parseInt(record.key)-1].action3Type === '1') ?
+                        (text.isAction3 === true && text.action3Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}}
                                     onChange={e => this.onAction3Change(record.key, e)}>
-                                {this.state.stepAction[parseInt(record.key)-1].action3}
+                                {text.action3}
                             </Select> : null
                     }
                     {
-                        (this.state.stepAction[parseInt(record.key)-1].isAction3 === true && this.state.stepAction[parseInt(record.key)-1].action3Type === '2')?
-                            <input onBlur={e => this.onAction3Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                        (text.isAction3 === true && text.action3Type === '2')?
+                            <input size={"small"} onBlur={e => this.onAction3Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                 </div>
 
@@ -101,38 +101,29 @@ export default class TestCase extends React.Component {
             ),
         }];
         this.state = {
-            setpData: [{
+            pageOptions: [], //记录页面下拉列表数据
+            action1Option:'',//记录1级行为下拉列表数据
+            // 每行步骤数据
+            caseSteps: [{
                 key:"1",
                 stepNo:"1",
-            }],// 记录步骤数据
-            pageOptions: [], //记录页面下拉列表数据
-            // 记录每行操作对象（页面及元素）内容
-            stepElement:[{
-                elementOptions:'',
-                pageId:'',
-                elementId:'',
-            }],
-            action1Option:'',//记录1级行为下拉列表数据
-            // 需要记录下每行的用例步骤数据与控件展示状态
-            stepAction:[{
-                action1:'',
-                action2:'',
-                action3:'',
-                isAction1: false,
-                isAction2: false,
-                isAction3: false,
-                action1Type: '',
-                action2Type: '',
-                action3Type: '',
-            }],
-            // 以下是存的数据
-            postCaseSteps: [{
-                parentId: '',
-                actionId: '',
-                subtext: '',
-                stepNo: '',
-                pageId: '',
-                elementId: '',
+                pageId:'',  // 每行页面id
+                step:{
+                    action1default:'',// 记录某行一级选中的行为
+                    action2default:'',// 记录某行二级选中的行为
+                    action3default:'',// 记录某行三级选中的行为
+                    action2:'',   // 记录某行二级行为
+                    action3:'',   // 记录某行三级行为
+                    isAction2: false, // 设置某行二级行为是否展示
+                    isAction3: false, // 设置某行三级行为是否展示
+                    action2Type: '', // 设置某行二级行为控件类型
+                    action3Type: '', // 设置某行二级行为控件类型
+
+                },
+                element:{
+                    elementId:'',
+                    elementOptions:'',
+                },
             }],
             directoryId:'',//记录用例所属目录id
             platform:'',
@@ -176,27 +167,13 @@ export default class TestCase extends React.Component {
     // 根据选中的操作行为展示后续控件
     onAction1Change(key, id) {
         key = parseInt(key);
-        // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                actionId: id,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].actionId = id;
-        }
-        this.setState({
-            postCaseSteps,
-        })
+        // 保存数据
+        const caseSteps = this.state.caseSteps;
+        caseSteps[key-1].step.action1default = id;
         // 获取二级行为操作数据
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
+            // 如果有数据返回
             if (rsp != null && rsp.length > 0) {
-
-                // 设置二级行为控件可见
-                var stepAction = this.state.stepAction;
-                stepAction[key-1].isAction2 = true;
-
                 // 如果action2的类别是下拉列表，则生成下拉列表数据
                 if (rsp[0].category === '1') {
                     var actionSelect = [];
@@ -209,130 +186,95 @@ export default class TestCase extends React.Component {
                         )
                     }
                     var data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-                    stepAction[key-1].action2Type='1'
-                    this.setState({
-                        action2: data,
-                        action2Type,
-                    });
+                    caseSteps[key-1].step.action2Type = '1';
+                    caseSteps[key-1].step.action2 = data;
+                    caseSteps[key-1].step.isAction2 = true;
                 } else {
-                    this.setState({
-                        isAction2: true,
-                        action2Type,
-                    });
+                    caseSteps[key-1].step.action2Type = '2';
+                    caseSteps[key-1].step.isAction2 = true;
                 }
 
             } else {
-                this.setState({
-                    isAction2: false,
-                    action2: [],
-                });
+                // 如果没有数据返回，相关数据重置
+                caseSteps[key-1].step.action2Type = '';
+                caseSteps[key-1].step.isAction2 = false;
+                caseSteps[key-1].step.action2 = [];
             }
+            this.setState({
+                caseSteps: caseSteps,
+            });
         });
     }
 
     // 根据子操作行为展示后续控件
     onAction2Change(key, id) {
-        // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                actionId: id,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].actionId = `${postCaseSteps[key].actionId},${id}`;
-        }
-        this.setState({
-            postCaseSteps,
-        })
+        key = parseInt(key);
+        // 保存数据
+        const caseSteps = this.state.caseSteps;
+        caseSteps[key-1].step.action2default = id;
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
+            // 如果有数据返回
             if (rsp != null && rsp.length > 0) {
-                var actionSelect = [];
-                var action3Type = '1';
-                var data;
-                for (var i = 0; i < rsp.length; i++) {
-                    console.log('rsp[i].category=====::', rsp[i].category);
-                    if (rsp[i].category === '2') {
-                        console.log('lalalalalal');
-                        action3Type = '2';
+                // 如果action3的类别是下拉列表，则生成下拉列表数据
+                if (rsp[0].category === '1') {
+                    var actionSelect = [];
+                    for (var i = 0; i < rsp.length; i++) {
+                        actionSelect.push(
+                            {
+                                id: rsp[i].id.toString(),
+                                actionName: rsp[i].actionName,
+                            }
+                        )
                     }
-                    actionSelect.push(
-                        {
-                            id : rsp[i].id.toString(),
-                            actionName : rsp[i].actionName,
-                            category: rsp[i].category,
-                        }
-                    )
-                }
-                if (action3Type === '1') {
-                    data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-                    this.setState({
-                        isAction3: true,
-                        action3: data,
-                        action3Type,
-                    });
-                } else {
-                    this.setState({
-                        isAction3: true,
-                        action3Type,
-                    });
-                }
+                    var data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                    caseSteps[key-1].step.action3Type = '1';
+                    caseSteps[key-1].step.action3 = data;
+                    caseSteps[key-1].step.isAction3 = true;
+                }  else {
+                    caseSteps[key-1].step.action3Type = '2';
+                    caseSteps[key-1].step.isAction3 = true;
+            }
 
             } else {
-                this.setState({
-                    isAction3: false,
-                    action3: [],
-                });
+                // 如果没有数据返回，相关数据重置
+                caseSteps[key-1].step.action3Type = '';
+                caseSteps[key-1].step.isAction3 = false;
+                caseSteps[key-1].step.action3 = [];
             }
+            this.setState({
+                caseSteps: caseSteps,
+            });
         });
     }
 
     // 根据3级操作展示后续控件
     onAction3Change(key, id) {
-        // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                actionId: id,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].actionId = `${postCaseSteps[key].actionId},${id}`;
-        }
+        key = parseInt(key);
+        const caseSteps = this.state.caseSteps;
+        caseSteps[key-1].step.action3default = id;
+
         this.setState({
-            postCaseSteps,
+            caseSteps:caseSteps,
         })
     }
 
     onAction2Input(key, value) {
         // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                subtext: value,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].subtext = value;
-        }
+        key = parseInt(key);
+        const caseSteps = this.state.caseSteps;
+        caseSteps[key-1].step.action2default = value;
         this.setState({
-            postCaseSteps,
+            caseSteps:caseSteps,
         })
     }
 
     onAction3Input(key, value) {
         // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                subtext: value,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].subtext = value;
-        }
+        key = parseInt(key);
+        const caseSteps = this.state.caseSteps;
+        caseSteps[key-1].step.action3default = value;
         this.setState({
-            postCaseSteps,
+            caseSteps:caseSteps,
         })
     }
     // 初始化页面数据下拉列表
@@ -373,27 +315,13 @@ export default class TestCase extends React.Component {
     onPageChange(key,value){
 
         // 所选页面变更时，不管是不是能取到元素列表信息，都置空元素列表的展示
-        const elementList = this.state.elementList;
-        elementList[parseInt(key)-1] = '';
-        console.log("onPageChange-elementList:",elementList);
+        const caseSteps = this.state.caseSteps;
+        caseSteps[parseInt(key)-1].element.elementId='';
         this.setState({
-            elementList:elementList,
+            caseSteps:caseSteps,
         });
 
-        // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        const elementOptionsList = this.state.elementOptionsList;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                pageId: value,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].pageId = value;
-        }
-        this.setState({
-            postCaseSteps,
-        })
+        // 页面选择变更后，加载所选页面元素的信息
         promiseAjax.get(`/element/elementforpage?pageId=${value}`).then((rsp) => {
             if (rsp != null && rsp.length!==0) {
                 var elementSelect = [];
@@ -406,63 +334,75 @@ export default class TestCase extends React.Component {
                     )
                 }
                 const data = elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
-                elementOptionsList[parseInt(key)-1] = data;
-                this.setState({
-                    elementOptionsList:elementOptionsList,
-                });
+                caseSteps[parseInt(key)-1].element.elementOptions = data;
             } else {
-                elementOptionsList[parseInt(key)-1] = [];
-                this.setState({
-                    elementOptionsList: elementOptionsList,
-                });
+                // 如果未获取到数据，清空原有数据
+                caseSteps[parseInt(key)-1].element.elementOptions = [];
             }
+            this.setState({
+                caseSteps:caseSteps,
+            });
         });
     }
 
     onElementChange (key,value) {
         // 保存选中
-        const postCaseSteps = this.state.postCaseSteps;
-        const elementList = this.state.elementList;
-        if (postCaseSteps.length <= key) {
-            const caseStep = {
-                elementId: value,
-            }
-            postCaseSteps.push(caseStep);
-        } else {
-            postCaseSteps[key].elementId = value;
-        }
-        elementList[parseInt(key)-1] = value;
+        const caseSteps = this.state.caseSteps;
+        caseSteps[parseInt(key)-1].element.elementId = value;
         this.setState({
-            postCaseSteps:postCaseSteps,
-            elementList:elementList,
+            caseSteps:caseSteps,
         });
     }
 
     onDelete(key, e) {
         e.preventDefault();
-        const setpData = this.state.setpData.filter(item => item.key !== key);
-        this.setState({ setpData });
+        // 删除列表数据源内容
+        const caseSteps = this.state.caseSteps.filter(item => item.key !== key);
+        this.setState({
+            caseSteps:caseSteps
+        });
+        console.log("caseSteps:",caseSteps);
+
     }
 
     onAdd(key) {
-        const data = this.state.setpData;
+        // 增加列表数据源内容
+        const caseSteps = this.state.caseSteps;
         var key_i = parseInt(key);
         // 在所选行下方插入一行数据
         var stepNo = key_i + 1;
         var el = {
             stepNo: stepNo.toString(),
             key: stepNo.toString(),
-        }
-        data.splice(key_i, 0, el);
+            pageId:'',  // 每行页面id
+            step:{
+                action1default:'',// 记录某行一级选中的行为
+                action2default:'',// 记录某行二级选中的行为
+                action3default:'',// 记录某行三级选中的行为
+                action2:'',   // 记录某行二级行为
+                action3:'',   // 记录某行三级行为
+                isAction2: false, // 设置某行二级行为是否展示
+                isAction3: false, // 设置某行三级行为是否展示
+                action2Type: '', // 设置某行二级行为控件类型
+                action3Type: '', // 设置某行二级行为控件类型
+
+            },
+            element:{
+                elementId:'',
+                elementOptions:''
+            },
+        };
+        caseSteps.splice(key_i, 0, el);
         // 新数据后的所有数据序号+1
-        for (var i=0;i<data.length;i++) {
+        for (var i=0;i<caseSteps.length;i++) {
             if (i>key_i) {
-                data[i].stepNo = (parseInt(data[i].stepNo) + 1).toString();
-                data[i].key = data[i].stepNo;
+                caseSteps[i].stepNo = (parseInt(caseSteps[i].stepNo) + 1).toString();
+                caseSteps[i].key = caseSteps[i].stepNo;
             }
         }
+
         this.setState({
-            setpData:data,
+            caseSteps:caseSteps,
         });
     }
 
@@ -473,11 +413,10 @@ export default class TestCase extends React.Component {
      */
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log('====this.state.postCaseSteps====', this.state.postCaseSteps);
+
         const form = this.props.form;
         var platform = this.state.platform;
         var directoryId = this.state.directoryId;
-
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 values.platform = platform;
@@ -487,6 +426,32 @@ export default class TestCase extends React.Component {
                 promiseAjax.post('/testcase/add', values).then(data => {
                     if (null != data) {
                         //测试用例保存成功后，保存测试步骤数据
+                        var caseStep = [];
+                        const caseSteps = this.state.caseSteps;
+                        for(var i=0;i<caseSteps.length;i++)
+                        {
+                            caseStep.push({
+                                caseId:data[0].id,
+                                pageId:caseSteps[i].pageId,
+                                stepNo:caseSteps[i].step.stepNo,
+                                elementId:stepElement[i].element.elementId,
+                                action1default:stepAction[i].step.action1default,
+                                action2default:stepAction[i].step.action2default,
+                                action3default:stepAction[i].step.action3default,
+                            })
+                        }
+                        //ajax get请求  url 路径
+                        promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
+                            if (null != data) {
+                                var rootId = data.nodeId;
+                                var data = data.children;
+                                // 将数据存入state  渲染页面
+                                this.setState({
+                                    data : data,
+                                    rootId : rootId,
+                                });
+                            }
+                        });
                         this.props.history.goBack();
                     }
                 });
@@ -558,7 +523,7 @@ export default class TestCase extends React.Component {
                                 <div>用例步骤：</div>
                                 <TableRC
                                     columns={this.columns}
-                                    data={this.state.setpData}
+                                    data={this.state.caseSteps}
                                     components={{
                                         body: {wrapper: AnimateBody},
                                     }}

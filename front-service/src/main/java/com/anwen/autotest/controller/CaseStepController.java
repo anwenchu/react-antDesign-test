@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * Created by an_wch on 2017/12/13.
@@ -23,13 +25,17 @@ public class CaseStepController extends AbstractController{
     /**
      * 新增元素
      *
-     * @param element 需要新增的对象
+     * @param planecase 需要新增的对象
      * @return 返回成功或失败
      */
     @ApiOperation(value = "新增元素", notes = "新增元素")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody CaseStepDomain element) {
-        return wrapperConsumer((p) -> caseStepRepository.save(p), element);
+    public ResponseEntity save(@RequestBody List<CaseStepDomain> planecase, String caseId, String result, String stepNo, String pageId, String elementId, String action1Default, String action2Default, String action3Default) {
+        // 批量插入数据
+        for (int i=0;i<planecase.size();i++) {
+            caseStepRepository.save(planecase.get(i));
+        }
+        return wrapperSupplier(() -> "success", false);
     }
 
     /**
