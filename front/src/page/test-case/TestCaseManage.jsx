@@ -28,7 +28,7 @@ export default class TestCaseManage extends React.Component{
         title: '用例标题',
         dataIndex: 'caseTitle',
         render: (text, record) => (
-            <a onClick={() => this.handleEdit(record.key)}>{text}</a>
+            <a onClick={() => this.handleEdit(record)}>{text}</a>
         )
     }, {
         title: '状态',
@@ -91,13 +91,16 @@ export default class TestCaseManage extends React.Component{
 
 
     /**
-     *
+     * 编辑用例
      * @param id
      */
-    handleEdit() {
+    handleEdit(record) {
+        console.log("caseInfo:",record);
         const editPath = {
             pathname : '/addtestcase',
             platform : this.getPlatform(),
+            isEdit:'1', // 如果是编辑操作则进入编辑状态
+            caseInfo : record,
         }
         this.props.history.push(editPath);
     }

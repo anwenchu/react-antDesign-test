@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by an_wch on 2017/12/13.
@@ -34,7 +37,10 @@ public class CaseController extends AbstractController{
     @PostMapping(value = "/add")
     public ResponseEntity save(@RequestBody CaseDomain testcase) {
         testcase.setIsDelete(0L);
-        return wrapperConsumer((p) -> caseRepository.save(p), testcase);
+        caseRepository.save(testcase);
+        List<CaseDomain> testcaseList = new ArrayList<CaseDomain>();
+        testcaseList.add(testcase);
+        return wrapperSupplier(() -> testcaseList, false);
     }
 
     /**

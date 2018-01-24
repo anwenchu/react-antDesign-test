@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by an on 2017/12/24.
@@ -35,6 +32,14 @@ public class ActionController extends AbstractController{
     }
 
 
-
+    /**
+     * 查询某一个操作
+     * @return
+     */
+    @ApiOperation(value = "查询目录", notes = "查询目录")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity detail(@PathVariable(name = "id") Long id) {
+        return wrapperSupplier(() -> actionRepository.findOne(id), false);
+    }
 
 }

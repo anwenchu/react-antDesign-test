@@ -25,15 +25,16 @@ public class CaseStepController extends AbstractController{
     /**
      * 新增元素
      *
-     * @param planecase 需要新增的对象
+     * @param caseStep 需要新增的对象
      * @return 返回成功或失败
      */
     @ApiOperation(value = "新增元素", notes = "新增元素")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody List<CaseStepDomain> planecase, String caseId, String result, String stepNo, String pageId, String elementId, String action1Default, String action2Default, String action3Default) {
+    public ResponseEntity save(@RequestBody List<CaseStepDomain> caseStep, String caseId, String result, String stepNo, String pageId, String elementId, String action1Default, String action2Default, String action3Default) {
         // 批量插入数据
-        for (int i=0;i<planecase.size();i++) {
-            caseStepRepository.save(planecase.get(i));
+        for (int i=0;i<caseStep.size();i++) {
+            System.out.print(caseStep.get(i));
+            caseStepRepository.save(caseStep.get(i));
         }
         return wrapperSupplier(() -> "success", false);
     }
@@ -81,5 +82,16 @@ public class CaseStepController extends AbstractController{
         return wrapperSupplier(() -> caseStepRepository.findOne(id), false);
     }
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "条件查询", notes = "条件查询")
+    @GetMapping(value = "/search")
+    public ResponseEntity search(@RequestParam(value = "caseId") String caseId) {
+
+        return wrapperSupplier(() -> caseStepRepository.findCaseStepDomainByCaseId(caseId), false);
+
+    }
 
 }

@@ -127,21 +127,101 @@ export default class TestCase extends React.Component {
             }],
             directoryId:'',//记录用例所属目录id
             platform:'',
-        };
+            testCase:{
+                caseTitle: "",
+                id: "",
+                setupCaseId:"",
+                teardownCaseId:"",
+            }};
     }
 
     componentDidMount() {
         // 初始化平台信息
         this.initPlatform();
-        //初始化page下拉列表
+        // 初始化page下拉列表
         this.initPageSelect();
         // 初始化步骤action下拉列表
         this.initAction1();
+        // 初始化用例信息（编辑状态）
+        this.initTestCase();
+    }
+    initTestCase(){
+        // 检查是否为编辑状态,如果是编辑状态则初始化用例数据
+        if (this.props.history.location.isEdit==='1') {
+            // 初始化用例信息
+            var caseInfo = this.props.history.location.caseInfo;
+            const testCase = this.state.testCase;
+            testCase.id = caseInfo.id;
+            testCase.caseTitle = caseInfo.caseTitle;
+            testCase.setupCaseId = caseInfo.setupCaseId;
+            testCase.teardownCaseId = caseInfo.teardownCaseId;
+            this.setState({
+                testCase: testCase,
+            });
+            // 初始化用例步骤信息
+            promiseAjax.get(`/casestep/search?caseId=${testCase.id}`).then((rsp) => {
+                if (rsp != null && rsp.length > 0) {
+                    var caseSteps = [];
+                    for (var i = 0; i < rsp.length; i++) {
+                        // 如果操作控件为下拉列表则初始化下拉列表
+                        var action2 = '';
+                        var action3 = '';
+                        if(rsp[i].action2Type==='1') {
+                            action2 = this.initActionOption(rsp[i].action1default);
+                        }
+                        if(rsp[i].action2Type==='1') {
+                            action3 = this.initActionOption(rsp[i].action2default);
+                        }
+                        // 获取每行元素id
+                        var elementOption = this.initElementList(rsp[i].pageId);
+                        caseSteps.push(
+                            {
+                                stepNo : stepNo.toString(),
+                                key : stepNo.toString(),
+                                pageId : rsp[i].pageId,  // 每行页面id
+                                step:{
+                                    action1default : rsp[i].action1Default,// 记录某行一级选中的行为
+                                    action2default : rsp[i].action2Default,// 记录某行二级选中的行为
+                                    action3default : rsp[i].action3Default,// 记录某行三级选中的行为
+                                    action2 : action2,   // 记录某行二级行为
+                                    action3 : action3,   // 记录某行三级行为
+                                    isAction2 : rsp[i].isAction2, // 设置某行二级行为是否展示
+                                    isAction3 : rsp[i].isAction3, // 设置某行三级行为是否展示
+                                    action2Type : rsp[i].action2Type, // 设置某行二级行为控件类型
+                                    action3Type : rsp[i].action3Type, // 设置某行二级行为控件类型
+
+                                },
+                                element:{
+                                    elementId:rsp[i].elementId,
+                                    elementOptions:elementOption,
+                                },
+                            }
+                        )
+                    }
+                    this.setState({
+                        caseSteps: caseSteps
+                    });
+                }
+            });
+
+        }else {
+            //如果不是编辑状态，清空用例和用例步骤数据
+            //this.setState({
+            //    testCase: '',
+            //    caseSteps:'',
+            //});
+            console.log("inittestcase--------")
+        }
+
+
     }
 
-    // 获取步骤描述中的一级（parentId=0）操作行为数据
-    initAction1() {
-        promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
+    initActionOption(actionData){
+        var actionOption='';
+        // 获取action2和action3内容
+        promiseAjax.get(`/action/findByParentId?parentId=${actionData}`).then((rsp) => {
+            return '2222'
+            console.log("initActionOption:------",rsp);
             if (rsp != null && rsp.length > 0) {
                 var actionSelect = [];
                 for (var i = 0; i < rsp.length; i++) {
@@ -152,15 +232,21 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
-                const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-                this.setState({
-                    action1Option: data
-                });
-            } else {
-                this.setState({
-                    action1Option: []
-                });
+                actionOption = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                return '2222'
+
             }
+
+        });
+
+    }
+
+    // 获取步骤描述中的一级（parentId=0）操作行为数据
+    initAction1() {
+        var actionOption = this.initActionOption('0');
+        console.log("initAction1:------",actionOption);
+        this.setState({
+            action1Option: actionOption
         });
     }
 
@@ -171,6 +257,7 @@ export default class TestCase extends React.Component {
         const caseSteps = this.state.caseSteps;
         caseSteps[key-1].step.action1default = id;
         // 获取二级行为操作数据
+
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
             // 如果有数据返回
             if (rsp != null && rsp.length > 0) {
@@ -310,19 +397,10 @@ export default class TestCase extends React.Component {
         });
     }
 
+    // 根据页面信息初始化
+    initElementList(pageId){
 
-    // 根据选择不同的页面初始化元素下拉列表数值--这里的元素只展示有元素名称的元素
-    onPageChange(key,value){
-
-        // 所选页面变更时，不管是不是能取到元素列表信息，都置空元素列表的展示
-        const caseSteps = this.state.caseSteps;
-        caseSteps[parseInt(key)-1].element.elementId='';
-        this.setState({
-            caseSteps:caseSteps,
-        });
-
-        // 页面选择变更后，加载所选页面元素的信息
-        promiseAjax.get(`/element/elementforpage?pageId=${value}`).then((rsp) => {
+        promiseAjax.get(`/element/elementforpage?pageId=${pageId}`).then((rsp) => {
             if (rsp != null && rsp.length!==0) {
                 var elementSelect = [];
                 for (var i = 0; i < rsp.length; i++) {
@@ -333,15 +411,29 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
-                const data = elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
-                caseSteps[parseInt(key)-1].element.elementOptions = data;
+                return elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
+
             } else {
                 // 如果未获取到数据，清空原有数据
-                caseSteps[parseInt(key)-1].element.elementOptions = [];
+                return [];
             }
-            this.setState({
-                caseSteps:caseSteps,
-            });
+
+        });
+    }
+
+
+    // 根据选择不同的页面初始化元素下拉列表数值--这里的元素只展示有元素名称的元素
+    onPageChange(key,value){
+
+        // 所选页面变更时，不管是不是能取到元素列表信息，都置空元素列表的展示,设置选中的id
+        const caseSteps = this.state.caseSteps;
+        caseSteps[parseInt(key)-1].element.elementId = '';
+        caseSteps[parseInt(key)-1].pageId = value;
+
+        // 页面选择变更后，加载所选页面元素的信息
+        caseSteps[parseInt(key)-1].element.elementOptions = this.initElementList(value);
+        this.setState({
+            caseSteps:caseSteps,
         });
     }
 
@@ -434,25 +526,23 @@ export default class TestCase extends React.Component {
                                 caseId:data[0].id,
                                 pageId:caseSteps[i].pageId,
                                 stepNo:caseSteps[i].step.stepNo,
-                                elementId:stepElement[i].element.elementId,
-                                action1default:stepAction[i].step.action1default,
-                                action2default:stepAction[i].step.action2default,
-                                action3default:stepAction[i].step.action3default,
+                                elementId:caseSteps[i].element.elementId,
+                                action1Default:caseSteps[i].step.action1default,
+                                action2Default:caseSteps[i].step.action2default,
+                                action3Default:caseSteps[i].step.action3default,
+                                isAction2:caseSteps[i].step.isAction2,
+                                isAction3:caseSteps[i].step.isAction3,
+                                action2Type:caseSteps[i].step.action2Type,
+                                action3Type:caseSteps[i].step.action3Type,
                             })
                         }
                         //ajax get请求  url 路径
-                        promiseAjax.get(`/dir/list?platform=${platform}`).then(data => {
+                        promiseAjax.post(`/casestep/add`,caseStep).then(data => {
                             if (null != data) {
-                                var rootId = data.nodeId;
-                                var data = data.children;
-                                // 将数据存入state  渲染页面
-                                this.setState({
-                                    data : data,
-                                    rootId : rootId,
-                                });
+                                this.props.history.goBack();
                             }
                         });
-                        this.props.history.goBack();
+
                     }
                 });
             }
