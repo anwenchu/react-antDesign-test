@@ -34,7 +34,7 @@ export default class TestCase extends React.Component {
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select  size={"small"} style={{ width: 110 }} onChange={e => this.onPageChange(record.key,e)}>
+                <Select  size={"small"} value={record.pageId} style={{ width: 110 }} onChange={e => this.onPageChange(record.key,e)}>
                     {this.state.pageOptions}
                 </Select>
             ),
@@ -44,8 +44,8 @@ export default class TestCase extends React.Component {
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"} value={text.elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
-                    {text.elementOptions}
+                <Select size={"small"} value={record.element.elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                    {record.element.elementOptions}
                 </Select>
             ),
             width: 120
@@ -55,30 +55,30 @@ export default class TestCase extends React.Component {
             key: 'step',
             render: (text, record) => (
                 <div>
-                    <Select size={"small"}  style={{ width: 110 }} onChange={e =>this.onAction1Change(record.key,e)}>
+                    <Select size={"small"}  value={record.step.action1default} style={{ width: 110 }} onChange={e =>this.onAction1Change(record.key,e)}>
                         {this.state.action1Option}
                     </Select>
                     {
-                        (text.isAction2 === true && text.action2Type === '1') ?
-                            <Select size={"small"} style={{width: 110,marginLeft:15}}
+                        (record.step.isAction2 === true && record.step.action2Type === '1') ?
+                            <Select size={"small"} style={{width: 110,marginLeft:15}} value={record.step.action2default}
                                     onChange={e => this.onAction2Change(record.key, e)}>
-                                {text.action2}
+                                {record.step.action2}
                             </Select> : null
                     }
                     {
-                        (text.isAction2 === true && text.action2Type === '2')?
-                            <input size={"small"} onBlur={e => this.onAction2Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                        (record.step.isAction2 === true && record.step.action2Type === '2')?
+                            <input size={"small"} value={record.step.action2default} onChange={e => this.onAction2Input(record.key,e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                     {
-                        (text.isAction3 === true && text.action3Type === '1') ?
-                            <Select size={"small"} style={{width: 110,marginLeft:15}}
+                        (record.step.isAction3 === true && record.step.action3Type === '1') ?
+                            <Select size={"small"} style={{width: 110,marginLeft:15}} value={record.step.action2default}
                                     onChange={e => this.onAction3Change(record.key, e)}>
-                                {text.action3}
+                                {record.step.action3}
                             </Select> : null
                     }
                     {
-                        (text.isAction3 === true && text.action3Type === '2')?
-                            <input size={"small"} onBlur={e => this.onAction3Input(record.key, e)} style={{width: 110,marginLeft:15}}/>: null
+                        (record.step.isAction3 === true && record.step.action3Type === '2')?
+                            <input size={"small"} value={record.step.action2default} onChange={e => this.onAction3Input(record.key,e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                 </div>
 
@@ -159,32 +159,22 @@ export default class TestCase extends React.Component {
                 testCase: testCase,
             });
             // 初始化用例步骤信息
+            var caseSteps = [];
             promiseAjax.get(`/casestep/search?caseId=${testCase.id}`).then((rsp) => {
                 if (rsp != null && rsp.length > 0) {
-                    var caseSteps = [];
                     for (var i = 0; i < rsp.length; i++) {
-                        // 如果操作控件为下拉列表则初始化下拉列表
-                        var action2 = '';
-                        var action3 = '';
-                        if(rsp[i].action2Type==='1') {
-                            action2 = this.initActionOption(rsp[i].action1default);
-                        }
-                        if(rsp[i].action2Type==='1') {
-                            action3 = this.initActionOption(rsp[i].action2default);
-                        }
-                        // 获取每行元素id
-                        var elementOption = this.initElementList(rsp[i].pageId);
+
                         caseSteps.push(
                             {
-                                stepNo : stepNo.toString(),
-                                key : stepNo.toString(),
+                                stepNo : rsp[i].stepNo,
+                                key : (i+1).toString(),
                                 pageId : rsp[i].pageId,  // 每行页面id
                                 step:{
                                     action1default : rsp[i].action1Default,// 记录某行一级选中的行为
                                     action2default : rsp[i].action2Default,// 记录某行二级选中的行为
                                     action3default : rsp[i].action3Default,// 记录某行三级选中的行为
-                                    action2 : action2,   // 记录某行二级行为
-                                    action3 : action3,   // 记录某行三级行为
+                                    action2 : '',   // 记录某行二级行为
+                                    action3 : '',   // 记录某行三级行为
                                     isAction2 : rsp[i].isAction2, // 设置某行二级行为是否展示
                                     isAction3 : rsp[i].isAction3, // 设置某行三级行为是否展示
                                     action2Type : rsp[i].action2Type, // 设置某行二级行为控件类型
@@ -193,14 +183,69 @@ export default class TestCase extends React.Component {
                                 },
                                 element:{
                                     elementId:rsp[i].elementId,
-                                    elementOptions:elementOption,
+                                    elementOptions:'',
                                 },
                             }
-                        )
+                        );
+
+                        // 如果action2是下拉列表
+                        const step = rsp[i];
+                        var m = i;
+                        if(step.action2Type==='1') {
+                            promiseAjax.get(`/action/findByParentId?parentId=${rsp[i].action1Default}`).then((rsp) => {
+                                if (rsp != null && rsp.length > 0) {
+                                    var actionSelect = [];
+                                    for (var k = 0; k < rsp.length; k++) {
+                                        actionSelect.push(
+                                            {
+                                                id: rsp[k].id.toString(),
+                                                actionName: rsp[k].actionName,
+                                            }
+                                        )
+                                    }
+                                    const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+
+                                    caseSteps[m].action2 = data;
+
+                                }
+                                // 如果action3是下拉列表
+                                if (step.action3Type === '1') {
+                                    promiseAjax.get(`/action/findByParentId?parentId=${step.action1Default}`).then((rsp) => {
+                                        if (rsp != null && rsp.length > 0) {
+                                            var actionSelect = [];
+                                            for (var k = 0; k < rsp.length; k++) {
+                                                actionSelect.push(
+                                                    {
+                                                        id: rsp[k].id.toString(),
+                                                        actionName: rsp[k].actionName,
+                                                    }
+                                                )
+                                            }
+                                            const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                                            caseSteps[m].action3 = data;
+                                            console.log('action3---------caseSteps:',caseSteps)
+                                            this.setState({
+                                                caseSteps: caseSteps
+                                            });
+                                        }
+                                    });
+                                    console.log('actionafter---------caseSteps:',caseSteps)
+                                } else {
+                                    this.setState({
+                                        caseSteps: caseSteps
+                                    });
+                                }
+                            });
+                        }else{
+                            this.setState({
+                                caseSteps: caseSteps
+                            });
+                        }
+
+                        // 获取每行元素id
+                        this.initElementList(m+1,step.pageId);
+
                     }
-                    this.setState({
-                        caseSteps: caseSteps
-                    });
                 }
             });
 
@@ -216,12 +261,11 @@ export default class TestCase extends React.Component {
 
     }
 
+
     initActionOption(actionData){
         var actionOption='';
-        // 获取action2和action3内容
+
         promiseAjax.get(`/action/findByParentId?parentId=${actionData}`).then((rsp) => {
-            return '2222'
-            console.log("initActionOption:------",rsp);
             if (rsp != null && rsp.length > 0) {
                 var actionSelect = [];
                 for (var i = 0; i < rsp.length; i++) {
@@ -233,21 +277,37 @@ export default class TestCase extends React.Component {
                     )
                 }
                 actionOption = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-                return '2222'
-
             }
 
         });
+
+        return actionOption;
+
 
     }
 
     // 获取步骤描述中的一级（parentId=0）操作行为数据
     initAction1() {
-        var actionOption = this.initActionOption('0');
-        console.log("initAction1:------",actionOption);
-        this.setState({
-            action1Option: actionOption
+
+        promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
+            var actionOption = '';
+            if (rsp != null && rsp.length > 0) {
+                var actionSelect = [];
+                for (var i = 0; i < rsp.length; i++) {
+                    actionSelect.push(
+                        {
+                            id : rsp[i].id.toString(),
+                            actionName : rsp[i].actionName,
+                        }
+                    )
+                }
+                actionOption = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
+                this.setState({
+                    action1Option: actionOption
+                });
+            }
         });
+
     }
 
     // 根据选中的操作行为展示后续控件
@@ -256,6 +316,8 @@ export default class TestCase extends React.Component {
         // 保存数据
         const caseSteps = this.state.caseSteps;
         caseSteps[key-1].step.action1default = id;
+        caseSteps[key-1].step.action2default = '';
+        caseSteps[key-1].step.action3default = '';
         // 获取二级行为操作数据
 
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
@@ -299,6 +361,7 @@ export default class TestCase extends React.Component {
         // 保存数据
         const caseSteps = this.state.caseSteps;
         caseSteps[key-1].step.action2default = id;
+        caseSteps[key-1].step.action3default = '';
         promiseAjax.get(`/action/findByParentId?parentId=${id}`).then((rsp) => {
             // 如果有数据返回
             if (rsp != null && rsp.length > 0) {
@@ -345,21 +408,21 @@ export default class TestCase extends React.Component {
         })
     }
 
-    onAction2Input(key, value) {
+    onAction2Input(key, e) {
         // 保存选中
         key = parseInt(key);
         const caseSteps = this.state.caseSteps;
-        caseSteps[key-1].step.action2default = value;
+        caseSteps[key-1].step.action2default = e.target.value;
         this.setState({
             caseSteps:caseSteps,
         })
     }
 
-    onAction3Input(key, value) {
+    onAction3Input(key, e) {
         // 保存选中
         key = parseInt(key);
         const caseSteps = this.state.caseSteps;
-        caseSteps[key-1].step.action3default = value;
+        caseSteps[key-1].step.action3default = e.target.value;
         this.setState({
             caseSteps:caseSteps,
         })
@@ -398,8 +461,9 @@ export default class TestCase extends React.Component {
     }
 
     // 根据页面信息初始化
-    initElementList(pageId){
-
+    initElementList(key,pageId){
+        key = parseInt(key);
+        const caseSteps = this.state.caseSteps;
         promiseAjax.get(`/element/elementforpage?pageId=${pageId}`).then((rsp) => {
             if (rsp != null && rsp.length!==0) {
                 var elementSelect = [];
@@ -411,11 +475,13 @@ export default class TestCase extends React.Component {
                         }
                     )
                 }
-                return elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
+                const data = elementSelect.map(element => <Option key={element.id}>{element.elementName}</Option>);
+                caseSteps[key-1].element.elementOptions = data;
 
-            } else {
-                // 如果未获取到数据，清空原有数据
-                return [];
+                this.setState({
+                    caseSteps: caseSteps,
+                });
+                console.log("initElementList:--------",this.state.caseSteps);
             }
 
         });
@@ -429,12 +495,12 @@ export default class TestCase extends React.Component {
         const caseSteps = this.state.caseSteps;
         caseSteps[parseInt(key)-1].element.elementId = '';
         caseSteps[parseInt(key)-1].pageId = value;
-
-        // 页面选择变更后，加载所选页面元素的信息
-        caseSteps[parseInt(key)-1].element.elementOptions = this.initElementList(value);
         this.setState({
             caseSteps:caseSteps,
         });
+        // 页面选择变更后，加载所选页面元素的信息
+        this.initElementList(key,value);
+
     }
 
     onElementChange (key,value) {
@@ -550,6 +616,7 @@ export default class TestCase extends React.Component {
 
     }
     render() {
+        console.log('this.state.caseStep---------:',this.state.caseSteps);
         const platform = this.props.location.platform;
         const { getFieldDecorator } = this.props.form;
         const formItemLayoutCaseTile = {

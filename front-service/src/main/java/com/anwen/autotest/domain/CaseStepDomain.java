@@ -44,5 +44,17 @@ public class CaseStepDomain {
     //3级行为
     @Column(name = "action3_default", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String action3Default;
+    //二级操作控件是否可见
+    @Column(name = "is_action2", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String isAction2;
+    //三级操作控件是否可见
+    @Column(name = "is_action3", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String isAction3;
+    //二级操作控件类型
+    @Column(name = "action2_type", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String action2Type;
+    //3级操作控件类型
+    @Column(name = "action3_type", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String action3Type;
 
 }

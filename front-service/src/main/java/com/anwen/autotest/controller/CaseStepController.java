@@ -30,7 +30,9 @@ public class CaseStepController extends AbstractController{
      */
     @ApiOperation(value = "新增元素", notes = "新增元素")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody List<CaseStepDomain> caseStep, String caseId, String result, String stepNo, String pageId, String elementId, String action1Default, String action2Default, String action3Default) {
+    public ResponseEntity save(@RequestBody List<CaseStepDomain> caseStep, String caseId, String result, String stepNo,
+                               String pageId, String elementId, String action1Default, String action2Default,
+                               String action3Default,String isAction2,String isAction3,String action2Type,String action3Type) {
         // 批量插入数据
         for (int i=0;i<caseStep.size();i++) {
             System.out.print(caseStep.get(i));
