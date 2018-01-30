@@ -26,29 +26,29 @@ export default class TestCase extends React.Component {
         super(props);
         this.columns = [{
             title: '编号',
-            dataIndex: 'stepNo',
-            key: 'stepNo',
+            dataIndex: 'key',
+            key: 'key',
             width: 50
         }, {
             title: '页面',
             dataIndex: 'page',
             key: 'page',
             render: (text, record) => (
-                <Select  size={"small"} value={record.pageId} style={{ width: 110 }} onChange={e => this.onPageChange(record.key,e)}>
+                <Select  size={"small"} value={record.pageId} style={{ width: 140 }} onChange={e => this.onPageChange(record.key,e)}>
                     {this.state.pageOptions}
                 </Select>
             ),
-            width: 120
+            width: 150
         }, {
             title: '操作对象',
             dataIndex: 'element',
             key: 'element',
             render: (text, record) => (
-                <Select size={"small"} value={record.element.elementId} style={{ width: 110 }}  onChange={e =>this.onElementChange(record.key,e)}>
+                <Select size={"small"} value={record.element.elementId} style={{ width: 140 }}  onChange={e =>this.onElementChange(record.key,e)}>
                     {record.element.elementOptions}
                 </Select>
             ),
-            width: 120
+            width: 150
         }, {
             title: '步骤描述',
             dataIndex: 'step',
@@ -59,36 +59,36 @@ export default class TestCase extends React.Component {
                         {this.state.action1Option}
                     </Select>
                     {
-                        (record.step.isAction2 === true && record.step.action2Type === '1') ?
+                        (record.step.isAction2 === '1' && record.step.action2Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}} value={record.step.action2default}
                                     onChange={e => this.onAction2Change(record.key, e)}>
                                 {record.step.action2}
                             </Select> : null
                     }
                     {
-                        (record.step.isAction2 === true && record.step.action2Type === '2')?
+                        (record.step.isAction2 === '1' && record.step.action2Type === '2')?
                             <input size={"small"} value={record.step.action2default} onChange={e => this.onAction2Input(record.key,e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                     {
-                        (record.step.isAction3 === true && record.step.action3Type === '1') ?
+                        (record.step.isAction3 === '1' && record.step.action3Type === '1') ?
                             <Select size={"small"} style={{width: 110,marginLeft:15}} value={record.step.action2default}
                                     onChange={e => this.onAction3Change(record.key, e)}>
                                 {record.step.action3}
                             </Select> : null
                     }
                     {
-                        (record.step.isAction3 === true && record.step.action3Type === '2')?
-                            <input size={"small"} value={record.step.action2default} onChange={e => this.onAction3Input(record.key,e)} style={{width: 110,marginLeft:15}}/>: null
+                        (record.step.isAction3 === '1' && record.step.action3Type === '2')?
+                            <input size={"small"} value={record.step.action3default} onChange={e => this.onAction3Input(record.key,e)} style={{width: 110,marginLeft:15}}/>: null
                     }
                 </div>
 
             ),
-            width: 400
+            width: 500
         }, {
             title: '状态',
             dataIndex: 'status',
             key: 'status',
-            width: 50
+            width: 80
         }, {
             title: '操作',
             key: 'action',
@@ -99,6 +99,7 @@ export default class TestCase extends React.Component {
                     <a onClick={e => this.onDelete(record.key, e)} href="#">删除</a>
                 </span>
             ),
+            width: 80,
         }];
         this.state = {
             pageOptions: [], //记录页面下拉列表数据
@@ -114,8 +115,8 @@ export default class TestCase extends React.Component {
                     action3default:'',// 记录某行三级选中的行为
                     action2:'',   // 记录某行二级行为
                     action3:'',   // 记录某行三级行为
-                    isAction2: false, // 设置某行二级行为是否展示
-                    isAction3: false, // 设置某行三级行为是否展示
+                    isAction2: '0', // 设置某行二级行为是否展示
+                    isAction3: '0', // 设置某行三级行为是否展示
                     action2Type: '', // 设置某行二级行为控件类型
                     action3Type: '', // 设置某行二级行为控件类型
 
@@ -132,7 +133,9 @@ export default class TestCase extends React.Component {
                 id: "",
                 setupCaseId:"",
                 teardownCaseId:"",
-            }};
+            },
+            isEdit : '0',//1:编辑状态，0：新增状态
+        };
     }
 
     componentDidMount() {
@@ -156,10 +159,13 @@ export default class TestCase extends React.Component {
             testCase.setupCaseId = caseInfo.setupCaseId;
             testCase.teardownCaseId = caseInfo.teardownCaseId;
             this.setState({
-                testCase: testCase,
+                testCase : testCase,
+                directoryId : caseInfo.directoryId,
+                isEdit:'1',
             });
             // 初始化用例步骤信息
             var caseSteps = [];
+            console.log('testcase：',testCase);
             promiseAjax.get(`/casestep/search?caseId=${testCase.id}`).then((rsp) => {
                 if (rsp != null && rsp.length > 0) {
                     for (var i = 0; i < rsp.length; i++) {
@@ -179,7 +185,7 @@ export default class TestCase extends React.Component {
                                     isAction3 : rsp[i].isAction3, // 设置某行三级行为是否展示
                                     action2Type : rsp[i].action2Type, // 设置某行二级行为控件类型
                                     action3Type : rsp[i].action3Type, // 设置某行二级行为控件类型
-
+                                    id : rsp[i].id,
                                 },
                                 element:{
                                     elementId:rsp[i].elementId,
@@ -190,9 +196,11 @@ export default class TestCase extends React.Component {
 
                         // 如果action2是下拉列表
                         const step = rsp[i];
-                        var m = i;
+                        const m = i;
                         if(step.action2Type==='1') {
+
                             promiseAjax.get(`/action/findByParentId?parentId=${rsp[i].action1Default}`).then((rsp) => {
+                                console.log("aciton2是下拉列表：",m)
                                 if (rsp != null && rsp.length > 0) {
                                     var actionSelect = [];
                                     for (var k = 0; k < rsp.length; k++) {
@@ -204,9 +212,7 @@ export default class TestCase extends React.Component {
                                         )
                                     }
                                     const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-
-                                    caseSteps[m].action2 = data;
-
+                                    caseSteps[m].step.action2 = data;
                                 }
                                 // 如果action3是下拉列表
                                 if (step.action3Type === '1') {
@@ -222,14 +228,13 @@ export default class TestCase extends React.Component {
                                                 )
                                             }
                                             const data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-                                            caseSteps[m].action3 = data;
-                                            console.log('action3---------caseSteps:',caseSteps)
+                                            caseSteps[m].step.action2 = data;
                                             this.setState({
                                                 caseSteps: caseSteps
                                             });
                                         }
                                     });
-                                    console.log('actionafter---------caseSteps:',caseSteps)
+
                                 } else {
                                     this.setState({
                                         caseSteps: caseSteps
@@ -241,7 +246,6 @@ export default class TestCase extends React.Component {
                                 caseSteps: caseSteps
                             });
                         }
-
                         // 获取每行元素id
                         this.initElementList(m+1,step.pageId);
 
@@ -255,33 +259,7 @@ export default class TestCase extends React.Component {
             //    testCase: '',
             //    caseSteps:'',
             //});
-            console.log("inittestcase--------")
         }
-
-
-    }
-
-
-    initActionOption(actionData){
-        var actionOption='';
-
-        promiseAjax.get(`/action/findByParentId?parentId=${actionData}`).then((rsp) => {
-            if (rsp != null && rsp.length > 0) {
-                var actionSelect = [];
-                for (var i = 0; i < rsp.length; i++) {
-                    actionSelect.push(
-                        {
-                            id : rsp[i].id.toString(),
-                            actionName : rsp[i].actionName,
-                        }
-                    )
-                }
-                actionOption = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
-            }
-
-        });
-
-        return actionOption;
 
 
     }
@@ -337,16 +315,16 @@ export default class TestCase extends React.Component {
                     var data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                     caseSteps[key-1].step.action2Type = '1';
                     caseSteps[key-1].step.action2 = data;
-                    caseSteps[key-1].step.isAction2 = true;
+                    caseSteps[key-1].step.isAction2 = '1';
                 } else {
                     caseSteps[key-1].step.action2Type = '2';
-                    caseSteps[key-1].step.isAction2 = true;
+                    caseSteps[key-1].step.isAction2 = '1';
                 }
 
             } else {
                 // 如果没有数据返回，相关数据重置
                 caseSteps[key-1].step.action2Type = '';
-                caseSteps[key-1].step.isAction2 = false;
+                caseSteps[key-1].step.isAction2 = '0';
                 caseSteps[key-1].step.action2 = [];
             }
             this.setState({
@@ -379,16 +357,16 @@ export default class TestCase extends React.Component {
                     var data = actionSelect.map(action => <Option key={action.id}>{action.actionName}</Option>);
                     caseSteps[key-1].step.action3Type = '1';
                     caseSteps[key-1].step.action3 = data;
-                    caseSteps[key-1].step.isAction3 = true;
+                    caseSteps[key-1].step.isAction3 = '1';
                 }  else {
                     caseSteps[key-1].step.action3Type = '2';
-                    caseSteps[key-1].step.isAction3 = true;
+                    caseSteps[key-1].step.isAction3 = '1';
             }
 
             } else {
                 // 如果没有数据返回，相关数据重置
                 caseSteps[key-1].step.action3Type = '';
-                caseSteps[key-1].step.isAction3 = false;
+                caseSteps[key-1].step.isAction3 = '0';
                 caseSteps[key-1].step.action3 = [];
             }
             this.setState({
@@ -481,7 +459,6 @@ export default class TestCase extends React.Component {
                 this.setState({
                     caseSteps: caseSteps,
                 });
-                console.log("initElementList:--------",this.state.caseSteps);
             }
 
         });
@@ -539,8 +516,8 @@ export default class TestCase extends React.Component {
                 action3default:'',// 记录某行三级选中的行为
                 action2:'',   // 记录某行二级行为
                 action3:'',   // 记录某行三级行为
-                isAction2: false, // 设置某行二级行为是否展示
-                isAction3: false, // 设置某行三级行为是否展示
+                isAction2: '0', // 设置某行二级行为是否展示
+                isAction3: '0', // 设置某行三级行为是否展示
                 action2Type: '', // 设置某行二级行为控件类型
                 action3Type: '', // 设置某行二级行为控件类型
 
@@ -580,44 +557,69 @@ export default class TestCase extends React.Component {
                 values.platform = platform;
                 values.directoryId = directoryId.toString();
                 console.log("handleSubmit-values:",values);
-                //ajax post请求  url 路径
-                promiseAjax.post('/testcase/add', values).then(data => {
-                    if (null != data) {
-                        //测试用例保存成功后，保存测试步骤数据
-                        var caseStep = [];
-                        const caseSteps = this.state.caseSteps;
-                        for(var i=0;i<caseSteps.length;i++)
-                        {
-                            caseStep.push({
-                                caseId:data[0].id,
-                                pageId:caseSteps[i].pageId,
-                                stepNo:caseSteps[i].step.stepNo,
-                                elementId:caseSteps[i].element.elementId,
-                                action1Default:caseSteps[i].step.action1default,
-                                action2Default:caseSteps[i].step.action2default,
-                                action3Default:caseSteps[i].step.action3default,
-                                isAction2:caseSteps[i].step.isAction2,
-                                isAction3:caseSteps[i].step.isAction3,
-                                action2Type:caseSteps[i].step.action2Type,
-                                action3Type:caseSteps[i].step.action3Type,
-                            })
-                        }
-                        //ajax get请求  url 路径
-                        promiseAjax.post(`/casestep/add`,caseStep).then(data => {
-                            if (null != data) {
-                                this.props.history.goBack();
-                            }
-                        });
-
+                var caseStep = [];
+                const caseSteps = this.state.caseSteps;
+                const isEdit = this.state.isEdit;
+                for(var i=0;i<caseSteps.length;i++) {
+                    caseStep.push({
+                        pageId:caseSteps[i].pageId,
+                        stepNo:caseSteps[i].step.stepNo,
+                        elementId:caseSteps[i].element.elementId,
+                        action1Default:caseSteps[i].step.action1default,
+                        action2Default:caseSteps[i].step.action2default,
+                        action3Default:caseSteps[i].step.action3default,
+                        isAction2:caseSteps[i].step.isAction2,
+                        isAction3:caseSteps[i].step.isAction3,
+                        action2Type:caseSteps[i].step.action2Type,
+                        action3Type:caseSteps[i].step.action3Type,
+                    })
+                }
+                // 如果是编辑状态
+                if (isEdit==='1'){
+                    const testCase = this.state.testCase;
+                    for(var i=0;i<caseSteps.length;i++) {
+                        caseStep[i].id = caseSteps[i].step.id;
+                        caseStep[i].caseId = testCase.id;
                     }
-                });
+                    // 保存测试用例
+                    values.id = testCase.id;
+                    promiseAjax.post('/testcase/add', values).then(data => {
+                        if (null != data) {
+                            // 保存测试步骤数据
+                            promiseAjax.post(`/casestep/add`,caseStep).then(data => {
+                                if (null != data) {
+                                    this.props.history.goBack();
+                                }
+                            });
+
+                        }
+                    });
+                }else{
+                    // 添加测试用例
+                    promiseAjax.post('/testcase/add', values).then(data => {
+                        if (null != data) {
+                            //测试用例保存成功后，保存测试步骤数据
+                            for(var i=0;i<caseSteps.length;i++) {
+                                caseStep[i].caseId = data[0].id;
+                            }
+                            // 添加测试步骤数据
+                            promiseAjax.post(`/casestep/add`,caseStep).then(data => {
+                                if (null != data) {
+                                    this.props.history.goBack();
+                                }
+                            });
+
+                        }
+                    });
+                }
+
             }
         });
 
+
     }
     render() {
-        console.log('this.state.caseStep---------:',this.state.caseSteps);
-        const platform = this.props.location.platform;
+        const testCase = this.state.testCase;
         const { getFieldDecorator } = this.props.form;
         const formItemLayoutCaseTile = {
             labelCol: {
@@ -637,11 +639,6 @@ export default class TestCase extends React.Component {
         };
         return (
             <Layout>
-                <Sider width={260} style={{background: "#F0F2F5"}}>
-                    <div style={{background: "#fff", padding: 10, minHeight: 960}}>
-                        <Directory platform={platform}/>
-                    </div>
-                </Sider>
                 <Content style={{padding: "0px 0px 0px 20px"}}>
                     <div style={{background: "#fff", padding: 50, minHeight: 960}}>
                         <Form onSubmit={this.handleSubmit}>
@@ -650,6 +647,7 @@ export default class TestCase extends React.Component {
                                 label="用例标题"
                             >
                                 {getFieldDecorator('caseTitle', {
+                                    initialValue: testCase == null ? '' : testCase.caseTitle,
                                     rules: [{
                                         required: true, message: '请输入用例标题!',
                                     },{
@@ -665,6 +663,7 @@ export default class TestCase extends React.Component {
                                 label="前置用例"
                             >
                                 {getFieldDecorator('setupCaseId', {
+                                    initialValue: testCase == null ? '' : testCase.setupCaseId,
                                     rules: [{
                                         message: '请输入前置用例编号!',
                                     },{
@@ -691,6 +690,7 @@ export default class TestCase extends React.Component {
                                 label="后置用例"
                             >
                                 {getFieldDecorator('teardownCaseId', {
+                                    initialValue: testCase == null ? '' : testCase.teardownCaseId,
                                     rules: [{
                                          message: '请输入后置用例编号!',
                                     },{

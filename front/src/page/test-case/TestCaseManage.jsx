@@ -101,6 +101,7 @@ export default class TestCaseManage extends React.Component{
             platform : this.getPlatform(),
             isEdit:'1', // 如果是编辑操作则进入编辑状态
             caseInfo : record,
+            directoryId : this.state.dirId,
         }
         this.props.history.push(editPath);
     }
