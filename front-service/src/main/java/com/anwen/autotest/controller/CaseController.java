@@ -2,12 +2,14 @@ package com.anwen.autotest.controller;
 
 import com.anwen.autotest.domain.CaseDomain;
 import com.anwen.autotest.repository.CaseRepository;
+import com.anwen.autotest.repository.DirRepository;
 import com.anwen.autotest.service.CaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.anwen.autotest.domain.DirDomain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,9 @@ public class CaseController extends AbstractController{
 
     @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private DirRepository dirRepository;
 
     @Autowired
     private CaseService caseService;
@@ -49,9 +54,12 @@ public class CaseController extends AbstractController{
      * @return
      */
     @ApiOperation(value = "删除目录", notes = "删除目录")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
-        return wrapperConsumer((p) -> caseRepository.delete(p), id);
+        CaseDomain testcase = caseRepository.findOne(id);
+        testcase.setIsDelete(1L);
+        return wrapperSupplier(() -> caseRepository.save(testcase), false);
+        //return wrapperConsumer((p) -> caseRepository.delete(p), id);
     }
 
     /**
@@ -94,7 +102,12 @@ public class CaseController extends AbstractController{
     @ApiOperation(value = "查询目录", notes = "查询目录")
     @GetMapping(value = "/search")
     public ResponseEntity detail(CaseDomain casedomain) {
-        //caseService.findAll(casedomain);
+
+        // todo: 需要递归子目录节点下的所有用例
+        List<DirDomain> childNode = dirRepository.findDirDomainByParentId(casedomain.getDirectoryId());
+        if(childNode.size()>1) {
+
+        }
         return wrapperSupplier(() -> caseService.findAll(casedomain), false);
     }
 

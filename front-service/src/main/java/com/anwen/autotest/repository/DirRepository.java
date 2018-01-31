@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface DirRepository extends JpaRepository<DirDomain, Long> {
     List<DirDomain> findDirDomainByIsDeleteAndPlatform(Long isDelete,String platform);
+    List<DirDomain> findDirDomainByParentIdAndPlatform(String parentId,String platform);
+    List<DirDomain> findDirDomainByParentId(String parentId);
 }

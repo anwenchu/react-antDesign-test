@@ -87,11 +87,13 @@ public class DirController extends AbstractController{
         Tree tree = new Tree(list);
 
         //如果是android平台，从根结点1开始描述树，如果是ios平台，从根结点11开始描述
+        List<DirDomain> androidroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
+        List<DirDomain> iosroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
         TreeNode treeNode;
         if (platform.equals("android"))
-            treeNode = tree.getTreeNode("1");
+            treeNode = tree.getTreeNode(androidroot.get(0).getId().toString());
         else
-            treeNode = tree.getTreeNode("11");
+            treeNode = tree.getTreeNode(iosroot.get(0).getId().toString());
 
         // 序列化
         SimplePropertyPreFilter filter = new SimplePropertyPreFilter(); // 构造方法里，也可以直接传需要序列化的属性名字

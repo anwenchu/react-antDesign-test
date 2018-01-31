@@ -22,29 +22,33 @@ export default class TestCaseManage extends React.Component{
         dirId:'',
     };
     columns = [{
-        title: '编号',
+        title: '用例编号',
         dataIndex: 'id',
+        width: 70
     }, {
         title: '用例标题',
         dataIndex: 'caseTitle',
         render: (text, record) => (
             <a onClick={() => this.handleEdit(record)}>{text}</a>
-        )
+        ),
+        width: 350
     }, {
         title: '状态',
         dataIndex: 'caseStatus',
+        width: 80
     }, {
         title: '操作',
         dataIndex: 'action',
         render: (text, record) => (
             <span>
-                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.key, e)}>
+                <Popconfirm title="Delete?" onConfirm={e => this.onDelete(record.id, e)}>
                     <a href="#">删除</a>
                 </Popconfirm>
                 <Divider type="vertical" />
                 <a href="#">订阅警报</a>
             </span>
         ),
+        width: 100
     }];
 
     // react 生命周期函数  自己百度
@@ -106,12 +110,13 @@ export default class TestCaseManage extends React.Component{
         this.props.history.push(editPath);
     }
 
-    onDelete(key, e) {
-        console.log('Delete', key);
-        e.preventDefault();
-        const data = this.state.data.filter(item => item.key !== key);
-        console.log('Delete', data);
-        this.setState({ data });
+    onDelete(caseId, e) {
+        const dirId = this.state.dirId;
+        console.log("record:",caseId);
+        promiseAjax.del(`/testcase/delete/${caseId}`).then(() => {
+            // todo: low一点 重新查询 可以优化
+            this.search(dirId);
+        });
     }
 
     // 点击新建按钮事件

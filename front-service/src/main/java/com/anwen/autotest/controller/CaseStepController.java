@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -35,8 +35,27 @@ public class CaseStepController extends AbstractController{
                                String action3Default,String isAction2,String isAction3,String action2Type,String action3Type) {
         // 批量插入数据
         for (int i=0;i<caseStep.size();i++) {
-            System.out.print(caseStep.get(i));
+            System.out.print(caseStep.get(i)+"\r\n");
             caseStepRepository.save(caseStep.get(i));
+        }
+        // 编辑保存时，删除步骤
+        if(caseStep.get(0).getId()!=null) {
+            // 查询所有用例步骤
+            List<CaseStepDomain> results = caseStepRepository.findCaseStepDomainByCaseId(caseStep.get(0).getCaseId());
+            boolean flag;
+            for(int i=0;i<results.size();i++){
+                flag = false;
+                for(int j=0;j<caseStep.size();j++){
+                    if (results.get(i).getId()==caseStep.get(j).getId()){
+                        flag = true;
+                    }
+                }
+                // 删除
+                if (flag!=true){
+                    System.out.print("--i:"+i+",id:"+results.get(i).getId());
+                    caseStepRepository.delete(results.get(i).getId());
+                }
+            }
         }
         return wrapperSupplier(() -> "success", false);
     }
@@ -47,7 +66,7 @@ public class CaseStepController extends AbstractController{
      * @return
      */
     @ApiOperation(value = "删除元素", notes = "删除元素")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable(value = "id") Long id) {
         return wrapperConsumer((p) -> caseStepRepository.delete(p), id);
     }
@@ -65,20 +84,20 @@ public class CaseStepController extends AbstractController{
     }
 
     /**
-     * 查询所有元素
+     * 查询所有用例步骤
      * @return
      */
-    @ApiOperation(value = "查询所有元素", notes = "查询所有元素")
+    @ApiOperation(value = "查询所有用例步骤", notes = "查询所有用例步骤")
     @GetMapping(value = "/list")
     public ResponseEntity list() {
         return wrapperSupplier(() -> caseStepRepository.findAll(), false);
     }
 
     /**
-     * 查询元素
+     * 查询步骤
      * @return
      */
-    @ApiOperation(value = "查询元素", notes = "查询元素")
+    @ApiOperation(value = "查询步骤", notes = "查询步骤")
     @GetMapping(value = "/{id}")
     public ResponseEntity detail(@PathVariable(name = "id") Long id) {
         return wrapperSupplier(() -> caseStepRepository.findOne(id), false);
@@ -91,8 +110,16 @@ public class CaseStepController extends AbstractController{
     @ApiOperation(value = "条件查询", notes = "条件查询")
     @GetMapping(value = "/search")
     public ResponseEntity search(@RequestParam(value = "caseId") String caseId) {
+        List<CaseStepDomain> results = caseStepRepository.findCaseStepDomainByCaseId(caseId);
+        // 按照步骤序号进行升序排序
+        Collections.sort(results, new Comparator<CaseStepDomain>() {
+            @Override
+            public int compare(CaseStepDomain r1, CaseStepDomain r2) {
+                return new Double(r1.getStepNo()).compareTo(new Double(r2.getStepNo()));
+            }
+        });
 
-        return wrapperSupplier(() -> caseStepRepository.findCaseStepDomainByCaseId(caseId), false);
+        return wrapperSupplier(() -> results, false);
 
     }
 

@@ -172,7 +172,7 @@ export default class TestCase extends React.Component {
 
                         caseSteps.push(
                             {
-                                stepNo : rsp[i].stepNo,
+                                stepNo : (i+1).toString(),
                                 key : (i+1).toString(),
                                 pageId : rsp[i].pageId,  // 每行页面id
                                 step:{
@@ -266,7 +266,6 @@ export default class TestCase extends React.Component {
 
     // 获取步骤描述中的一级（parentId=0）操作行为数据
     initAction1() {
-
         promiseAjax.get(`/action/findByParentId?parentId=0`).then((rsp) => {
             var actionOption = '';
             if (rsp != null && rsp.length > 0) {
@@ -438,7 +437,7 @@ export default class TestCase extends React.Component {
         });
     }
 
-    // 根据页面信息初始化
+    // 根据页面信息初始化元素列表内容
     initElementList(key,pageId){
         key = parseInt(key);
         const caseSteps = this.state.caseSteps;
@@ -489,6 +488,7 @@ export default class TestCase extends React.Component {
         });
     }
 
+    // 删除用例步骤
     onDelete(key, e) {
         e.preventDefault();
         // 删除列表数据源内容
@@ -497,7 +497,6 @@ export default class TestCase extends React.Component {
             caseSteps:caseSteps
         });
         console.log("caseSteps:",caseSteps);
-
     }
 
     onAdd(key) {
@@ -548,8 +547,6 @@ export default class TestCase extends React.Component {
      */
     handleSubmit = (e) => {
         e.preventDefault();
-
-        const form = this.props.form;
         var platform = this.state.platform;
         var directoryId = this.state.directoryId;
         this.props.form.validateFields((err, values) => {
@@ -563,7 +560,7 @@ export default class TestCase extends React.Component {
                 for(var i=0;i<caseSteps.length;i++) {
                     caseStep.push({
                         pageId:caseSteps[i].pageId,
-                        stepNo:caseSteps[i].step.stepNo,
+                        stepNo:caseSteps[i].stepNo,
                         elementId:caseSteps[i].element.elementId,
                         action1Default:caseSteps[i].step.action1default,
                         action2Default:caseSteps[i].step.action2default,
@@ -574,6 +571,7 @@ export default class TestCase extends React.Component {
                         action3Type:caseSteps[i].step.action3Type,
                     })
                 }
+                console.log("caseStep:",caseStep);
                 // 如果是编辑状态
                 if (isEdit==='1'){
                     const testCase = this.state.testCase;
@@ -588,6 +586,7 @@ export default class TestCase extends React.Component {
                             // 保存测试步骤数据
                             promiseAjax.post(`/casestep/add`,caseStep).then(data => {
                                 if (null != data) {
+                                    message.info('保存测试用例成功！');
                                     this.props.history.goBack();
                                 }
                             });
@@ -601,10 +600,12 @@ export default class TestCase extends React.Component {
                             //测试用例保存成功后，保存测试步骤数据
                             for(var i=0;i<caseSteps.length;i++) {
                                 caseStep[i].caseId = data[0].id;
+
                             }
                             // 添加测试步骤数据
                             promiseAjax.post(`/casestep/add`,caseStep).then(data => {
                                 if (null != data) {
+                                    message.info('添加测试用例成功！');
                                     this.props.history.goBack();
                                 }
                             });
