@@ -164,7 +164,6 @@ export default class ElementEidt extends React.Component {
                         >
                             {getFieldDecorator('elementXpath', {
                                 initialValue: element == null ? '' : element.elementXpath,
-                                rules: [{required: true, message: '请输入元素xpath!'}],
                             })(
                                 <Input placeholder="请输入元素xpath"/>
                             )}

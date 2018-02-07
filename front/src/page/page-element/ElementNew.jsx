@@ -143,7 +143,6 @@ export default class ElementNew extends React.Component {
                             label="元素xpath"
                         >
                             {getFieldDecorator('elementXpath', {
-                                rules: [{required: true, message: '请输入元素xpath!'}],
                             })(
                                 <Input placeholder="请输入元素xpath"/>
                             )}

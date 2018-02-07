@@ -34,18 +34,23 @@ export default class ElementManage extends React.Component{
     columns = [{
         title: '编号',
         dataIndex: 'elementNo',
+        width:50,
     }, {
         title: '元素名称',
         dataIndex: 'elementName',
+        width:100,
     }, {
         title: '元素类型',
         dataIndex: 'elementCategory',
+        width:100,
     }, {
         title: '元素id',
         dataIndex: 'elementId',
+        width:150,
     }, {
         title: '元素文本',
         dataIndex: 'elementText',
+        width:150,
     }, {
         title: '操作',
         dataIndex: 'action',
@@ -62,6 +67,7 @@ export default class ElementManage extends React.Component{
                 </Row>
             </span>
         ),
+        width:80,
     }];
 
 

@@ -27,7 +27,7 @@ export default class TestPlaneManage extends React.Component {
         title: '计划标题',
         dataIndex: 'testPlaneName',
         render: (text, record) => (
-            <Link to={{action:"edit",record:record,pathname:"/addplane"}}>{text}</Link>
+            <a onClick={() => this.handleEdit(record)}>{text}</a>
         ),
     }, {
         title: '客户端版本',
@@ -96,6 +96,21 @@ export default class TestPlaneManage extends React.Component {
             this.search();
         });
     }
+
+    /**
+     * 编辑测试计划
+     * @param id
+     */
+    handleEdit(record) {
+        const editPath = {
+            pathname : '/addplane',
+            platform : this.getPlatform(),
+            isEdit:'1', // 如果是编辑操作则进入编辑状态
+            planeInfo : record,
+        }
+        this.props.history.push(editPath);
+    }
+
 
 
 

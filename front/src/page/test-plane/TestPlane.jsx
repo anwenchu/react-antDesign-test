@@ -1,5 +1,5 @@
 import React from "react";
-import {Layout,Form, Input, Cascader, Divider, Row, Col, Checkbox, Button, Table} from "antd";
+import {Layout,Form, Input, Cascader, Divider, Row, Col, Checkbox, Button, Table,message} from "antd";
 import "antd/dist/antd.css";
 import {promiseAjax} from '../common/an';
 import {
@@ -24,6 +24,7 @@ export default class TestPlane extends React.Component {
         plane : [],
         platform : '',
         selectCase : [],  // 记录被选中的用例信息
+        isEdit:'', //判断是否为编辑状态
     };
     columns = [{
         title: '执行顺序',
@@ -97,12 +98,12 @@ export default class TestPlane extends React.Component {
      * @param all
      */
     search = () => {
-        const isEidt = this.props.location.action;
+        const isEidt = this.props.location.isEdit;
         console.log("search-isEdit:",isEidt);
         var platform;
         if(null != isEidt){
             // 如果是编辑状态，则初始化表单数据
-            const plane = this.props.location.record;
+            const plane = this.props.location.planeInfo;
             plane.directoryId = plane.directoryId.split(",");
             platform = plane.platform;
             this.setState({
@@ -167,39 +168,72 @@ export default class TestPlane extends React.Component {
      */
     handleSubmit = (e) => {
         e.preventDefault();
-        const form = this.props.form;
         var platform = this.state.platform;
 
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 values.platform = platform;
                 values.directoryId = values.directoryId.toString();
+                const isEdit = this.props.location.isEdit;
+
+                //插入测试计划的用例数据
+                var planecase = [];
+                var selectCase = this.state.selectedRowKeys;
+                var caseData = this.state.caseData;
+                for(var i=0;i<selectCase.length;i++){
+                    var value = caseData[selectCase[i]-1];//选择被选中的用例数据
+                    planecase.push({
+                        caseId : value.id.toString(),
+                        caseCount : value.caseCount,
+                        orderNo : value.key,
+                    })
+                }
                 console.log("handleSubmit-values:",values);
-                //ajax post请求  url 路径
-                promiseAjax.post('/plane/add', values).then(data => {
-                    if (null != data) {
-                        //插入测试计划的用例数据
-                        var planecase = [];
-                        var selectCase = this.state.selectedRowKeys;
-                        var caseData = this.state.caseData;
-                        for(var i=0;i<selectCase.length;i++){
-                            var value = caseData[selectCase[i]-1];//选择被选中的用例数据
-                            planecase.push({
-                                caseId : value.id.toString(),
-                                caseCount : value.caseCount,
-                                planeId : data[0].id.toString(),  // 测试计划添加成功后返回的id
-                                orderNo : value.key,
-                            })
-                        }
-                        // 插入测试计划所选用例
-                        promiseAjax.post('/planecase/add', planecase).then(data => {
-                            if (null != data) {
-                                //form.resetFields();
-                                this.props.history.goBack();
-                            }
-                        });
+                // 如果是编辑状态
+                if (isEdit==='1') {
+                    console.log("handleSubmit-111111:",isEdit);
+                    // 保存测试用例
+                    const testplane = this.props.location.planeInfo;
+                    values.id = testplane.id;
+                    for(var i=0;i<planecase.length;i++){
+                        planecase[i].planeId = testplane.id.toString(); // 测试计划添加成功后返回的id
                     }
-                });
+                    //测试计划新建成功后，新增测试用例数据
+                    promiseAjax.post('/plane/add', values).then(data => {
+                        if (null != data) {
+                            // 保存测试用例数据
+                            promiseAjax.post(`/planecase/add`,planecase).then(data => {
+                                if (null != data) {
+                                    message.info('保存测试计划成功！');
+                                    this.props.history.goBack();
+                                }
+                            });
+
+                        }
+                    });
+                }else {
+                    //添加测试计划
+                    promiseAjax.post('/plane/add', values).then(data => {
+                        if (null != data) {
+                            //测试计划新建成功后，新增测试用例数据
+                            for(var i=0;i<planecase.length;i++){
+                                planecase[i].planeId = data[0].id.toString(); // 测试计划添加成功后返回的id
+                            }
+                            // 插入测试计划所选用例
+                            promiseAjax.post('/planecase/add', planecase).then(data => {
+                                if (null != data) {
+                                    //form.resetFields();
+                                    this.props.history.goBack();
+                                }
+                            });
+                        }
+                    });
+                }
+
+
+
+
+
             }
         });
     }
@@ -415,7 +449,7 @@ export default class TestPlane extends React.Component {
                                         rules: [{
                                             required: true, message: '请输入app地址!',
                                         },{
-                                            max:50,message: '最多允许输入100个字符!',
+                                            max:100,message: '最多允许输入100个字符!',
                                         }],
                                     })(
                                         <Input placeholder="请输入app地址"/>
