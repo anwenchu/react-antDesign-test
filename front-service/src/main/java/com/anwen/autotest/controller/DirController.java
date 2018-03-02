@@ -88,7 +88,7 @@ public class DirController extends AbstractController{
 
         //如果是android平台，从根结点1开始描述树，如果是ios平台，从根结点11开始描述
         List<DirDomain> androidroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
-        List<DirDomain> iosroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
+        List<DirDomain> iosroot = dirRepository.findDirDomainByParentIdAndPlatform("0","ios");
         TreeNode treeNode;
         if (platform.equals("android"))
             treeNode = tree.getTreeNode(androidroot.get(0).getId().toString());

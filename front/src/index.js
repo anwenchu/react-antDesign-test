@@ -13,6 +13,7 @@ const history = createHistory()
 
 promiseAjax.init({
     setOptions: (instance) => {
+        //instance.defaults.baseURL = 'http://172.16.7.88:8080/';
         instance.defaults.baseURL = 'http://localhost:8080/';
     },
     // onShowErrorTip: (err, errorTip) => {

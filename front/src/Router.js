@@ -39,9 +39,6 @@ export default class Router extends React.Component {
                                 <Route exact path="/addplane" component={TestPlane}/>
                             </div>
                         </Content>
-                        <Footer style={{textAlign: "center"}}>
-                            Ant Design ©2017 Created by QA
-                        </Footer>
                     </Layout>
 
                 </BrowserRouter>
