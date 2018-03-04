@@ -4,6 +4,7 @@ import com.anwen.autotest.domain.CaseDomain;
 import com.anwen.autotest.repository.CaseRepository;
 import com.anwen.autotest.repository.DirRepository;
 import com.anwen.autotest.service.CaseService;
+import com.sun.org.apache.xerces.internal.dom.ChildNode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.anwen.autotest.domain.DirDomain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.String;
 
 
 /**
@@ -95,6 +97,9 @@ public class CaseController extends AbstractController{
         return wrapperSupplier(() -> caseRepository.findOne(id), false);
     }
 
+
+
+
     /**
      * 条件查询
      * @return
@@ -103,13 +108,41 @@ public class CaseController extends AbstractController{
     @GetMapping(value = "/search")
     public ResponseEntity detail(CaseDomain casedomain) {
 
-        // todo: 需要递归子目录节点下的所有用例
-        List<DirDomain> childNode = dirRepository.findDirDomainByParentId(casedomain.getDirectoryId());
-        if(childNode.size()>1) {
-
+        // 如果是根节点，则获取根节点的id
+        if (null==casedomain.getDirectoryId()){
+            if (casedomain.getPlatform().equals("android")){
+                List<DirDomain> androidroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
+                casedomain.setDirectoryId(androidroot.get(0).getId().toString());
+            }else{
+                List<DirDomain> iosroot = dirRepository.findDirDomainByParentIdAndPlatform("0","ios");
+                casedomain.setDirectoryId(iosroot.get(0).getId().toString());
+            }
         }
-        return wrapperSupplier(() -> caseService.findAll(casedomain), false);
+
+        List<CaseDomain> caseList = new ArrayList<>();
+        List<CaseDomain> resultList = getCaseList(casedomain,caseList);
+
+        return wrapperSupplier(() -> resultList, false);
     }
 
+    public List<CaseDomain> getCaseList(CaseDomain casedomain,List<CaseDomain> caseList)
+    {
+        // 查询是否有子节点，有子节点则添加子节点结果
+        String dirId = casedomain.getDirectoryId();
+        List<DirDomain> childNodeList = dirRepository.findDirDomainByParentId(dirId);
+
+        if (childNodeList.size()>=1) {
+            // 如果有子节点则查找子节点
+            for (DirDomain childNode : childNodeList) {
+                casedomain.setDirectoryId(childNode.getId().toString());
+                getCaseList(casedomain,caseList);
+            }
+        } else {
+            // 如果没有子节点，获取用例
+            caseList.addAll(caseService.findAll(casedomain));
+        }
+        return caseList;
+    }
 
 }
+

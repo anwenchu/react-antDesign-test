@@ -57,6 +57,10 @@ public class ElementDomain {
     //删除状态
     @Column(name = "is_delete", columnDefinition = "int(x) COMMENT 'xx'")
     private Long isDelete;
+    //元素索引
+    @Column(name = "element_Index", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String elementIndex;
+
 
 
 

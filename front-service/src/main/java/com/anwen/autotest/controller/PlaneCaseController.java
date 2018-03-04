@@ -1,13 +1,15 @@
 package com.anwen.autotest.controller;
 
+import com.anwen.autotest.domain.CaseDomain;
 import com.anwen.autotest.domain.PlaneCaseDomain;
+import com.anwen.autotest.repository.CaseRepository;
 import com.anwen.autotest.repository.PlaneCaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.anwen.autotest.controller.result.bean.PlaneCaseResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class PlaneCaseController extends AbstractController{
 
     @Autowired
     private PlaneCaseRepository planeCaseRepository;
+    @Autowired
+    private CaseRepository caseRepository;
 
     /**
      * 批量新增测试用例
@@ -31,14 +35,13 @@ public class PlaneCaseController extends AbstractController{
      */
     @ApiOperation(value = "新增测试计划用例", notes = "新增测试计划用例")
     @PostMapping(value = "/add")
-    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planeCase, Long caseId, String caseCount, String planeId, String orderNo) {
+    public ResponseEntity save(@RequestBody List<PlaneCaseDomain> planeCase, Long caseId, String caseCount, String planeId, String orderNo,String result) {
 
         //查询出该计划下的所有用例
         List<PlaneCaseDomain> cases = planeCaseRepository.findPlaneCaseDomainByPlaneId(planeCase.get(0).getPlaneId());
-        System.out.print(cases.size());
         int flag = 0;
-        for (PlaneCaseDomain caseCommit:planeCase){
-            for (PlaneCaseDomain caseInfo:cases){
+        for (PlaneCaseDomain caseCommit : planeCase){
+            for (PlaneCaseDomain caseInfo : cases){
                 if (caseCommit.getCaseId()==caseInfo.getCaseId()) {
                     // 当计划中有该条用例时，修改
                     flag = 1;
@@ -102,5 +105,27 @@ public class PlaneCaseController extends AbstractController{
         return wrapperSupplier(() -> planeCaseRepository.findPlaneCaseDomainByPlaneId(planeId), false);
     }
 
+    /**
+     * 条件查询
+     * @return
+     */
+    @ApiOperation(value = "查询指定计划中的用例数据", notes = "查询指定计划中的用例数据")
+    @GetMapping(value = "/result")
+    public ResponseEntity planeCaseResult(@RequestParam(value = "planeId") String planeId) {
+        // 获取测试计划下的所有用例id
+        List<PlaneCaseDomain> cases = planeCaseRepository.findPlaneCaseDomainByPlaneId(planeId);
+        List<PlaneCaseResult> planeCaseResults = new ArrayList<>();
+        for (int i=0; i<cases.size();i++){
+            // 根据用例id获取用例标题信息
+            CaseDomain caseDomain = caseRepository.findOne(Long.parseLong(cases.get(i).getCaseId()));
+            PlaneCaseResult result = new PlaneCaseResult();
+            result.setCaseId(caseDomain.getId().toString());
+            result.setCaseOrder(Integer.toString(i+1));
+            result.setCaseResult(cases.get(i).getResult());
+            result.setCaseTitle(caseDomain.getCaseTitle());
+            planeCaseResults.add(result);
+        }
+        return wrapperSupplier(() -> planeCaseResults, false);
+    }
 
 }

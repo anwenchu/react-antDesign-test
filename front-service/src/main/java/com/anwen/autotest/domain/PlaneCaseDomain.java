@@ -32,4 +32,7 @@ public class PlaneCaseDomain {
     //测试排序
     @Column(name = "order_no", columnDefinition = "varchar(x) COMMENT 'xx'")
     private String orderNo;
+    //执行结果
+    @Column(name = "result", columnDefinition = "varchar(x) COMMENT 'xx'")
+    private String result;
 }

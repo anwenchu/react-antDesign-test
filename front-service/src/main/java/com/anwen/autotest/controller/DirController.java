@@ -2,10 +2,10 @@ package com.anwen.autotest.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
-import com.anwen.autotest.controller.tree.Dir;
-import com.anwen.autotest.controller.tree.ITreeNode;
-import com.anwen.autotest.controller.tree.Tree;
-import com.anwen.autotest.controller.tree.TreeNode;
+import com.anwen.autotest.controller.result.tree.Dir;
+import com.anwen.autotest.controller.result.tree.ITreeNode;
+import com.anwen.autotest.controller.result.tree.Tree;
+import com.anwen.autotest.controller.result.tree.TreeNode;
 import com.anwen.autotest.domain.DirDomain;
 import com.anwen.autotest.repository.DirRepository;
 import io.swagger.annotations.Api;

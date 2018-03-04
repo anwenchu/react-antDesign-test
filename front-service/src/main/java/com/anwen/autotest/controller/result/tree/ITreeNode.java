@@ -1,4 +1,4 @@
-package com.anwen.autotest.controller.tree;
+package com.anwen.autotest.controller.result.tree;
 
 public interface ITreeNode {
     public String getNodeId();

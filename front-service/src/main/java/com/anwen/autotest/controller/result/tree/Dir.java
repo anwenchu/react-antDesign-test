@@ -1,6 +1,4 @@
-package com.anwen.autotest.controller.tree;
-
-import com.anwen.autotest.controller.tree.ITreeNode;
+package com.anwen.autotest.controller.result.tree;
 
 public class Dir implements ITreeNode {
     private String uuid; //目录id

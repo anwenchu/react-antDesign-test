@@ -1,4 +1,4 @@
-package com.anwen.autotest.controller.tree;
+package com.anwen.autotest.controller.result.tree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
