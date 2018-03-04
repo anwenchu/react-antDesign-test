@@ -339,6 +339,16 @@ export default class ElementManage extends React.Component{
                                                 </FormItem>
                                                 <FormItem
                                                     {...formItemLayout}
+                                                    label="元素index"
+                                                >
+                                                    {getFieldDecorator('elementIndex', {
+                                                        initialValue: element == null ? '' : element.elementIndex,
+                                                    })(
+                                                        <Input placeholder="请输入元素index"/>
+                                                    )}
+                                                </FormItem>
+                                                <FormItem
+                                                    {...formItemLayout}
                                                     label="描述"
                                                 >
                                                     {getFieldDecorator('elementDesc', {

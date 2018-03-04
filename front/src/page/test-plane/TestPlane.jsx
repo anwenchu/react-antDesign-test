@@ -29,16 +29,21 @@ export default class TestPlane extends React.Component {
     columns = [{
         title: '执行顺序',
         dataIndex: 'key',
+        width: 100
     }, {
         title: '用例标题',
         dataIndex: 'caseTitle',
-        render: text => <Link to={"/addtestcase"}>{text}</Link>,
+        render: (text, record) => (
+            <a onClick={() => this.handleEdit(record.id)}>{text}</a>
+        ),
+        width: 650
     }, {
         title: '执行次数',
         dataIndex: 'caseCount',
         render: (text, record) => (
             <Input placeholder="1" value={record.caseCount} onChange={e=>this.onChangeValue(record.key,e)}/>
         ),
+        width: 150
     }, {
         title: '操作',
         dataIndex: 'action',
@@ -49,7 +54,23 @@ export default class TestPlane extends React.Component {
                     <a href="#" onClick={e => this.downMove(record.key,e)}>下移</a>
                 </span>
         ),
+        width: 150
     }];
+
+
+    /**
+     * 编辑用例
+     * @param id
+     */
+    handleEdit(caseId) {
+        const editPath = {
+            pathname : '/addtestcase',
+            isEdit:'1', // 如果是编辑操作则进入编辑状态
+            caseId : caseId,
+            platform:this.state.platform,
+        }
+        this.props.history.push(editPath);
+    }
 
     onChangeValue = (key,e) => {
         console.log("onChangeUserName-value:",e.target.value );
@@ -110,36 +131,56 @@ export default class TestPlane extends React.Component {
                 plane : plane
             });
             // 获取当前目录下的所有用例数据
-            this.getCaseData(plane.directoryId);
-            //获取用例列表数据
-            promiseAjax.get(`/planecase/search?planeId=${plane.id}`).then(data => {
+            promiseAjax.get(`/testcase/search?directoryId=${plane.directoryId[plane.directoryId.length-1]}`).then(data => {
                 if (data && data.length!=0) {
-                    // 根据返回结果修改选中状态
-                    var selectedRowKeys = this.state.selectedRowKeys;
-                    var caseData = this.state.selectedRowKeys;
-                    data.map((item)=>{
-                        selectedRowKeys.push(item.orderNo);
-                        for(var i=0;i<caseData.length;i++)
-                            if (caseData[i].caseId === item.caseId){
-                                // 修改用例执行次数
-                                caseData[i].caseCount = item.caseCount;
-                                // 修改被选中用例的位置
-                                if ((parseInt(caseData[i].key)-1) !== item.orderNo){
-                                    // 交换序号key
-                                    var tempKey = caseData[parseInt(item.orderNo)].key;
-                                    caseData[parseInt(item.orderNo)].key = caseData[i].key;
-                                    caseData[i].key = tempKey;
-                                    // 交换位置
-                                    var temp = caseData[parseInt(item.orderNo)];
-                                    caseData[parseInt(item.orderNo)] = caseData[i];
-                                    caseData[i] = temp;
-                                }
-                            }
-                    });
-
-
+                    // 增加排序字段
+                    for(var i=0;i<data.length;i++){
+                        data[i]["key"] = (i+1).toString();
+                        data[i]["caseCount"] = '1';
+                    }
+                    // 更新用例数据源
                     this.setState({
-                        selectCase : data,
+                        caseData : data
+                    });
+                    //获取用例列表数据
+                    promiseAjax.get(`/planecase/search?planeId=${plane.id}`).then(rsp => {
+                        if (rsp && rsp.length!=0) {
+                            // 根据返回结果修改选中状态
+                            const selectedRowKeys = this.state.selectedRowKeys;
+                            console.log("selectedRowKeys:",selectedRowKeys);
+                            const caseData = this.state.caseData;
+                            console.log("caseData:",caseData);
+                            rsp.map((item)=>{
+                                selectedRowKeys.push(item.orderNo);
+                                console.log("item:",item);
+                                for(var i=0;i<caseData.length;i++)
+
+                                    if (caseData[i].id.toString() === item.caseId){
+                                        console.log("caseData[i].id:",caseData[i].id.toString());
+                                        // 修改用例执行次数
+                                        caseData[i].caseCount = item.caseCount;
+                                        // 修改位置
+                                        if(caseData[parseInt(item.orderNo)-1].id.toString()!==item.caseId){
+                                            var tmp = caseData[i];
+                                            caseData[i] = caseData[parseInt(item.orderNo)-1];
+                                            caseData[parseInt(item.orderNo)-1] = tmp
+                                            var tmp = caseData[parseInt(item.orderNo)-1].key
+                                            caseData[parseInt(item.orderNo)-1].key = caseData[i].key;
+                                            caseData[i].key = tmp;
+
+
+                                        }
+                                    }
+                                    else{
+                                        console.log("caseData[i].id:",caseData[i].id.toString());
+                                    }
+                            });
+
+
+                            this.setState({
+                                selectCase : rsp,
+                            });
+                        }
                     });
                 }
             });
@@ -238,22 +279,25 @@ export default class TestPlane extends React.Component {
         });
     }
 
+
+    // 获取该目录下所有用例数据
     getCaseData(directoryId){
         // 条件查询接口
         promiseAjax.get(`/testcase/search?directoryId=${directoryId[directoryId.length-1]}`).then(data => {
             if (data && data.length!=0) {
-                // 将数据存入state  渲染页面
-                console.log("onChange-data",data);
                 // 增加排序字段
                 for(var i=0;i<data.length;i++){
                     data[i]["key"] = (i+1).toString();
                     data[i]["caseCount"] = '1';
                 }
+                // 将数据存入state  渲染页面
                 this.setState({
                     caseData : data,
                 });
+                console.log("onChange-data",this.state.caseData);
             }
         });
+
     }
 
 
@@ -267,8 +311,7 @@ export default class TestPlane extends React.Component {
     upMove(key,e) {
 
         const data = [...this.state.caseData];
-        console.log("render-upMove-key",key);
-        console.log("render-upMove-data-before",data);
+
         e.preventDefault();
         var key_i = parseInt(key);
 
@@ -287,14 +330,20 @@ export default class TestPlane extends React.Component {
             // 交换选中状态
             var selectCase = this.state.selectedRowKeys;
             if (selectCase.length !==0){
-                key_i = key_i -1;
+                selectCase.sort()
+                console.log("key-before",key_i);
+                console.log("selectCase-before",selectCase);
+
                 for (var i=0;i<selectCase.length;i++){
-                    if(key_i===selectCase[i])
-                        selectCase[i] = selectCase[i]-1;
-                    else if((key_i-1)===selectCase[i])
-                        selectCase[i] = selectCase[i]+1;
+                    if ((key_i-1).toString() === selectCase[i]){
+                        selectCase[i] = key_i.toString()
+                    }
+                    else if(key_i.toString()===selectCase[i]){
+                        selectCase[i] = (key_i-1).toString();
+                    }
                 }
             }
+            console.log("selectCase-after",selectCase);
 
         }
         this.setState({
@@ -323,14 +372,20 @@ export default class TestPlane extends React.Component {
 
             // 交换选中状态
             var selectCase = this.state.selectedRowKeys;
-            if(selectCase.length!==0){
-                key_i = key_i -1;
+            if (selectCase.length !==0){
+                selectCase.sort()
+                console.log("selectCase-before",selectCase);
+
                 for (var i=0;i<selectCase.length;i++){
-                    if(key_i===selectCase[i])
-                        selectCase[i] = selectCase[i]+1;
-                    else if((key_i+1)===selectCase[i])
-                        selectCase[i] = selectCase[i]-1;
+                    if(key_i.toString()===selectCase[i]){
+                        selectCase[i] = (key_i+1).toString();
+                    }
+                    else if ((key_i+1).toString() === selectCase[i]){
+                        selectCase[i] = key_i.toString()
+                    }
+
                 }
+
             }
 
         }
@@ -351,7 +406,6 @@ export default class TestPlane extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const { caseData,caseDir, selectedRowKeys,plane } = this.state;
-        console.log("render-plane:",plane);
         // 选择复选框
         const rowSelection = {
             selectedRowKeys,

@@ -2,10 +2,6 @@ import React from "react";
 import { Popconfirm, version, Layout, Menu, Breadcrumb, Divider,Input,Row, Col ,Table, Icon,Dropdown, Button,message} from "antd";
 import "antd/dist/antd.css";
 import Directory from './Directory';
-import DropdownList from '../common/DropdownList';
-import {
-    Link
-} from 'react-router-dom'
 import {promiseAjax} from "../common/an";
 /*
 *页面名称：测试用例管理页面
@@ -29,7 +25,7 @@ export default class TestCaseManage extends React.Component{
         title: '用例标题',
         dataIndex: 'caseTitle',
         render: (text, record) => (
-            <a onClick={() => this.handleEdit(record)}>{text}</a>
+            <a onClick={() => this.handleEdit(record.id)}>{text}</a>
         ),
         width: 350
     }, {
@@ -98,13 +94,13 @@ export default class TestCaseManage extends React.Component{
      * 编辑用例
      * @param id
      */
-    handleEdit(record) {
-        console.log("caseInfo:",record);
+    handleEdit(caseId) {
+        console.log("caseInfo:",caseId);
         const editPath = {
             pathname : '/addtestcase',
             platform : this.getPlatform(),
             isEdit:'1', // 如果是编辑操作则进入编辑状态
-            caseInfo : record,
+            caseId : caseId,
             directoryId : this.state.dirId,
         }
         this.props.history.push(editPath);

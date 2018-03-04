@@ -23,15 +23,18 @@ export default class TestPlaneManage extends React.Component {
     columns = [{
         title: '编号',
         dataIndex: 'id',
+        width: 100
     }, {
         title: '计划标题',
         dataIndex: 'testPlaneName',
         render: (text, record) => (
             <a onClick={() => this.handleEdit(record)}>{text}</a>
         ),
+        width: 500
     }, {
         title: '客户端版本',
         dataIndex: 'appVersion',
+        width: 150
     }, {
         title: '操作',
         dataIndex: 'action',
@@ -40,8 +43,12 @@ export default class TestPlaneManage extends React.Component {
                 <Popconfirm title="Delete?" onConfirm={e => this.handleDelete(record.id, e)}>
                     <a>删除</a>
                 </Popconfirm>
+                <Divider type="vertical" />
+                <Link to={{pathname:"/testcaseresult",planeId:record.id}}>查看结果</Link>
             </span>
+
         ),
+        width: 150
     }];
 
 

@@ -13,6 +13,7 @@ import TestPlaneManage from './page/test-plane/TestPlaneManage';
 import TestPlane from './page/test-plane/TestPlane';
 import { DatePicker, version, Layout, Menu, Breadcrumb } from "antd";
 import HeaderMenu from '../src/page/common/HeaderMenu';
+import TestCaseResult from './page/result/TestCaseResult';
 
 const { Header, Content, Footer } = Layout;
 
@@ -36,6 +37,7 @@ export default class Router extends React.Component {
                                 <Route path="/testplanemanage/ios" component={TestPlaneManage}/>
                                 <Route path="/testplanemanage/performance/ios" component={TestPlaneManage}/>
                                 <Route path="/testplanemanage/performance/android" component={TestPlaneManage}/>
+                                <Route path="/testcaseresult" component={TestCaseResult}/>
                                 <Route exact path="/addplane" component={TestPlane}/>
                             </div>
                         </Content>

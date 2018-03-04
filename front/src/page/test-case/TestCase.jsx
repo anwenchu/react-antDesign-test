@@ -152,17 +152,21 @@ export default class TestCase extends React.Component {
         // 检查是否为编辑状态,如果是编辑状态则初始化用例数据
         if (this.props.history.location.isEdit==='1') {
             // 初始化用例信息
-            var caseInfo = this.props.history.location.caseInfo;
+            var caseId = this.props.history.location.caseId;
             const testCase = this.state.testCase;
-            testCase.id = caseInfo.id;
-            testCase.caseTitle = caseInfo.caseTitle;
-            testCase.setupCaseId = caseInfo.setupCaseId;
-            testCase.teardownCaseId = caseInfo.teardownCaseId;
-            this.setState({
-                testCase : testCase,
-                directoryId : caseInfo.directoryId,
-                isEdit:'1',
+            testCase.id = caseId;
+            promiseAjax.get(`/testcase/${caseId}`).then((rsp) => {
+                testCase.caseTitle = rsp.caseTitle;
+                testCase.setupCaseId = rsp.setupCaseId;
+                testCase.teardownCaseId = rsp.teardownCaseId;
+                this.setState({
+                    testCase : testCase,
+                    isEdit:'1',
+                    directoryId:rsp.directoryId,
+                    platform:rsp.platform,
+                });
             });
+
             // 初始化用例步骤信息
             var caseSteps = [];
             console.log('testcase：',testCase);
