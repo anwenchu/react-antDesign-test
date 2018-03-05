@@ -202,6 +202,7 @@ export default class ElementManage extends React.Component{
                     message.info('保存元素成功！');
                     // 创建成功后刷新页面
                     this.search(pageId);
+                    this.props.form.resetFields();
                 });
             }
         });

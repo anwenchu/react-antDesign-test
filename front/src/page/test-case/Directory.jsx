@@ -63,7 +63,6 @@ class Directory extends React.Component {
             values.parentId = this.state.selectedKeys[0];
             if (null == values.parentId)
                 values.parentId = this.state.rootId;
-            console.log("this.state.rootId:",this.state.rootId);
             console.log("values:",values);
             if (!err) {
                 promiseAjax.post('/dir/add', values).then(() => {
@@ -71,6 +70,7 @@ class Directory extends React.Component {
                     this.setState({
                         visible1: false,
                     });
+                    this.props.form.resetFields();
                 });
             }
         });
@@ -113,6 +113,8 @@ class Directory extends React.Component {
                     this.setState({
                         visible2: false,
                     });
+                    // 重置表单控件数值为初始值
+                    this.props.form.resetFields();
                 });
             }
         });
@@ -165,7 +167,7 @@ class Directory extends React.Component {
             if (item.nodeId === this.state.selectedKeys[0]) {
                 const dirName = item.nodeName;
                 const parentId = item.parentNodeId;
-                console.log("parentId:",parentId);
+                console.log("item:",item);
                 this.setState({
                     dirName: dirName,
                     parentId:parentId,
