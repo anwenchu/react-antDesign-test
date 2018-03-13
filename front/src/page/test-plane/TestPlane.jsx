@@ -546,7 +546,7 @@ export default class TestPlane extends React.Component {
                                     {getFieldDecorator('deviceName', {
                                         initialValue: plane == null ? '' : plane.deviceName,
                                         rules: [{
-                                            required: true, message: '请输入uuid!',
+                                            required: true, message: '请输入设备名称!',
                                         },{
                                             max:50,message: '最多允许输入50个字符!',
                                         }],
@@ -556,7 +556,7 @@ export default class TestPlane extends React.Component {
                                 </FormItem>
                                 <FormItem
                                     {...formItemLayout}
-                                    label="uuis（ios）"
+                                    label="udid（ios）"
                                 >
                                     {getFieldDecorator('deviceUUID', {
                                         initialValue: plane == null ? '' : plane.deviceUUID,
@@ -564,7 +564,7 @@ export default class TestPlane extends React.Component {
                                             max:50,message: '最多允许输入50个字符!',
                                         }],
                                     })(
-                                        <Input placeholder="请输入uuid"/>
+                                        <Input placeholder="请输入udid"/>
                                     )}
 
                                 </FormItem>

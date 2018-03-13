@@ -109,7 +109,7 @@ public class CaseController extends AbstractController{
     public ResponseEntity detail(CaseDomain casedomain) {
 
         // 如果是根节点，则获取根节点的id
-        if (null==casedomain.getDirectoryId()){
+        if (null==casedomain.getDirectoryId() || casedomain.getDirectoryId().equals("")){
             if (casedomain.getPlatform().equals("android")){
                 List<DirDomain> androidroot = dirRepository.findDirDomainByParentIdAndPlatform("0","android");
                 casedomain.setDirectoryId(androidroot.get(0).getId().toString());

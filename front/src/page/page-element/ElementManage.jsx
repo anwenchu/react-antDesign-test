@@ -266,7 +266,7 @@ export default class ElementManage extends React.Component{
                                                     })(
                                                         <Select
                                                             style={{width: '100%'}}
-                                                            placeholder="请选择状态"
+                                                            placeholder="请选择页面"
                                                             notFoundContent="暂无数据"
                                                         >
                                                             {data.map(d => <Select.Option key={d.id}>{d.pageName}</Select.Option>)}
