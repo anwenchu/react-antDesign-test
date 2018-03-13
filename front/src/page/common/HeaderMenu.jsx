@@ -69,7 +69,7 @@ const {Header} = Layout;
                 <Row>
                     <Col span={4}>
                         <div style={{color: "#F0F2F5", height: "45px", lineHeight: "45px", fontSize: "20px"}}>
-                            自动化测试平台
+                            <a href={"/index"} style={{color: "#F0F2F5"}}>自动化测试平台</a>
                         </div>
                     </Col>
                     <Col span={20}>
